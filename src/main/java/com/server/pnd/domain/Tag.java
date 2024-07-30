@@ -10,23 +10,18 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "USER")
-public class User extends BaseEntity {
+@Table(name = "TAG")
+public class Tag extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotEmpty @Column(name = "id")
     private Long id;
 
-    @NotEmpty @Column(name = "github_id")
-    private String githubId;
+    @Column(name = "project_id")
+    private String projectId;
 
-    @Column(name = "name")
-    private String name;
-
-    @Column(name = "image")
-    private String image;
-
-    @Column(name = "email")
-    private String email;
+    @NotEmpty @Column(name = "name")
+    private String name; // 태그 이름
 
 }
