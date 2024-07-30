@@ -10,23 +10,17 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "USER")
-public class User extends BaseEntity {
-
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Table(name = "README")
+public class ReadME extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotEmpty @Column(name = "id")
     private Long id;
 
-    @NotEmpty @Column(name = "github_id")
-    private String githubId;
+    @Column(name = "markdown_id")
+    private Long markdownId;
 
-    @Column(name = "name")
-    private String name;
-
-    @Column(name = "image")
-    private String image;
-
-    @Column(name = "email")
-    private String email;
+    @NotEmpty @Column(name = "project")
+    private Long projectId;
 
 }
