@@ -1,13 +1,19 @@
 package com.server.pnd.user.service;
 
+import com.server.pnd.domain.User;
+import com.server.pnd.user.dto.SocialLoginResponseDto;
 import com.server.pnd.user.dto.TokenDto;
+import com.server.pnd.user.dto.UserInfo;
 import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.Map;import org.slf4j.Logger;
+import java.util.Map;
+
+import org.antlr.v4.runtime.Token;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +25,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -92,7 +99,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
 
                 // 토큰과 관련 정보 추출
                 if (params.containsKey("access_token")) {
-
+                    
                     accessToken = params.get("access_token");
                     refreshToken = params.get("refresh_token"); // refresh_token 추출
 
@@ -100,7 +107,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                             .accessToken(accessToken)
                             .refreshToken(refreshToken)
                             .build();
-
+                    
                     logger.info("Access Token: {}", accessToken);
                     logger.info("Refresh Token: {}", refreshToken); // refresh_token 로깅
                 }else {
@@ -117,9 +124,9 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, tokenDto, "접근 토큰을 성공적으로 받았습니다.");
         return ResponseEntity.status(200).body(res);
     }
-/*
+
     @Override
-    public ResponseEntity<CustomApiResponse<?>> getUserInfo(String accessToken) {
+    public ResponseEntity<CustomApiResponse<?>> getUserInfo(TokenDto tokenDto) {
         String githubId = null;
         String nickname = null;
         String email = null;
@@ -217,5 +224,5 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
             CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, socialLoginResponseDto, "로그인이 성공적으로 완료되었습니다.");
             return ResponseEntity.status(200).body(res);
         }
-    }*/
+    }
 }
