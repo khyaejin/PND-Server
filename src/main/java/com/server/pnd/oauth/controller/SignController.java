@@ -1,5 +1,8 @@
 package com.server.pnd.oauth.controller;
 
+import com.server.pnd.domain.User;
+import com.server.pnd.oauth.dto.UserInfo;
+import com.server.pnd.oauth.service.GithubSocialLoginServiceImpl;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -9,10 +12,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("api/oauth")
 @RequiredArgsConstructor
 public class SignController {
+    private final GithubSocialLoginServiceImpl githubSocialLoginService;
     private static final Logger logger = LoggerFactory.getLogger(SignController.class);
 
     //깃허브 소셜 로그인
@@ -27,14 +33,14 @@ public class SignController {
         }
 
         // 2. 접근 토큰 받기
-        ResponseEntity<CustomApiResponse<?>> tokenResponse = kakaoLoginService.getAccessToken(code, null);
+        ResponseEntity<CustomApiResponse<?>> tokenResponse = githubSocialLoginService.getAccessToken(code, null);
         if (tokenResponse.getStatusCode() != HttpStatus.OK) {
             return ResponseEntity.status(tokenResponse.getStatusCode()).body(tokenResponse.getBody());
         }
 
         // 3. 사용자 정보 받기
         String accessToken = (String) tokenResponse.getBody().getData(); //후에 서비스 계층 안으로 넣어주기
-        ResponseEntity<CustomApiResponse<?>> userInfoResponse = kakaoLoginService.getUserInfo(accessToken);
+        ResponseEntity<CustomApiResponse<?>> userInfoResponse = githubSocialLoginService.getUserInfo(accessToken);
         if (userInfoResponse.getStatusCode() != HttpStatus.OK) {
             return ResponseEntity.status(tokenResponse.getStatusCode()).body(tokenResponse.getBody());
         }
@@ -44,9 +50,10 @@ public class SignController {
         //log를 통한 테스트 용도
         logger.info("User_Email: {}", userInfo.getEmail());
         logger.info("User_Name: {}", userInfo.getName());
-        logger.info("User_ProviderId: {}", userInfo.getProviderId());
+        logger.info("User_Gtihun_id: {}", userInfo.getGithubId());
         logger.info("User_Image: {}", userInfo.getImage());
-        ResponseEntity<CustomApiResponse<?>> loginResponse = kakaoLoginService.login(userInfo);
+        logger.info("Uer_AccessToken: {}", userInfo.getAccessToken());
+        ResponseEntity<CustomApiResponse<?>> loginResponse = githubSocialLoginService.login(userInfo);
         if (loginResponse.getBody().getStatus() != 200 || loginResponse.getBody().getStatus() != 201) {
             return ResponseEntity.status(loginResponse.getStatusCode()).body(loginResponse.getBody());
         }
