@@ -15,7 +15,6 @@ public class Project extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotEmpty @Column(name = "id")
     private Long id;
 
     @Column(name = "repository_id")

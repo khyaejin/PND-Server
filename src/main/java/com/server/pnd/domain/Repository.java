@@ -15,7 +15,6 @@ public class Repository extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotEmpty
     private Long id;
 
     @NotEmpty @Column(name = "user_id")

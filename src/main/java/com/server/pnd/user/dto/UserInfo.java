@@ -13,6 +13,7 @@ public class UserInfo {
     // @Builder.Default //후에 기본값 지정해주기 -> 기본 카카오톡 프로필?
     private String image;
     private String accessToken;
+    private String refreshToken;
 
     public User toEntity() {
         return User.builder()
@@ -21,6 +22,7 @@ public class UserInfo {
                 .email(email)
                 .image(image)
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 }

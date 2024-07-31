@@ -15,7 +15,6 @@ public class Report extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotEmpty
     private Long id;
 
     @NotEmpty @Column(name = "project_id")

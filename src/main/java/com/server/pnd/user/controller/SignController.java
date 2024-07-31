@@ -1,13 +1,19 @@
 package com.server.pnd.user.controller;
 
+import com.server.pnd.domain.User;
+import com.server.pnd.user.dto.TokenDto;
+import com.server.pnd.user.dto.UserInfo;
 import com.server.pnd.user.service.GithubSocialLoginServiceImpl;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/pnd/user")
@@ -33,9 +39,10 @@ public class SignController {
             return ResponseEntity.status(tokenResponse.getStatusCode()).body(tokenResponse.getBody());
         }
 
-      /*  // 3. 사용자 정보 받기
-        String accessToken = (String) tokenResponse.getBody().getData(); //후에 서비스 계층 안으로 넣어주기
-        ResponseEntity<CustomApiResponse<?>> userInfoResponse = githubSocialLoginService.getUserInfo(accessToken);
+        // 3. 사용자 정보 받기
+        TokenDto tokenDto = (TokenDto) tokenResponse.getBody().getData(); // 접근토큰, 리프레시 토큰 받아오기
+
+        ResponseEntity<CustomApiResponse<?>> userInfoResponse = githubSocialLoginService.getUserInfo(tokenDto);
         if (userInfoResponse.getStatusCode() != HttpStatus.OK) {
             return ResponseEntity.status(tokenResponse.getStatusCode()).body(tokenResponse.getBody());
         }
@@ -49,14 +56,9 @@ public class SignController {
         logger.info("User_Image: {}", userInfo.getImage());
         logger.info("Uer_AccessToken: {}", userInfo.getAccessToken());
         ResponseEntity<CustomApiResponse<?>> loginResponse = githubSocialLoginService.login(userInfo);
-        if (loginResponse.getBody().getStatus() != 200 || loginResponse.getBody().getStatus() != 201) {
-            return ResponseEntity.status(loginResponse.getStatusCode()).body(loginResponse.getBody());
-        }
-        return ResponseEntity.status(loginResponse.getStatusCode()).body(loginResponse.getBody());*/
-        return tokenResponse;
+        return ResponseEntity.status(loginResponse.getStatusCode()).body(loginResponse.getBody());
     }
-/*
-    @GetMapping(value = "/social/test/find/user")
+    /*@GetMapping(value = "/social/test/find/user")
     public Optional<User> testGetUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
         return jwtUtil.findUserByJwtToken(authorizationHeader);
     }
