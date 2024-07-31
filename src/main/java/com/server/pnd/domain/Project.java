@@ -21,16 +21,15 @@ public class Project extends BaseEntity {
     @Column(name = "repository_id")
     private Long repositoryId; // 레포지토리 ID
 
-    @Column(name = "period")
     private String period; // 프로젝트 기간
 
-    @Column(name = "image")
     private String image; // 썸네일
 
-    @NotEmpty @Column(name = "pbti")
-    private String pbti; // 프로젝트 mbti
+    private String type; // 개발자 유형
 
-    @NotEmpty @Column(name = "pbti_description")
-    private String pbtiDescription; // 프로젝트 mbti 설명
+    @NotEmpty @Column(name = "type_description")
+    private String typeDescription; // 개발자 유형 설명
+
+    private String part; //파 (백엔드, 프론트앤드 등)
 
 }
