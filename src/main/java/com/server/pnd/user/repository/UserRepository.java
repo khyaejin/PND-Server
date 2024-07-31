@@ -1,4 +1,4 @@
-package com.server.pnd.user;
+package com.server.pnd.user.repository;
 
 import com.server.pnd.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;

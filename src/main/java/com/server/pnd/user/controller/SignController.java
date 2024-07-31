@@ -1,21 +1,16 @@
-package com.server.pnd.oauth.controller;
+package com.server.pnd.user.controller;
 
-import com.server.pnd.domain.User;
-import com.server.pnd.oauth.dto.UserInfo;
-import com.server.pnd.oauth.service.GithubSocialLoginServiceImpl;
+import com.server.pnd.user.service.GithubSocialLoginServiceImpl;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
-@RequestMapping("api/oauth")
+@RequestMapping("api/pnd/user")
 @RequiredArgsConstructor
 public class SignController {
     private final GithubSocialLoginServiceImpl githubSocialLoginService;
@@ -23,7 +18,7 @@ public class SignController {
 
     //깃허브 소셜 로그인
     @PostMapping(value = "/social/github")
-    public ResponseEntity<CustomApiResponse<?>> kakaoLogin(@RequestParam String code) {
+    public ResponseEntity<CustomApiResponse<?>> githubLogin(@RequestParam String code) {
         // 1. 인가 코드 받기 (@RequestParam String code)
         logger.info("Request_Code: {}", code);
         if (code.isEmpty()) {
@@ -58,7 +53,7 @@ public class SignController {
             return ResponseEntity.status(loginResponse.getStatusCode()).body(loginResponse.getBody());
         }
         return ResponseEntity.status(loginResponse.getStatusCode()).body(loginResponse.getBody());*/
-        return null;
+        return tokenResponse;
     }
 /*
     @GetMapping(value = "/social/test/find/user")

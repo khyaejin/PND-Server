@@ -1,14 +1,12 @@
-package com.server.pnd.oauth.service;
+package com.server.pnd.user.service;
 
-import com.nimbusds.jose.shaded.gson.JsonObject;
-import com.server.pnd.domain.User;
-import com.server.pnd.oauth.dto.SocialLoginResponseDto;
-import com.server.pnd.oauth.dto.UserInfo;
-import com.server.pnd.user.UserRepository;
+import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONObject;
-import org.slf4j.Logger;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +18,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,12 +39,17 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
     public ResponseEntity<CustomApiResponse<?>> getAccessToken(String code) {
         String accessToken;
         try {
+            // 깃허브 인증을 위한 URL 설정
+            String githubReqUrl = "https://github.com/login/oauth/access_token";
             URL url = new URL(githubReqUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-            conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+            // HTTP POST 요청 설정
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
             conn.setDoOutput(true);
 
+            // POST 파라미터 설정
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=").append(githubClientId);
@@ -55,12 +57,13 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
             sb.append("&redirect_uri=").append(githubRedirectUrl);
             sb.append("&code=").append(code);
 
-            // 전송
+            // 요청 파라미터 전송
             try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()))) {
                 bw.write(sb.toString());
                 bw.flush();
             }
 
+            // 접근토큰 받기
             int responseCode = conn.getResponseCode();
             logger.info("Token Response Code: {}", responseCode);
 
@@ -72,11 +75,26 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                     responseSb.append(line);
                 }
                 String result = responseSb.toString();
-                logger.info("Token Response Body: {}", result);
+                logger.info("Token_Response_Body: {}", result);
 
-                JSONObject jsonObject = new JSONObject(result);
-                if (jsonObject.has("access_token")) {
-                    accessToken = jsonObject.getString("access_token");
+
+                // URL-encoded form 데이터 파싱
+                Map<String, String> params = new HashMap<>();
+                String[] pairs = result.split("&");
+                for (String pair : pairs) {
+                    int idx = pair.indexOf("=");
+                    params.put(URLDecoder.decode(pair.substring(0, idx), StandardCharsets.UTF_8.name()), URLDecoder.decode(pair.substring(idx + 1), StandardCharsets.UTF_8.name()));
+                }
+
+                // 토큰과 관련 정보 추출
+                if (params.containsKey("access_token")) {
+                    accessToken = params.get("access_token");
+                    String scope = params.getOrDefault("scope", "");  // 'getOrDefault' will return "" if the field is not present
+                    String tokenType = params.getOrDefault("token_type", "");
+
+                    logger.info("Access Token: {}", accessToken);
+                    logger.info("Scope: {}", scope);
+                    logger.info("Token Type: {}", tokenType);
                 } else {
                     CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(401,"이미 사용되었거나 유효하지 않은 인가 코드 입니다.");
                     return ResponseEntity.status(401).body(res);

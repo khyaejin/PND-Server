@@ -1,4 +1,4 @@
-package com.server.pnd.oauth.dto;
+package com.server.pnd.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
