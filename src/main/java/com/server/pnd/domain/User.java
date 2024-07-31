@@ -20,13 +20,10 @@ public class User extends BaseEntity {
     @NotEmpty @Column(name = "github_id")
     private String githubId;
 
-    @Column(name = "name")
     private String name;
 
-    @Column(name = "image")
     private String image;
 
-    @Column(name = "email")
     private String email;
 
     @NotEmpty @Column(name = "access_token")

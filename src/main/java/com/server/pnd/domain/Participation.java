@@ -15,7 +15,7 @@ public class Participation extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotEmpty @Column(name = "id")
+    @NotEmpty
     private Long id;
 
     @NotEmpty @Column(name = "user_id")

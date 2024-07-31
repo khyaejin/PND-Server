@@ -14,7 +14,7 @@ import lombok.*;
 public class ReadME extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotEmpty @Column(name = "id")
+    @NotEmpty
     private Long id;
 
     @Column(name = "markdown_id")

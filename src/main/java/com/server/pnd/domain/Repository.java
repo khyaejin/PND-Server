@@ -15,19 +15,18 @@ public class Repository extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotEmpty @Column(name = "id")
+    @NotEmpty
     private Long id;
 
     @NotEmpty @Column(name = "user_id")
     private Long userId;
 
-    @NotEmpty @Column(name = "name")
+    @NotEmpty
     private String name; // 레포지토리 이름
 
-    @NotEmpty @Column(name = "url")
+    @NotEmpty
     private String url; // 레포지토리 URL
 
-    @Column(name = "description")
     private String description; // 레포지토리 설명
 
 }

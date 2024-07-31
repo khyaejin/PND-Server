@@ -16,16 +16,14 @@ public class Markdown extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotEmpty
-    @Column(name = "id")
     private Long id;
 
     @Column(name = "user_id")
     private Long userId;
 
-    @NotEmpty @Column(name = "title")
+    @NotEmpty
     private String title;
 
-    @Column(name = "content")
     private String content;
 
 }
