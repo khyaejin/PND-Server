@@ -29,4 +29,6 @@ public class User extends BaseEntity {
     @NotEmpty @Column(name = "access_token")
     private String accessToken;
 
+    @NotEmpty @Column(name = "refresh_token")
+    private String refreshToken;
 }

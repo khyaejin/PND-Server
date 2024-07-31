@@ -125,12 +125,15 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
         return ResponseEntity.status(200).body(res);
     }
 
+    // 회원 정보 받아오기
     @Override
     public ResponseEntity<CustomApiResponse<?>> getUserInfo(TokenDto tokenDto) {
         String githubId = null;
         String nickname = null;
         String email = null;
         String profileImageUrl = null;
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
 
         String reqUrl = "https://kapi.kakao.com/v2/user/me";
         try {
