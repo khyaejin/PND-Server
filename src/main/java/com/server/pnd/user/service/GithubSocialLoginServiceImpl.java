@@ -4,6 +4,7 @@ import com.server.pnd.domain.User;
 import com.server.pnd.user.dto.SocialLoginResponseDto;
 import com.server.pnd.user.dto.TokenDto;
 import com.server.pnd.user.dto.UserInfo;
+import com.server.pnd.user.jwt.JwtUtil;
 import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.antlr.v4.runtime.Token;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +32,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class GithubSocialLoginServiceImpl implements SocialLoginService {
     private final UserRepository userRepository;
-
+    private final JwtUtil jwtUtil;
     private static final Logger logger = LoggerFactory.getLogger(GithubSocialLoginServiceImpl.class);
 
     @Value("${spring.security.oauth2.client.registration.github.client-id}")
@@ -135,24 +136,24 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
 
-        String reqUrl = "https://kapi.kakao.com/v2/user/me";
+        String reqUrl = "https://api.github.com/user";
         try {
             URL url = new URL(reqUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Authorization", "Bearer " + accessToken);
-            conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+            conn.setRequestMethod("GET");  // GitHub API는 GET 메소드 사용
+            conn.setRequestProperty("Authorization", "token " + accessToken);
+            conn.setRequestProperty("Content-type", "application/json");  // GitHub API에서는 JSON 형식을 주로 사용
 
             int responseCode = conn.getResponseCode();
             logger.info("Response Code: {}", responseCode);
 
             if (responseCode == 401) {
-                CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(401, "토큰이 만료되었거나 유효하지 않은 토큰입니다.");
+                CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(401, "Access token is expired or invalid.");
                 return ResponseEntity.status(401).body(res);
             }
 
             try (BufferedReader br = new BufferedReader(new InputStreamReader(
-                    responseCode >= 200 && responseCode <= 300 ? conn.getInputStream() : conn.getErrorStream()))) {
+                    responseCode >= 200 && responseCode < 300 ? conn.getInputStream() : conn.getErrorStream()))) {
                 String line;
                 StringBuilder responseSb = new StringBuilder();
                 while ((line = br.readLine()) != null) {
@@ -163,31 +164,12 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
 
                 JSONObject jsonObject = new JSONObject(result);
 
-                if (jsonObject.has("id")) {
-                    githubId = String.valueOf(jsonObject.getLong("id"));
-                } else {
-                    logger.warn("No 'id' field in response");
-                }
+                githubId = jsonObject.optString("id", null);
+                nickname = jsonObject.optString("login", null); // GitHub uses 'login' as the username
+                email = jsonObject.optString("email", null);
+                profileImageUrl = jsonObject.optString("avatar_url", null); // GitHub uses 'avatar_url' for the profile image
 
-                if (jsonObject.has("properties")) {
-                    nickname = jsonObject.getJSONObject("properties").optString("nickname", null);
-                } else {
-                    logger.warn("No 'properties' field in response");
-                }
-
-                if (jsonObject.has("kakao_account")) {
-                    JSONObject kakaoAccount = jsonObject.getJSONObject("kakao_account");
-                    email = kakaoAccount.optString("email", null);
-
-                    if (kakaoAccount.has("profile")) {
-                        JSONObject profile = kakaoAccount.getJSONObject("profile");
-                        profileImageUrl = profile.optString("profile_image_url", null);
-                    } else {
-                        logger.warn("No 'profile' field in 'kakao_account'");
-                    }
-                } else {
-                    logger.warn("No 'kakao_account' field in response");
-                }
+                // Optionally handle additional fields like 'bio', 'followers' etc.
             }
         } catch (Exception e) {
             logger.error("Error getting user info", e);
@@ -202,6 +184,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                 .image(profileImageUrl)
                 .accessToken(accessToken)
                 .build();
+
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, userInfo, "유저 정보를 성공적으로 가져왔습니다.");
         return ResponseEntity.status(200).body(res);
     }
@@ -209,9 +192,10 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
 
     @Override
     public ResponseEntity<CustomApiResponse<?>> login(UserInfo userInfo) {
-        Optional<User> foundUser = userRepository.findByProviderAndProviderId(userInfo.getProvider(), userInfo.getProviderId());
+        String githubId = userInfo.getGithubId();
+        Optional<User> foundUser = userRepository.findByGithubId(githubId);
 
-        String token = jwtUtil.createToken(userInfo.getProvider(), userInfo.getProviderId());
+        String token = jwtUtil.createToken(githubId);
         SocialLoginResponseDto socialLoginResponseDto = SocialLoginResponseDto.builder()
                 .token(token).build();
 
