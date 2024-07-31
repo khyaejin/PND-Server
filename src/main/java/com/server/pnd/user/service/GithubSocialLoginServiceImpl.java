@@ -1,5 +1,6 @@
 package com.server.pnd.user.service;
 
+import com.server.pnd.user.dto.TokenDto;
 import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,9 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
     @Override
     public ResponseEntity<CustomApiResponse<?>> getAccessToken(String code) {
         String accessToken;
+        String refreshToken;
+        TokenDto tokenDto;
+
         try {
             // 깃허브 인증을 위한 URL 설정
             String githubReqUrl = "https://github.com/login/oauth/access_token";
@@ -88,14 +92,18 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
 
                 // 토큰과 관련 정보 추출
                 if (params.containsKey("access_token")) {
+
                     accessToken = params.get("access_token");
-                    String scope = params.getOrDefault("scope", "");  // 'getOrDefault' will return "" if the field is not present
-                    String tokenType = params.getOrDefault("token_type", "");
+                    refreshToken = params.get("refresh_token"); // refresh_token 추출
+
+                    tokenDto = TokenDto.builder()
+                            .accessToken(accessToken)
+                            .refreshToken(refreshToken)
+                            .build();
 
                     logger.info("Access Token: {}", accessToken);
-                    logger.info("Scope: {}", scope);
-                    logger.info("Token Type: {}", tokenType);
-                } else {
+                    logger.info("Refresh Token: {}", refreshToken); // refresh_token 로깅
+                }else {
                     CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(401,"이미 사용되었거나 유효하지 않은 인가 코드 입니다.");
                     return ResponseEntity.status(401).body(res);
                 }
@@ -106,7 +114,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
             return ResponseEntity.status(401).body(res);
         }
 
-        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, accessToken, "접근 토큰을 성공적으로 받았습니다.");
+        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, tokenDto, "접근 토큰을 성공적으로 받았습니다.");
         return ResponseEntity.status(200).body(res);
     }
 /*
