@@ -1,12 +1,13 @@
 package com.server.pnd.oauth.service;
 
+import com.nimbusds.jose.shaded.gson.JsonObject;
 import com.server.pnd.domain.User;
 import com.server.pnd.oauth.dto.SocialLoginResponseDto;
 import com.server.pnd.oauth.dto.UserInfo;
 import com.server.pnd.user.UserRepository;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
-import net.minidev.json.JSONObject;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,20 +29,20 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
 
     private static final Logger logger = LoggerFactory.getLogger(GithubSocialLoginServiceImpl.class);
 
-    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
-    private String kakaoApiKey;
-    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
-    private String kakaoRedirectUri;
-    @Value("${spring.security.oauth2.client.provider.kakao.token-uri}")
-    private String reqUrl;
-    @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
-    private String kakaoClientSecret;
+    @Value("${spring.security.oauth2.client.registration.github.client-id}")
+    private String githubClientId;
+    @Value("${spring.security.oauth2.client.registration.github.redirect-uri}")
+    private String githubRedirectUrl;
+    @Value("${spring.security.oauth2.client.provider.github.token-uri}")
+    private String githubReqUrl;
+    @Value("${spring.security.oauth2.client.registration.github.client-secret}")
+    private String githubClientSecret;
 
     @Override
-    public ResponseEntity<CustomApiResponse<?>> getAccessToken(String code, String state) {
+    public ResponseEntity<CustomApiResponse<?>> getAccessToken(String code) {
         String accessToken;
         try {
-            URL url = new URL(reqUrl);
+            URL url = new URL(githubReqUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -49,11 +50,12 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
 
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
-            sb.append("&client_id=").append(kakaoApiKey);
-            sb.append("&client_secret=").append(kakaoClientSecret);
-            sb.append("&redirect_uri=").append(kakaoRedirectUri);
+            sb.append("&client_id=").append(githubClientId);
+            sb.append("&client_secret=").append(githubClientSecret);
+            sb.append("&redirect_uri=").append(githubRedirectUrl);
             sb.append("&code=").append(code);
 
+            // 전송
             try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()))) {
                 bw.write(sb.toString());
                 bw.flush();
@@ -89,11 +91,10 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, accessToken, "접근 토큰을 성공적으로 받았습니다.");
         return ResponseEntity.status(200).body(res);
     }
-
+/*
     @Override
     public ResponseEntity<CustomApiResponse<?>> getUserInfo(String accessToken) {
-        String providerId = null;
-        String provider = "kakao";
+        String githubId = null;
         String nickname = null;
         String email = null;
         String profileImageUrl = null;
@@ -127,7 +128,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                 JSONObject jsonObject = new JSONObject(result);
 
                 if (jsonObject.has("id")) {
-                    providerId = String.valueOf(jsonObject.getLong("id"));
+                    githubId = String.valueOf(jsonObject.getLong("id"));
                 } else {
                     logger.warn("No 'id' field in response");
                 }
@@ -168,6 +169,8 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, userInfo, "유저 정보를 성공적으로 가져왔습니다.");
         return ResponseEntity.status(200).body(res);
     }
+
+
     @Override
     public ResponseEntity<CustomApiResponse<?>> login(UserInfo userInfo) {
         Optional<User> foundUser = userRepository.findByProviderAndProviderId(userInfo.getProvider(), userInfo.getProviderId());
@@ -188,5 +191,5 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
             CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, socialLoginResponseDto, "로그인이 성공적으로 완료되었습니다.");
             return ResponseEntity.status(200).body(res);
         }
-    }
+    }*/
 }

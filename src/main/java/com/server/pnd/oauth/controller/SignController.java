@@ -22,7 +22,7 @@ public class SignController {
     private static final Logger logger = LoggerFactory.getLogger(SignController.class);
 
     //깃허브 소셜 로그인
-    @PostMapping(value = "/social/kakao")
+    @PostMapping(value = "/social/github")
     public ResponseEntity<CustomApiResponse<?>> kakaoLogin(@RequestParam String code) {
         // 1. 인가 코드 받기 (@RequestParam String code)
         logger.info("Request_Code: {}", code);
@@ -33,12 +33,12 @@ public class SignController {
         }
 
         // 2. 접근 토큰 받기
-        ResponseEntity<CustomApiResponse<?>> tokenResponse = githubSocialLoginService.getAccessToken(code, null);
+        ResponseEntity<CustomApiResponse<?>> tokenResponse = githubSocialLoginService.getAccessToken(code);
         if (tokenResponse.getStatusCode() != HttpStatus.OK) {
             return ResponseEntity.status(tokenResponse.getStatusCode()).body(tokenResponse.getBody());
         }
 
-        // 3. 사용자 정보 받기
+      /*  // 3. 사용자 정보 받기
         String accessToken = (String) tokenResponse.getBody().getData(); //후에 서비스 계층 안으로 넣어주기
         ResponseEntity<CustomApiResponse<?>> userInfoResponse = githubSocialLoginService.getUserInfo(accessToken);
         if (userInfoResponse.getStatusCode() != HttpStatus.OK) {
@@ -57,9 +57,10 @@ public class SignController {
         if (loginResponse.getBody().getStatus() != 200 || loginResponse.getBody().getStatus() != 201) {
             return ResponseEntity.status(loginResponse.getStatusCode()).body(loginResponse.getBody());
         }
-        return ResponseEntity.status(loginResponse.getStatusCode()).body(loginResponse.getBody());
+        return ResponseEntity.status(loginResponse.getStatusCode()).body(loginResponse.getBody());*/
+        return null;
     }
-
+/*
     @GetMapping(value = "/social/test/find/user")
     public Optional<User> testGetUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
         return jwtUtil.findUserByJwtToken(authorizationHeader);
@@ -73,5 +74,5 @@ public class SignController {
         }
         User user = foundUser.get();
         return user;
-    }
+    }*/
 }
