@@ -29,4 +29,7 @@ public class User extends BaseEntity {
     @Column(name = "email")
     private String email;
 
+    @NotEmpty @Column(name = "access_token")
+    private String accessToken;
+
 }
