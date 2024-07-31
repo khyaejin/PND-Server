@@ -15,7 +15,6 @@ public class Markdown extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotEmpty
     private Long id;
 
     @Column(name = "user_id")
