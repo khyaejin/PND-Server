@@ -15,13 +15,13 @@ public class Tag extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotEmpty @Column(name = "id")
+    @NotEmpty
     private Long id;
 
     @Column(name = "project_id")
     private String projectId;
 
-    @NotEmpty @Column(name = "name")
+    @NotEmpty
     private String name; // 태그 이름
 
 }
