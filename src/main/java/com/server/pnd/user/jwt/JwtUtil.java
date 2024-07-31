@@ -51,7 +51,7 @@ public class JwtUtil {
 
         Optional<User> foundUser = userRepository.findByGithubId(githubId);
         if (foundUser.isEmpty()) {
-            log.warn("해당 provider, providerId를 가진 회원이 존재하지 않습니다.");
+            log.warn("해당 githubId를 가진 회원이 존재하지 않습니다.");
             return Optional.empty();
         }
 
@@ -67,7 +67,7 @@ public class JwtUtil {
 
     private static final long EXPIRATION_TIME = 86400000; // 1일
 
-    // 토큰 생성 (provider, providerId 사용)
+    // 토큰 생성 (githubId 사용)
     public String createToken(String githubId) {
         return Jwts.builder()
                 .setSubject(githubId)

@@ -183,6 +183,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                 .email(email)
                 .image(profileImageUrl)
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
 
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, userInfo, "유저 정보를 성공적으로 가져왔습니다.");

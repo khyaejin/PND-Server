@@ -56,9 +56,6 @@ public class SignController {
         logger.info("User_Image: {}", userInfo.getImage());
         logger.info("Uer_AccessToken: {}", userInfo.getAccessToken());
         ResponseEntity<CustomApiResponse<?>> loginResponse = githubSocialLoginService.login(userInfo);
-        if (loginResponse.getBody().getStatus() != 200 || loginResponse.getBody().getStatus() != 201) {
-            return ResponseEntity.status(loginResponse.getStatusCode()).body(loginResponse.getBody());
-        }
         return ResponseEntity.status(loginResponse.getStatusCode()).body(loginResponse.getBody());
     }
     /*@GetMapping(value = "/social/test/find/user")
