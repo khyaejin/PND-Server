@@ -18,5 +18,5 @@ public interface SocialLoginService {
     ResponseEntity<CustomApiResponse<?>> login(UserInfo userInfo);
 
     //레포지토리 정보 가져오지
-    ResponseEntity<CustomApiResponse<?>> getUserRepository(TokenDto tokenDto);
+    ResponseEntity<CustomApiResponse<?>> getUserRepository(TokenDto tokenDto, UserInfo userInfo);
 }

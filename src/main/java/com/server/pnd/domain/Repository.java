@@ -25,10 +25,8 @@ public class Repository{
     @JoinColumn(name = "user_id")
     private User user;
 
-    @NotEmpty
     private String name; // 레포지토리 이름
 
-    @NotEmpty
     private String htmlUrl; // 레포지토리 URL
 
     private String description; // 레포지토리 설명

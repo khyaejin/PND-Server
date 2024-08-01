@@ -168,11 +168,10 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                 JSONObject jsonObject = new JSONObject(result);
 
                 githubId = jsonObject.optString("id", null);
-                nickname = jsonObject.optString("login", null); // GitHub uses 'login' as the username
+                nickname = jsonObject.optString("login", null);
                 email = jsonObject.optString("email", null);
-                profileImageUrl = jsonObject.optString("avatar_url", null); // GitHub uses 'avatar_url' for the profile image
+                profileImageUrl = jsonObject.optString("avatar_url", null);
 
-                // Optionally handle additional fields like 'bio', 'followers' etc.
             }
         } catch (Exception e) {
             logger.error("Error getting user info", e);
@@ -195,12 +194,11 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
 
 
     // 레포지토리 조회
-
     @Override
-    public ResponseEntity<CustomApiResponse<?>> getUserRepository(TokenDto tokenDto) {
+    public ResponseEntity<CustomApiResponse<?>> getUserRepository(TokenDto tokenDto, UserInfo userInfo) {
         String accessToken = tokenDto.getAccessToken();
         String reqUrl = "https://api.github.com/user/repos";
-        List<RepositoryInfoDto> repositories = new ArrayList<>();
+        List<Repository> repositories = new ArrayList<>();
 
         try {
             URL url = new URL(reqUrl);
@@ -220,6 +218,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                     JSONArray jsonArray = new JSONArray(responseSb.toString());
 
                     for (int i = 0; i < jsonArray.length(); i++) {
+                        // 레포지토리 정보 받아오기
                         JSONObject repo = jsonArray.getJSONObject(i);
                         String name = repo.getString("name");
                         String htmlUrl = repo.getString("html_url");
@@ -232,7 +231,20 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                         String createdAt = repo.getString("created_at");
                         String updatedAt = repo.getString("updated_at");
 
-                        RepositoryInfoDto repositoryInfoDto = RepositoryInfoDto.builder()
+                        // 레포지토리 정보 잘 받아왔나 로그로 확인
+                        logger.info("Repository Name: {}, HTML URL: {}, Stars: {}, Description: {}, Forks: {}, Open Issues: {}, Watchers: {}, Language: {}, Created At: {}, Updated At: {}", name, htmlUrl, stars, description, forksCount, openIssues, watchers, language, createdAt, updatedAt);
+
+                        Optional<User> foundUser = userRepository.findByGithubId(userInfo.getGithubId());
+
+                        if (foundUser.isEmpty()) {
+                            // 후순위 : 관련 로직 작성
+                        }
+
+                        User user = foundUser.get();
+
+                        // repository build
+                        Repository repository = Repository.builder()
+                                .user(user)
                                 .name(name)
                                 .htmlUrl(htmlUrl)
                                 .stars(stars)
@@ -243,9 +255,8 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                                 .watchers(watchers)
                                 .createdAt(createdAt)
                                 .updatedAt(updatedAt).build();
+                        repositories.add(repository);
 
-                        repositories.add(repositoryInfoDto);
-                        Repository repository = repositoryInfoDto.toEntity();
                         repositoryRepository.save(repository);
                     }
                 }

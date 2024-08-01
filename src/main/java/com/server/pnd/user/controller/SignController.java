@@ -44,13 +44,7 @@ public class SignController {
             return ResponseEntity.status(tokenResponse.getStatusCode()).body(tokenResponse.getBody());
         }
 
-        // 4. 레포지토리 정보 가져오기
-        ResponseEntity<CustomApiResponse<?>> userRepositoryResponses = githubSocialLoginService.getUserRepository(tokenDto);
-        if (userInfoResponse.getStatusCode() != HttpStatus.OK) {
-            return ResponseEntity.status(tokenResponse.getStatusCode()).body(tokenResponse.getBody());
-        }
-
-        // 5. 로그인/회원가입 후 JWT 토큰 발급
+        // 4. 로그인/회원가입 후 JWT 토큰 발급
         UserInfo userInfo = (UserInfo) userInfoResponse.getBody().getData(); //후에 서비스 계층 안으로 넣어주기
         //log를 통한 테스트 용도
         logger.info("User_Email: {}", userInfo.getEmail());
@@ -59,7 +53,15 @@ public class SignController {
         logger.info("User_Image: {}", userInfo.getImage());
         logger.info("Uer_AccessToken: {}", userInfo.getAccessToken());
         ResponseEntity<CustomApiResponse<?>> loginResponse = githubSocialLoginService.login(userInfo);
+
+        // 5. 레포지토리 정보 가져오기
+        ResponseEntity<CustomApiResponse<?>> userRepositoryResponses = githubSocialLoginService.getUserRepository(tokenDto, userInfo);
+        if (userInfoResponse.getStatusCode() != HttpStatus.OK) {
+            return ResponseEntity.status(tokenResponse.getStatusCode()).body(tokenResponse.getBody());
+        }
+
         return ResponseEntity.status(loginResponse.getStatusCode()).body(loginResponse.getBody());
+
     }
     /*@GetMapping(value = "/social/test/find/user")
     public Optional<User> testGetUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {

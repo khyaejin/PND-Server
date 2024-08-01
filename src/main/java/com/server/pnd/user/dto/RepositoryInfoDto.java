@@ -25,9 +25,11 @@ public class RepositoryInfoDto {
     private String language;
     private String createdAt;
     private String updatedAt;
+    private User user;
 
     public Repository toEntity() {
         return Repository.builder()
+                .user(user)
                 .name(name)
                 .htmlUrl(htmlUrl)
                 .stars(stars)
