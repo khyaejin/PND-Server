@@ -8,12 +8,9 @@ import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/pnd/user")
@@ -52,11 +49,19 @@ public class SignController {
         //log를 통한 테스트 용도
         logger.info("User_Email: {}", userInfo.getEmail());
         logger.info("User_Name: {}", userInfo.getName());
-        logger.info("User_Gtihun_id: {}", userInfo.getGithubId());
+        logger.info("User_Gtihub_id: {}", userInfo.getGithubId());
         logger.info("User_Image: {}", userInfo.getImage());
         logger.info("Uer_AccessToken: {}", userInfo.getAccessToken());
         ResponseEntity<CustomApiResponse<?>> loginResponse = githubSocialLoginService.login(userInfo);
+
+        // 5. 레포지토리 정보 가져오기
+        ResponseEntity<CustomApiResponse<?>> userRepositoryResponses = githubSocialLoginService.getUserRepository(tokenDto, userInfo);
+        if (userInfoResponse.getStatusCode() != HttpStatus.OK) {
+            return ResponseEntity.status(tokenResponse.getStatusCode()).body(tokenResponse.getBody());
+        }
+
         return ResponseEntity.status(loginResponse.getStatusCode()).body(loginResponse.getBody());
+
     }
     /*@GetMapping(value = "/social/test/find/user")
     public Optional<User> testGetUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {

@@ -17,8 +17,9 @@ public class Report extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty @Column(name = "project_id")
-    private Long projectId;
+    @OneToOne
+    @NotEmpty @JoinColumn(name = "project_id")
+    private Project project;
 
     @NotEmpty
     private String description; // 한줄 요약 설명
@@ -36,10 +37,10 @@ public class Report extends BaseEntity {
 
     private String recommendations; // 학습 추천
 
-    @Column(name = "custom_question")
+    @JoinColumn(name = "custom_question")
     private String customQuestion; // 프로젝트 맞춤 질문
 
-    @Column(name = "image_link")
+    @JoinColumn(name = "image_link")
     private String imageLink; // 이미지 URL
 
 }

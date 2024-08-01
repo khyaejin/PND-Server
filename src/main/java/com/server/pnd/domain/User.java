@@ -12,13 +12,13 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "USER")
-public class User extends BaseEntity {
+public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @JoinColumn(name = "id")
     private Long id;
 
-    @NotEmpty @Column(name = "github_id")
+    @NotEmpty @JoinColumn(name = "github_id")
     private String githubId;
 
     private String name;
@@ -27,9 +27,9 @@ public class User extends BaseEntity {
 
     private String email;
 
-    @NotEmpty @Column(name = "access_token")
+    @NotEmpty @JoinColumn(name = "access_token")
     private String accessToken;
 
-    @NotEmpty @Column(name = "refresh_token")
+    @NotEmpty @JoinColumn(name = "refresh_token")
     private String refreshToken;
 }

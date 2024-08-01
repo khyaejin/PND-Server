@@ -1,6 +1,9 @@
 package com.server.pnd.user.service;
 
+import com.server.pnd.domain.Repository;
 import com.server.pnd.domain.User;
+import com.server.pnd.repository.repository.RepositoryRepository;
+import com.server.pnd.user.dto.RepositoryInfoDto;
 import com.server.pnd.user.dto.SocialLoginResponseDto;
 import com.server.pnd.user.dto.TokenDto;
 import com.server.pnd.user.dto.UserInfo;
@@ -10,9 +13,9 @@ import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +29,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +36,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private static final Logger logger = LoggerFactory.getLogger(GithubSocialLoginServiceImpl.class);
+    private final RepositoryRepository repositoryRepository;
 
     @Value("${spring.security.oauth2.client.registration.github.client-id}")
     private String githubClientId;
@@ -165,11 +168,10 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                 JSONObject jsonObject = new JSONObject(result);
 
                 githubId = jsonObject.optString("id", null);
-                nickname = jsonObject.optString("login", null); // GitHub uses 'login' as the username
+                nickname = jsonObject.optString("login", null);
                 email = jsonObject.optString("email", null);
-                profileImageUrl = jsonObject.optString("avatar_url", null); // GitHub uses 'avatar_url' for the profile image
+                profileImageUrl = jsonObject.optString("avatar_url", null);
 
-                // Optionally handle additional fields like 'bio', 'followers' etc.
             }
         } catch (Exception e) {
             logger.error("Error getting user info", e);
@@ -191,6 +193,89 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
     }
 
 
+    // 레포지토리 조회
+    @Override
+    public ResponseEntity<CustomApiResponse<?>> getUserRepository(TokenDto tokenDto, UserInfo userInfo) {
+        String accessToken = tokenDto.getAccessToken();
+        String reqUrl = "https://api.github.com/user/repos";
+        List<Repository> repositories = new ArrayList<>();
+
+        try {
+            URL url = new URL(reqUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Authorization", "token " + accessToken);
+            conn.setRequestProperty("Content-type", "application/json");
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                    String line;
+                    StringBuilder responseSb = new StringBuilder();
+                    while ((line = br.readLine()) != null) {
+                        responseSb.append(line);
+                    }
+                    JSONArray jsonArray = new JSONArray(responseSb.toString());
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        // 레포지토리 정보 받아오기
+                        JSONObject repo = jsonArray.getJSONObject(i);
+                        String name = repo.getString("name");
+                        String htmlUrl = repo.getString("html_url");
+                        int stars = repo.getInt("stargazers_count");
+                        String description = repo.optString("description", ""); // 설명 추가
+                        int forksCount = repo.getInt("forks_count");
+                        int openIssues = repo.getInt("open_issues_count");
+                        int watchers = repo.getInt("watchers_count");
+                        String language = repo.optString("language", "None");
+                        String createdAt = repo.getString("created_at");
+                        String updatedAt = repo.getString("updated_at");
+
+                        // 레포지토리 정보 잘 받아왔나 로그로 확인
+                        logger.info("Repository Name: {}, HTML URL: {}, Stars: {}, Description: {}, Forks: {}, Open Issues: {}, Watchers: {}, Language: {}, Created At: {}, Updated At: {}", name, htmlUrl, stars, description, forksCount, openIssues, watchers, language, createdAt, updatedAt);
+
+                        Optional<User> foundUser = userRepository.findByGithubId(userInfo.getGithubId());
+
+                        if (foundUser.isEmpty()) {
+                            // 후순위 : 관련 로직 작성
+                        }
+
+                        User user = foundUser.get();
+
+                        // repository build
+                        Repository repository = Repository.builder()
+                                .user(user)
+                                .name(name)
+                                .htmlUrl(htmlUrl)
+                                .stars(stars)
+                                .description(description)
+                                .forksCount(forksCount)
+                                .openIssues(openIssues)
+                                .language(language)
+                                .watchers(watchers)
+                                .createdAt(createdAt)
+                                .updatedAt(updatedAt).build();
+                        repositories.add(repository);
+
+                        repositoryRepository.save(repository);
+                    }
+                }
+            } else {
+                CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(responseCode, "Failed to retrieve repository information");
+                return ResponseEntity.status(responseCode).body(res);
+            }
+        } catch (Exception e) {
+            logger.error("Error fetching repository information", e);
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(400, "Failed to fetch user repositories.");
+            return ResponseEntity.status(400).body(res);
+        }
+
+        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, repositories, "Successfully retrieved user repositories.");
+        return ResponseEntity.status(200).body(res);
+    }
+
+
+    // 로그인
     @Override
     public ResponseEntity<CustomApiResponse<?>> login(UserInfo userInfo) {
         String githubId = userInfo.getGithubId();
@@ -213,4 +298,5 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
             return ResponseEntity.status(200).body(res);
         }
     }
+
 }
