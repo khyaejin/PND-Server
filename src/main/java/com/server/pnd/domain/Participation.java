@@ -17,10 +17,12 @@ public class Participation extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne
+    @NotEmpty @JoinColumn(name = "user_id")
+    private User user;
 
-    @NotEmpty @Column(name = "project_id")
-    private Long projectId;
+    @ManyToOne
+    @NotEmpty @JoinColumn(name = "project_id")
+    private Project project;
 
 }

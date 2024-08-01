@@ -16,10 +16,12 @@ public class ReadME extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "markdown_id")
-    private Long markdownId;
+    @OneToOne
+    @JoinColumn(name = "markdown_id")
+    private Markdown markdown;
 
-    @NotEmpty @Column(name = "project")
-    private Long projectId;
+    @OneToOne
+    @NotEmpty @JoinColumn(name = "project_id")
+    private Project project;
 
 }

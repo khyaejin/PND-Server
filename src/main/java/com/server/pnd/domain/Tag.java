@@ -17,8 +17,9 @@ public class Tag extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "project_id")
-    private String projectId;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project;
 
     @NotEmpty
     private String name; // 태그 이름

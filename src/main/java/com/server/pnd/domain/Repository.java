@@ -3,6 +3,7 @@ package com.server.pnd.domain;
 import com.server.pnd.util.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,8 +20,10 @@ public class Repository{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @NotEmpty
     private String name; // 레포지토리 이름
@@ -40,9 +43,9 @@ public class Repository{
 
     private String language; // 주 사용 언어
 
-    @Column(name = "created_at")
+    @JoinColumn(name = "created_at")
     private String createdAt; //레포지토리 생성 일시
 
-    @Column(name = "updated_at")
+    @JoinColumn(name = "updated_at")
     private String updatedAt; //레포지토리 최종 수정 일시
 }
