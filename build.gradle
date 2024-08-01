@@ -50,6 +50,9 @@ dependencies {
 	implementation 'org.json:json:20210307'
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 
+	// open ai api
+	implementation 'dev.ai4j:openai4j:0.17.0'
+
 }
 
 tasks.named('test') {
