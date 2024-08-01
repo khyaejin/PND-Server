@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "REPOSITORY")
-public class Repository extends BaseEntity {
+public class Repository{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class Repository extends BaseEntity {
     private String name; // 레포지토리 이름
 
     @NotEmpty
-    private String url; // 레포지토리 URL
+    private String htmlUrl; // 레포지토리 URL
 
     private String description; // 레포지토리 설명
 
@@ -40,4 +40,9 @@ public class Repository extends BaseEntity {
 
     private String language; // 주 사용 언어
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt; //레포지토리 생성 일시
+
+    @Column(name = "modified_at")
+    private LocalDateTime modifiedAt; //레포지토리 최종 수정 일시
 }
