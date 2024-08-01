@@ -28,4 +28,6 @@ public class Repository extends BaseEntity {
 
     private String description; // 레포지토리 설명
 
+    private Long stars; // 레포지토리 스타
+
 }
