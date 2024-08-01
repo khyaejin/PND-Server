@@ -1,6 +1,7 @@
 package com.server.pnd.user.service;
 
 import com.server.pnd.domain.User;
+import com.server.pnd.user.dto.RepositoryInfo;
 import com.server.pnd.user.dto.SocialLoginResponseDto;
 import com.server.pnd.user.dto.TokenDto;
 import com.server.pnd.user.dto.UserInfo;
@@ -10,8 +11,7 @@ import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,7 +27,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -193,10 +192,12 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
 
 
     // 레포지토리 조회
+
     @Override
     public ResponseEntity<CustomApiResponse<?>> getUserRepository(TokenDto tokenDto) {
         String accessToken = tokenDto.getAccessToken();
-        String reqUrl = "https://api.github.com/user/repos"; // 사용자 레포지토리 정보 조회 URL
+        String reqUrl = "https://api.github.com/user/repos";
+        List<RepositoryInfo> repositories = new ArrayList<>();
 
         try {
             URL url = new URL(reqUrl);
@@ -206,8 +207,6 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
             conn.setRequestProperty("Content-type", "application/json");
 
             int responseCode = conn.getResponseCode();
-            logger.info("GitHub API Response Code: {}", responseCode);
-
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
                     String line;
@@ -222,6 +221,15 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                         String name = repo.getString("name");
                         String htmlUrl = repo.getString("html_url");
                         int stars = repo.getInt("stargazers_count");
+                        String description = repo.optString("description", ""); // 설명 추가
+                        int forksCount = repo.getInt("forks_count");
+                        int openIssues = repo.getInt("open_issues_count");
+                        int watchers = repo.getInt("watchers_count");
+                        String language = repo.optString("language", "None");
+                        String createdAt = repo.getString("created_at");
+                        String updatedAt = repo.getString("updated_at");
+
+                        repositories.add();
                     }
                 }
             } else {
