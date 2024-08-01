@@ -8,12 +8,9 @@ import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/pnd/user")
@@ -47,12 +44,18 @@ public class SignController {
             return ResponseEntity.status(tokenResponse.getStatusCode()).body(tokenResponse.getBody());
         }
 
-        // 4. 로그인/회원가입 후 JWT 토큰 발급
+        // 4. 레포지토리 정보 가져오기
+        ResponseEntity<CustomApiResponse<?>> userRepositoryResponses = githubSocialLoginService.getUserRepository(tokenDto);
+        if (userInfoResponse.getStatusCode() != HttpStatus.OK) {
+            return ResponseEntity.status(tokenResponse.getStatusCode()).body(tokenResponse.getBody());
+        }
+
+        // 5. 로그인/회원가입 후 JWT 토큰 발급
         UserInfo userInfo = (UserInfo) userInfoResponse.getBody().getData(); //후에 서비스 계층 안으로 넣어주기
         //log를 통한 테스트 용도
         logger.info("User_Email: {}", userInfo.getEmail());
         logger.info("User_Name: {}", userInfo.getName());
-        logger.info("User_Gtihun_id: {}", userInfo.getGithubId());
+        logger.info("User_Gtihub_id: {}", userInfo.getGithubId());
         logger.info("User_Image: {}", userInfo.getImage());
         logger.info("Uer_AccessToken: {}", userInfo.getAccessToken());
         ResponseEntity<CustomApiResponse<?>> loginResponse = githubSocialLoginService.login(userInfo);

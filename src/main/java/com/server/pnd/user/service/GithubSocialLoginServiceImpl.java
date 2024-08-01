@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -191,6 +192,54 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
     }
 
 
+    // 레포지토리 조회
+    @Override
+    public ResponseEntity<CustomApiResponse<?>> getUserRepository(TokenDto tokenDto) {
+        String accessToken = tokenDto.getAccessToken();
+        String reqUrl = "https://api.github.com/user/repos"; // 사용자 레포지토리 정보 조회 URL
+
+        try {
+            URL url = new URL(reqUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Authorization", "token " + accessToken);
+            conn.setRequestProperty("Content-type", "application/json");
+
+            int responseCode = conn.getResponseCode();
+            logger.info("GitHub API Response Code: {}", responseCode);
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                    String line;
+                    StringBuilder responseSb = new StringBuilder();
+                    while ((line = br.readLine()) != null) {
+                        responseSb.append(line);
+                    }
+                    JSONArray jsonArray = new JSONArray(responseSb.toString());
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject repo = jsonArray.getJSONObject(i);
+                        String name = repo.getString("name");
+                        String htmlUrl = repo.getString("html_url");
+                        int stars = repo.getInt("stargazers_count");
+                    }
+                }
+            } else {
+                CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(responseCode, "Failed to retrieve repository information");
+                return ResponseEntity.status(responseCode).body(res);
+            }
+        } catch (Exception e) {
+            logger.error("Error fetching repository information", e);
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(400, "Failed to fetch user repositories.");
+            return ResponseEntity.status(400).body(res);
+        }
+
+        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, repositories, "Successfully retrieved user repositories.");
+        return ResponseEntity.status(200).body(res);
+    }
+
+
+    // 로그인
     @Override
     public ResponseEntity<CustomApiResponse<?>> login(UserInfo userInfo) {
         String githubId = userInfo.getGithubId();
@@ -213,4 +262,5 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
             return ResponseEntity.status(200).body(res);
         }
     }
+
 }
