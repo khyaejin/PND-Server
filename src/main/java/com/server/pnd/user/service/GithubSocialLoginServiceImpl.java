@@ -1,7 +1,7 @@
 package com.server.pnd.user.service;
 
 import com.server.pnd.domain.User;
-import com.server.pnd.user.dto.RepositoryInfo;
+import com.server.pnd.user.dto.RepositoryInfoDto;
 import com.server.pnd.user.dto.SocialLoginResponseDto;
 import com.server.pnd.user.dto.TokenDto;
 import com.server.pnd.user.dto.UserInfo;
@@ -197,7 +197,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
     public ResponseEntity<CustomApiResponse<?>> getUserRepository(TokenDto tokenDto) {
         String accessToken = tokenDto.getAccessToken();
         String reqUrl = "https://api.github.com/user/repos";
-        List<RepositoryInfo> repositories = new ArrayList<>();
+        List<RepositoryInfoDto> repositories = new ArrayList<>();
 
         try {
             URL url = new URL(reqUrl);
@@ -229,7 +229,17 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                         String createdAt = repo.getString("created_at");
                         String updatedAt = repo.getString("updated_at");
 
-                        repositories.add();
+                        repositories.add(RepositoryInfoDto.builder()
+                                .name(name)
+                                .htmlUrl(htmlUrl)
+                                .stars(stars)
+                                .description(description)
+                                .forksCount(forksCount)
+                                .openIssues(openIssues)
+                                .language(language)
+                                .watchers(watchers)
+                                .createdAt(createdAt)
+                                .updatedAt(updatedAt).build());
                     }
                 }
             } else {

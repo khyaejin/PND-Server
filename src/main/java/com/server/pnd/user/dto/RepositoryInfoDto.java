@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Builder
-public class RepositoryInfo {
+public class RepositoryInfoDto {
     private String name; // 레포지토리 이름
     private String htmlUrl; // 레포지토리 url
     private int stars; // 스타

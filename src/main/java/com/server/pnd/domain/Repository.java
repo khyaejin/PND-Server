@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Builder
@@ -28,6 +30,14 @@ public class Repository extends BaseEntity {
 
     private String description; // 레포지토리 설명
 
-    private Long stars; // 레포지토리 스타
+    private int stars; // 레포지토리 스타
+
+    private int forksCount; // 포크 수
+
+    private int openIssues; // 열려있는 이슈 수
+
+    private int watchers; // 보고 있는 사용자 수 (업데이트 알람 받음)
+
+    private String language; // 주 사용 언어
 
 }
