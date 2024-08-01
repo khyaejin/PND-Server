@@ -41,8 +41,8 @@ public class Repository{
     private String language; // 주 사용 언어
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt; //레포지토리 생성 일시
+    private String createdAt; //레포지토리 생성 일시
 
-    @Column(name = "modified_at")
-    private LocalDateTime modifiedAt; //레포지토리 최종 수정 일시
+    @Column(name = "updated_at")
+    private String updatedAt; //레포지토리 최종 수정 일시
 }

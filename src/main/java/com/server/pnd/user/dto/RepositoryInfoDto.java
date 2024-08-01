@@ -36,7 +36,8 @@ public class RepositoryInfoDto {
                 .openIssues(openIssues)
                 .language(language)
                 .watchers(watchers)
-                .
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
                 .build();
     }
 }

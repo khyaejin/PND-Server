@@ -2,6 +2,7 @@ package com.server.pnd.user.service;
 
 import com.server.pnd.domain.Repository;
 import com.server.pnd.domain.User;
+import com.server.pnd.repository.repository.RepositoryRepository;
 import com.server.pnd.user.dto.RepositoryInfoDto;
 import com.server.pnd.user.dto.SocialLoginResponseDto;
 import com.server.pnd.user.dto.TokenDto;
@@ -35,6 +36,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private static final Logger logger = LoggerFactory.getLogger(GithubSocialLoginServiceImpl.class);
+    private final RepositoryRepository repositoryRepository;
 
     @Value("${spring.security.oauth2.client.registration.github.client-id}")
     private String githubClientId;
@@ -199,7 +201,6 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
         String accessToken = tokenDto.getAccessToken();
         String reqUrl = "https://api.github.com/user/repos";
         List<RepositoryInfoDto> repositories = new ArrayList<>();
-        Repository repository;
 
         try {
             URL url = new URL(reqUrl);
@@ -231,9 +232,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                         String createdAt = repo.getString("created_at");
                         String updatedAt = repo.getString("updated_at");
 
-
-
-                        repositories.add(RepositoryInfoDto.builder()
+                        RepositoryInfoDto repositoryInfoDto = RepositoryInfoDto.builder()
                                 .name(name)
                                 .htmlUrl(htmlUrl)
                                 .stars(stars)
@@ -243,7 +242,11 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                                 .language(language)
                                 .watchers(watchers)
                                 .createdAt(createdAt)
-                                .updatedAt(updatedAt).build());
+                                .updatedAt(updatedAt).build();
+
+                        repositories.add(repositoryInfoDto);
+                        Repository repository = repositoryInfoDto.toEntity();
+                        repositoryRepository.save(repository);
                     }
                 }
             } else {
