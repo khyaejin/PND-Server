@@ -1,6 +1,8 @@
 package com.server.pnd.user.service;
 
+import com.server.pnd.domain.Repository;
 import com.server.pnd.domain.User;
+import com.server.pnd.repository.repository.RepositoryRepository;
 import com.server.pnd.user.dto.SearchProfileResponseDto;
 import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.jwt.JwtUtil;
@@ -9,12 +11,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
+    private final RepositoryRepository repositoryRepository;
     private final JwtUtil jwtUtil;
 
     // 프로필 조회
@@ -51,6 +55,15 @@ public class UserServiceImpl implements UserService{
         }
         User user = foundUser.get();
 
+        List<Repository> repositories= repositoryRepository.findByUserId(user.getId());
+
+        // 조회 성공 - 해당 회원의 깃허브 레포지토리가 존재하지 않는 경우 : 200
+        if (repositories.isEmpty()) {
+            CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, null, "사용자의 레포지토리가 존재하지 않습니다.");
+            return ResponseEntity.status(200).body(res);
+        }
+
+        // 조회 성공 - 해당 회원의 깃허브 레포지토리가 존재하는 경우 : 200
         return null;
     }
 }
