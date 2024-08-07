@@ -6,9 +6,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-@Builder
 @AllArgsConstructor
-public class TokenDto {
-    private String accessToken;
-    private String refreshToken;
+@Builder
+public class SearchProfileResponseDto {
+    private String name;
+    private String image; // 깃허브 프로필
+    private String email;
 }
