@@ -1,13 +1,12 @@
-package com.server.pnd.user.service;
+package com.server.pnd.oauth.service;
 
 import com.server.pnd.domain.Repository;
 import com.server.pnd.domain.User;
 import com.server.pnd.repository.repository.RepositoryRepository;
-import com.server.pnd.user.dto.RepositoryInfoDto;
-import com.server.pnd.user.dto.SocialLoginResponseDto;
-import com.server.pnd.user.dto.TokenDto;
-import com.server.pnd.user.dto.UserInfo;
-import com.server.pnd.user.jwt.JwtUtil;
+import com.server.pnd.oauth.dto.SocialLoginResponseDto;
+import com.server.pnd.oauth.dto.TokenDto;
+import com.server.pnd.oauth.dto.UserInfo;
+import com.server.pnd.util.jwt.JwtUtil;
 import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,8 @@
-package com.server.pnd.user.service;
+package com.server.pnd.oauth.service;
 
 
-import com.server.pnd.user.dto.TokenDto;
-import com.server.pnd.user.dto.UserInfo;
+import com.server.pnd.oauth.dto.TokenDto;
+import com.server.pnd.oauth.dto.UserInfo;
 import com.server.pnd.util.response.CustomApiResponse;
 import org.springframework.http.ResponseEntity;
 

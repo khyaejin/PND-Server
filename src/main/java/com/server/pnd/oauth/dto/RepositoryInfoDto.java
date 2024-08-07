@@ -1,4 +1,4 @@
-package com.server.pnd.user.dto;
+package com.server.pnd.oauth.dto;
 
 import com.server.pnd.domain.Repository;
 import com.server.pnd.domain.User;

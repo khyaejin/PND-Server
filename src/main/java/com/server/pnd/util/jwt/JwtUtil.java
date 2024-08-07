@@ -1,4 +1,4 @@
-package com.server.pnd.user.jwt;
+package com.server.pnd.util.jwt;
 
 
 import com.server.pnd.domain.User;

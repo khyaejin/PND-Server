@@ -1,9 +1,8 @@
-package com.server.pnd.user.controller;
+package com.server.pnd.oauth.controller;
 
-import com.server.pnd.domain.User;
-import com.server.pnd.user.dto.TokenDto;
-import com.server.pnd.user.dto.UserInfo;
-import com.server.pnd.user.service.GithubSocialLoginServiceImpl;
+import com.server.pnd.oauth.dto.TokenDto;
+import com.server.pnd.oauth.dto.UserInfo;
+import com.server.pnd.oauth.service.GithubSocialLoginServiceImpl;
 import com.server.pnd.user.service.UserService;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class SignController {
     private final GithubSocialLoginServiceImpl githubSocialLoginService;
-    private final UserService userService;
 
     private static final Logger logger = LoggerFactory.getLogger(SignController.class);
 
@@ -68,12 +66,6 @@ public class SignController {
 
     }
 
-    // 프로필 조회
-    @GetMapping("/profile")
-    public ResponseEntity<CustomApiResponse<?>> getProfile(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
-        return userService.getProfile(authorizationHeader);
-    }
 
     /* 테스트 API : 후순위 @GetMapping(value = "/social/test/find/user")
     public Optional<User> testGetUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
