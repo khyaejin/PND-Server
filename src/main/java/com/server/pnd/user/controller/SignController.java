@@ -46,10 +46,10 @@ public class SignController {
 
         // 4. 로그인/회원가입 후 JWT 토큰 발급
         UserInfo userInfo = (UserInfo) userInfoResponse.getBody().getData(); //후에 서비스 계층 안으로 넣어주기
-        //log를 통한 테스트 용도
+        //로그를 통한 테스트 용도
         logger.info("User_Email: {}", userInfo.getEmail());
         logger.info("User_Name: {}", userInfo.getName());
-        logger.info("User_Gtihub_id: {}", userInfo.getGithubId());
+        logger.info("User_Github_id: {}", userInfo.getGithubId());
         logger.info("User_Image: {}", userInfo.getImage());
         logger.info("Uer_AccessToken: {}", userInfo.getAccessToken());
         ResponseEntity<CustomApiResponse<?>> loginResponse = githubSocialLoginService.login(userInfo);
