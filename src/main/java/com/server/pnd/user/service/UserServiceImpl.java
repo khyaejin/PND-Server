@@ -30,7 +30,6 @@ public class UserServiceImpl implements UserService{
         User user = foundUser.get();
 
         // 프로필 조회 성공 (200)
-
         SearchProfileResponseDto data = SearchProfileResponseDto.builder()
                 .name(user.getName())
                 .image(user.getImage())
@@ -39,5 +38,19 @@ public class UserServiceImpl implements UserService{
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, data, "사용자 정보 조회 완료되었습니다.");
         return ResponseEntity.status(200).body(res);
 
+    }
+
+    @Override
+    public ResponseEntity<CustomApiResponse<?>> getAllRepository(String authorizationHeader) {
+        Optional<User> foundUser = jwtUtil.findUserByJwtToken(authorizationHeader);
+
+        // 토큰에 해당하는 유저가 없는 경우 : 404
+        if (foundUser.isEmpty()) {
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "유효하지 않은 토큰이거나, 해당 ID에 해당하는 사용자가 존재하지 않습니다.");
+            return ResponseEntity.status(404).body(res);
+        }
+        User user = foundUser.get();
+
+        return null;
     }
 }

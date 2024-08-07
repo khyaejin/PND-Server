@@ -6,4 +6,7 @@ import org.springframework.http.ResponseEntity;
 public interface UserService {
     // 프로필 조회
     ResponseEntity<CustomApiResponse<?>> getProfile(String authorizationHeader);
+
+    // 레포지토리 전체 조회
+    ResponseEntity<CustomApiResponse<?>> getAllRepository(String authorizationHeader);
 }
