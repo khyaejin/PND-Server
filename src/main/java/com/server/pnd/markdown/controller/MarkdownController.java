@@ -27,4 +27,10 @@ public class MarkdownController {
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
         return markdownService.searchMarkdownList(authorizationHeader);
     }
+
+    // 마크다운 문서 세부 조회
+    @GetMapping("/{markdown_id}")
+    public ResponseEntity<CustomApiResponse<?>> searchMarkdown(@PathVariable("markdown_id") Long markdownId) {
+        return markdownService.searchMarkdown(markdownId);
+    }
 }
