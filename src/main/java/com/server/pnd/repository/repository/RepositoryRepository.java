@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @org.springframework.stereotype.Repository
 public interface RepositoryRepository extends JpaRepository<Repository, Long> {
-    Optional<Repository> findByRepositoryId(String repositoryId);
+
 }
