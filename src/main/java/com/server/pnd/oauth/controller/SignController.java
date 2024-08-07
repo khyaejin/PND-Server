@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/pnd/user")
+@RequestMapping("api/pnd/oauth")
 @RequiredArgsConstructor
 public class SignController {
     private final GithubSocialLoginServiceImpl githubSocialLoginService;
