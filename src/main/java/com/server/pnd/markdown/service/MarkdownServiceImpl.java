@@ -2,6 +2,7 @@ package com.server.pnd.markdown.service;
 
 import com.server.pnd.domain.Markdown;
 import com.server.pnd.domain.User;
+import com.server.pnd.markdown.dto.MarkdownListSearchResponseDto;
 import com.server.pnd.markdown.dto.MarkdownSavedRequestDto;
 import com.server.pnd.markdown.dto.MarkdownSavedResponseDto;
 import com.server.pnd.markdown.repository.MarkdownRepository;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,6 +48,7 @@ public class MarkdownServiceImpl implements MarkdownService{
         Markdown markdown = Markdown.builder()
                 .title(title)
                 .content(content)
+                .user(user)
                 .build();
         markdownRepository.save(markdown);
 
@@ -55,5 +59,41 @@ public class MarkdownServiceImpl implements MarkdownService{
         // 마크다운 저장 성공 : 201
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(201, data, "마크다운 파일 저장 완료되었습니다.");
         return ResponseEntity.status(201).body(res);
+    }
+
+    @Override
+    public ResponseEntity<CustomApiResponse<?>> searchMarkdownList(String authorizationHeader) {
+        Optional<User> foundUser = jwtUtil.findUserByJwtToken(authorizationHeader);
+
+        // 토큰에 해당하는 유저가 없는 경우 : 404
+        if (foundUser.isEmpty()) {
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "유효하지 않은 토큰이거나, 해당 ID에 해당하는 사용자가 존재하지 않습니다.");
+            return ResponseEntity.status(404).body(res);
+        }
+        User user = foundUser.get();
+
+        // 해당 회원의 마크다운 파일들 가져오기
+        List<Markdown> markdowns = markdownRepository.findByUserId(user.getId());
+
+        // 조회 성공 - 회원의 마크다운 파일이 존재하지 않는 경우 : 200
+        if (markdowns.isEmpty()) {
+            return ResponseEntity.status(200).body(CustomApiResponse.createSuccess(200,null,"사용자의 마크다운 파일이 존재하지 않습니다."));
+        }
+
+        // data
+        List<MarkdownListSearchResponseDto> responseDtos = new ArrayList<>();
+
+        for (Markdown markdown : markdowns) {
+            MarkdownListSearchResponseDto responseDto = MarkdownListSearchResponseDto.builder()
+                    .markdownId(markdown.getId())
+                    .content(markdown.getContent())
+                    .title(markdown.getTitle())
+                    .build();
+            responseDtos.add(responseDto);
+        }
+
+        // 조회 성공 - 회원의 마크다운 파일이 존재하는 경우 : 200
+        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, responseDtos, "마크다운 파일 조회 완료되었습니다.");
+        return ResponseEntity.status(200).body(res);
     }
 }

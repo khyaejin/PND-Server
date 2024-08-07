@@ -16,8 +16,15 @@ public class MarkdownController {
 
     // 마크다운 문서 저장
     @PostMapping
-    public ResponseEntity<CustomApiResponse<?>> savedMarkdownFile(
+    public ResponseEntity<CustomApiResponse<?>> savedMarkdown(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader, @RequestBody MarkdownSavedRequestDto markdownSavedRequestDto) {
         return markdownService.savedMarkdown(authorizationHeader, markdownSavedRequestDto);
+    }
+
+    // 마크다운 문서 전체 조회
+    @GetMapping
+    public ResponseEntity<CustomApiResponse<?>> searchMarkdownList(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
+        return markdownService.searchMarkdownList(authorizationHeader);
     }
 }
