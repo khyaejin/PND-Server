@@ -56,4 +56,17 @@ public class MarkdownServiceImpl implements MarkdownService{
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(201, data, "마크다운 파일 저장 완료되었습니다.");
         return ResponseEntity.status(201).body(res);
     }
+
+    @Override
+    public ResponseEntity<CustomApiResponse<?>> searchMarkdownList(String authorizationHeader) {
+        Optional<User> foundUser = jwtUtil.findUserByJwtToken(authorizationHeader);
+
+        // 토큰에 해당하는 유저가 없는 경우 : 404
+        if (foundUser.isEmpty()) {
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "유효하지 않은 토큰이거나, 해당 ID에 해당하는 사용자가 존재하지 않습니다.");
+            return ResponseEntity.status(404).body(res);
+        }
+        User user = foundUser.get();
+        return null;
+    }
 }

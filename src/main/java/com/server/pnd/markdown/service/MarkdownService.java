@@ -8,4 +8,7 @@ public interface MarkdownService {
 
     // 마크다운 문서 저장
     ResponseEntity<CustomApiResponse<?>> savedMarkdown(String authorizationHeader, MarkdownSavedRequestDto markdownSavedRequestDto);
+
+    // 마크다운 문서 전체 조회
+    ResponseEntity<CustomApiResponse<?>> searchMarkdownList(String authorizationHeader);
 }
