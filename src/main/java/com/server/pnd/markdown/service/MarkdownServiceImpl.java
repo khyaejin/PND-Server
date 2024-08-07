@@ -1,7 +1,10 @@
 package com.server.pnd.markdown.service;
 
+import com.server.pnd.domain.Markdown;
 import com.server.pnd.domain.User;
 import com.server.pnd.markdown.dto.MarkdownSavedRequestDto;
+import com.server.pnd.markdown.dto.MarkdownSavedResponseDto;
+import com.server.pnd.markdown.repository.MarkdownRepository;
 import com.server.pnd.util.jwt.JwtUtil;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MarkdownServiceImpl implements MarkdownService{
     private final JwtUtil jwtUtil;
-
+    private final MarkdownRepository markdownRepository;
 
     // 마크다운 문서 저장
     @Override
@@ -28,9 +31,19 @@ public class MarkdownServiceImpl implements MarkdownService{
         }
         User user = foundUser.get();
 
-        // 저장 성공 : 200
+        // DB에 저장
+        Markdown markdown = Markdown.builder()
+                .title(markdownSavedRequestDto.getTitle())
+                .content(markdownSavedRequestDto.getContent())
+                .build();
+        markdownRepository.save(markdown);
 
+        // data 가공
+        MarkdownSavedResponseDto data = MarkdownSavedResponseDto.builder()
+                .markdownId(markdown.getId()).build();
 
-        return null;
+        // 마크다운 저장 성공 : 201
+        CustomApiResponse<?> res = CustomApiResponse.createSuccess(201, data, "마크다운 파일 저장 완료되었습니다.");
+        return ResponseEntity.status(201).body(res);
     }
 }
