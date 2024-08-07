@@ -31,10 +31,20 @@ public class MarkdownServiceImpl implements MarkdownService{
         }
         User user = foundUser.get();
 
+        // 중복 조회
+        String title = markdownSavedRequestDto.getTitle();
+        String content = markdownSavedRequestDto.getContent();
+        Optional<Markdown> foundMarkdown = markdownRepository.findByTitleAndContent(title,content);
+
+        // 이미 저장한 마크다운 파일인 경우 : 409
+        if (foundMarkdown.isPresent()) {
+            return ResponseEntity.status(409).body(CustomApiResponse.createFailWithoutData(409, "이미 DB에 저장된 마크다운 파일입니다."));
+        }
+
         // DB에 저장
         Markdown markdown = Markdown.builder()
-                .title(markdownSavedRequestDto.getTitle())
-                .content(markdownSavedRequestDto.getContent())
+                .title(title)
+                .content(content)
                 .build();
         markdownRepository.save(markdown);
 
