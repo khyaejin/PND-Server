@@ -19,8 +19,8 @@ public class Diagram extends BaseEntity {
 
     @OneToOne
     @NotEmpty
-    @JoinColumn(name = "project_id")
-    private Project project;
+    @JoinColumn(name = "repository_id")
+    private Repository repository;
 
     @NotEmpty
     private String flowchart; // GPT가 변형시켜준 플로우차트
