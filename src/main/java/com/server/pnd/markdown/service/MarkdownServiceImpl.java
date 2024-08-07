@@ -2,6 +2,7 @@ package com.server.pnd.markdown.service;
 
 import com.server.pnd.domain.Markdown;
 import com.server.pnd.domain.User;
+import com.server.pnd.markdown.dto.MarkdownListSearchResponseDto;
 import com.server.pnd.markdown.dto.MarkdownSavedRequestDto;
 import com.server.pnd.markdown.dto.MarkdownSavedResponseDto;
 import com.server.pnd.markdown.repository.MarkdownRepository;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,15 +73,27 @@ public class MarkdownServiceImpl implements MarkdownService{
         User user = foundUser.get();
 
         // 해당 회원의 마크다운 파일들 가져오기
-        List<Markdown> markdownList = markdownRepository.findByUserId(user.getId());
+        List<Markdown> markdowns = markdownRepository.findByUserId(user.getId());
 
         // 조회 성공 - 회원의 마크다운 파일이 존재하지 않는 경우 : 200
-        if (markdownList.isEmpty()) {
-            return ResponseEntity.status(200).body(CustomApiResponse.createSuccess(200,null,"사용자의 마크다운 파일이 존재하지 않습니다."))
+        if (markdowns.isEmpty()) {
+            return ResponseEntity.status(200).body(CustomApiResponse.createSuccess(200,null,"사용자의 마크다운 파일이 존재하지 않습니다."));
         }
 
+        // data
+        List<MarkdownListSearchResponseDto> responseDtos = new ArrayList<>();
 
+        for (Markdown markdown : markdowns) {
+            MarkdownListSearchResponseDto responseDto = MarkdownListSearchResponseDto.builder()
+                    .markdownId(markdown.getId())
+                    .content(markdown.getContent())
+                    .title(markdown.getTitle())
+                    .build();
+            responseDtos.add(responseDto);
+        }
 
-        return null;
+        // 조회 성공 - 회원의 마크다운 파일이 존재하는 경우 : 200
+        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, responseDtos, "마크다운 파일 조회 완료되었습니다.");
+        return ResponseEntity.status(200).body(res);
     }
 }

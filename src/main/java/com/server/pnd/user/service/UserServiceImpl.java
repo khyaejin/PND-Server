@@ -67,6 +67,7 @@ public class UserServiceImpl implements UserService{
 
         // 조회 성공 - 해당 회원의 깃허브 레포지토리가 존재하는 경우 : 200
         List<SearchRepositoryResponseDto> responseDtos = new ArrayList<>();
+
         for (Repository repository : repositories) {
             SearchRepositoryResponseDto responseDto = SearchRepositoryResponseDto.builder()
                     .id(repository.getId())
