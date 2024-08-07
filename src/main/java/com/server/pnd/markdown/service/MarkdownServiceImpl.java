@@ -45,6 +45,7 @@ public class MarkdownServiceImpl implements MarkdownService{
         Markdown markdown = Markdown.builder()
                 .title(title)
                 .content(content)
+                .user(user)
                 .build();
         markdownRepository.save(markdown);
 
@@ -67,6 +68,7 @@ public class MarkdownServiceImpl implements MarkdownService{
             return ResponseEntity.status(404).body(res);
         }
         User user = foundUser.get();
+
         return null;
     }
 }
