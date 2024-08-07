@@ -4,10 +4,12 @@ import com.server.pnd.domain.User;
 import com.server.pnd.user.dto.TokenDto;
 import com.server.pnd.user.dto.UserInfo;
 import com.server.pnd.user.service.GithubSocialLoginServiceImpl;
+import com.server.pnd.user.service.UserService;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +19,11 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class SignController {
     private final GithubSocialLoginServiceImpl githubSocialLoginService;
+    private final UserService userService;
+
     private static final Logger logger = LoggerFactory.getLogger(SignController.class);
 
-    //깃허브 소셜 로그인
+    // 깃허브 소셜 로그인
     @PostMapping(value = "/social/github")
     public ResponseEntity<CustomApiResponse<?>> githubLogin(@RequestParam String code) {
         // 1. 인가 코드 받기 (@RequestParam String code)
@@ -63,7 +67,15 @@ public class SignController {
         return ResponseEntity.status(loginResponse.getStatusCode()).body(loginResponse.getBody());
 
     }
-    /*@GetMapping(value = "/social/test/find/user")
+
+    // 프로필 조회
+    @GetMapping("/profile")
+    public ResponseEntity<CustomApiResponse<?>> getProfile(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
+        return userService.getProfile(authorizationHeader);
+    }
+
+    /* 테스트 API : 후순위 @GetMapping(value = "/social/test/find/user")
     public Optional<User> testGetUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
         return jwtUtil.findUserByJwtToken(authorizationHeader);
     }
