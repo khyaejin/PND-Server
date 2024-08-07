@@ -27,7 +27,7 @@ public class Project extends BaseEntity {
 
     private String type; // 개발자 유형
 
-    @NotEmpty @JoinColumn(name = "type_description")
+    @Column(name = "type_description", nullable = true)
     private String typeDescription; // 개발자 유형 설명
 
     private String part; //파 (백엔드, 프론트앤드 등)
