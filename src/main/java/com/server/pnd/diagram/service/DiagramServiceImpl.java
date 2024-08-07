@@ -7,6 +7,7 @@ import com.server.pnd.domain.Diagram;
 import com.server.pnd.domain.Project;
 import com.server.pnd.domain.Repository;
 import com.server.pnd.domain.User;
+import com.server.pnd.project.repository.ProjectRepository;
 import com.server.pnd.repository.repository.RepositoryRepository;
 import com.server.pnd.util.jwt.JwtUtil;
 import com.server.pnd.util.response.CustomApiResponse;
@@ -28,6 +29,7 @@ public class DiagramServiceImpl implements DiagramService {
     private final RepositoryRepository repositoryRepository;
     private final ChatGPTService chatGPTService;
     private final JwtUtil jwtUtil;
+    private final ProjectRepository projectRepository;
 
     @Override @Transactional
     public CustomApiResponse<DiagramResponseDto> createDiagram(HttpServletRequest request, DiagramRequestDto dto, String authorizationHeader) {
