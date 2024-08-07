@@ -110,6 +110,15 @@ public class MarkdownServiceImpl implements MarkdownService{
         }
         Markdown markdown = foundMarkdown.get();
 
+        // data
+        MarkdownDetailDto data = MarkdownDetailDto.builder()
+                .title(markdown.getTitle())
+                .content(markdown.getContent())
+                .createdAt(markdown.localDateTimeToString())
+                .build();
 
+        // 조회 성공 : 200
+        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, data, "마크다운 파일 조회 완료되었습니다.");
+        return ResponseEntity.status(200).body(res);
     }
 }
