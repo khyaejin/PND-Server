@@ -24,7 +24,7 @@ public class UserController {
     }
 
     // 레포지토리 전체 조회
-    @GetMapping("repository")
+    @GetMapping("/repository")
     public  ResponseEntity<CustomApiResponse<?>> getAllRepository(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader){
         return userService.getAllRepository(authorizationHeader);

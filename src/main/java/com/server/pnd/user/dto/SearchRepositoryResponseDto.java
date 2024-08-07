@@ -1,12 +1,11 @@
 package com.server.pnd.user.dto;
 
-import jakarta.persistence.JoinColumn;
 import lombok.*;
 
 @Getter @Setter
 @AllArgsConstructor
 @Builder
-public class RepositorySearchResponseDto {
+public class SearchRepositoryResponseDto {
     private Long id;
 
     private String name; // 레포지토리 이름

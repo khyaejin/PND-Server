@@ -4,6 +4,7 @@ import com.server.pnd.domain.Repository;
 import com.server.pnd.domain.User;
 import com.server.pnd.repository.repository.RepositoryRepository;
 import com.server.pnd.user.dto.SearchProfileResponseDto;
+import com.server.pnd.user.dto.SearchRepositoryResponseDto;
 import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.jwt.JwtUtil;
 import com.server.pnd.util.response.CustomApiResponse;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,6 +66,21 @@ public class UserServiceImpl implements UserService{
         }
 
         // 조회 성공 - 해당 회원의 깃허브 레포지토리가 존재하는 경우 : 200
-        return null;
+        List<SearchRepositoryResponseDto> responseDtos = new ArrayList<>();
+        for (Repository repository : repositories) {
+            SearchRepositoryResponseDto responseDto = SearchRepositoryResponseDto.builder()
+                    .id(repository.getId())
+                    .name(repository.getName())
+                    .description(repository.getDescription())
+                    .stars(repository.getStars())
+                    .forksCount(repository.getForksCount())
+                    .openIssues(repository.getOpenIssues())
+                    .watchers(repository.getWatchers())
+                    .language(repository.getLanguage())
+                    .createdAt(repository.getCreatedAt()).build();
+            responseDtos.add(responseDto);
+        }
+        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, responseDtos, "레포지토리 전체 조회 성공했습니다.");
+        return ResponseEntity.status(200).body(res);
     }
 }
