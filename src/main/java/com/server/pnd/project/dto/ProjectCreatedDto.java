@@ -9,7 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Builder
-public class ProjectCreatedRequestDto {
+public class ProjectCreatedDto {
+    private Long projectId;
     private Long repositoryId;
     private String period;
     private String image;

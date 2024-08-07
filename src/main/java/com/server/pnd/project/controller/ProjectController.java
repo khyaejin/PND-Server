@@ -1,7 +1,6 @@
 package com.server.pnd.project.controller;
 
-import com.server.pnd.markdown.dto.MarkdownSavedRequestDto;
-import com.server.pnd.project.dto.ProjectCreatedRequestDto;
+import com.server.pnd.project.dto.ProjectCreatedDto;
 import com.server.pnd.project.service.ProjectService;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,7 @@ public class ProjectController {
     // 프로젝트 생성
     @PostMapping
     public ResponseEntity<CustomApiResponse<?>> createProject(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader, @RequestBody ProjectCreatedRequestDto projectCreatedRequestDto) {
-        return projectService.createProject(authorizationHeader, projectCreatedRequestDto);
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader, @RequestBody ProjectCreatedDto projectCreatedDto) {
+        return projectService.createProject(authorizationHeader, projectCreatedDto);
     }
 }
