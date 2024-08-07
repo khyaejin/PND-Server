@@ -7,8 +7,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClientException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -29,7 +31,7 @@ public class ChatGPTService {
     }
 
     // ChatGPT API에 요청을 보내고 응답을 받는 메서드
-    public Map<String, String> getChatGPTResponses(Map<String, String> prompts) {
+    public String getChatGPTResponse(String prompt) {
         // 요청 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + apiKey);
@@ -38,19 +40,27 @@ public class ChatGPTService {
         // 요청 본문 설정
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("model", "gpt-4");  // 모델을 gpt-4로 설정
-        requestBody.put("prompt", String.join("\n", prompts.values()));
+        requestBody.put("prompt", prompt);
         requestBody.put("max_tokens", 150);
 
         // 요청 엔티티 생성
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
-        // API 호출 및 응답 받기
-        ResponseEntity<Map> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity, Map.class);
+        try {
+            // API 호출 및 응답 받기
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity, Map.class);
 
-        // 응답에서 결과 추출
-        Map<String, String> result = new HashMap<>();
-        result.put("response", response.getBody().toString());  // 응답 내용을 적절히 파싱하여 반환
-
-        return result;
+            // 응답에서 결과 추출
+            Map<String, Object> responseBody = response.getBody();
+            if (responseBody != null && responseBody.containsKey("choices")) {
+                List<Map<String, Object>> choices = (List<Map<String, Object>>) responseBody.get("choices");
+                if (!choices.isEmpty()) {
+                    return (String) choices.get(0).get("text");
+                }
+            }
+            throw new IllegalStateException("ChatGPT API로부터 예상치 못한 응답 구조를 받았습니다.");
+        } catch (RestClientException e) {
+            throw new RuntimeException("ChatGPT API와의 통신에 실패했습니다.", e);
+        }
     }
 }
