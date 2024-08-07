@@ -2,10 +2,12 @@ package com.server.pnd.markdown.service;
 
 import com.server.pnd.domain.Markdown;
 import com.server.pnd.domain.User;
+import com.server.pnd.markdown.dto.MarkdownDetailDto;
 import com.server.pnd.markdown.dto.MarkdownListSearchResponseDto;
 import com.server.pnd.markdown.dto.MarkdownSavedRequestDto;
 import com.server.pnd.markdown.dto.MarkdownSavedResponseDto;
 import com.server.pnd.markdown.repository.MarkdownRepository;
+import com.server.pnd.util.entity.BaseEntity;
 import com.server.pnd.util.jwt.JwtUtil;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -95,5 +97,19 @@ public class MarkdownServiceImpl implements MarkdownService{
         // 조회 성공 - 회원의 마크다운 파일이 존재하는 경우 : 200
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, responseDtos, "마크다운 파일 조회 완료되었습니다.");
         return ResponseEntity.status(200).body(res);
+    }
+
+    @Override
+    public ResponseEntity<CustomApiResponse<?>> searchMarkdown(Long markdownId) {
+        Optional<Markdown> foundMarkdown = markdownRepository.findById(markdownId);
+
+        // 해당 ID의 마크다운 파일이 DB에 없는 경우 : 404
+        if (foundMarkdown.isEmpty()) {
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 마크다운 파일이 DB에 존재하지 않습니다.");
+            return ResponseEntity.status(404).body(res);
+        }
+        Markdown markdown = foundMarkdown.get();
+
+
     }
 }

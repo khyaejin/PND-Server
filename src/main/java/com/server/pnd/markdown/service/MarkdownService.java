@@ -11,4 +11,7 @@ public interface MarkdownService {
 
     // 마크다운 문서 전체 조회
     ResponseEntity<CustomApiResponse<?>> searchMarkdownList(String authorizationHeader);
+
+    // 마크다운 문서 세부 조회
+    ResponseEntity<CustomApiResponse<?>> searchMarkdown(Long markdownId);
 }
