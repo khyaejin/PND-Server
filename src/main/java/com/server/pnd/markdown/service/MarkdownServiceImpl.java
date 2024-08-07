@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -68,6 +69,16 @@ public class MarkdownServiceImpl implements MarkdownService{
             return ResponseEntity.status(404).body(res);
         }
         User user = foundUser.get();
+
+        // 해당 회원의 마크다운 파일들 가져오기
+        List<Markdown> markdownList = markdownRepository.findByUserId(user.getId());
+
+        // 조회 성공 - 회원의 마크다운 파일이 존재하지 않는 경우 : 200
+        if (markdownList.isEmpty()) {
+            return ResponseEntity.status(200).body(CustomApiResponse.createSuccess(200,null,"사용자의 마크다운 파일이 존재하지 않습니다."))
+        }
+
+
 
         return null;
     }
