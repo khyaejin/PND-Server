@@ -14,11 +14,13 @@ import lombok.*;
 @Table(name = "USER")
 public class User {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JoinColumn(name = "id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @NotEmpty @JoinColumn(name = "github_id")
+    @NotNull
+    @Column(name = "github_id")
     private String githubId;
 
     private String name;
@@ -27,9 +29,11 @@ public class User {
 
     private String email;
 
-    @NotEmpty @JoinColumn(name = "access_token")
+    @NotEmpty
+    @Column(name = "access_token")
     private String accessToken;
 
-    @NotEmpty @JoinColumn(name = "refresh_token")
+    @NotEmpty
+    @Column(name = "refresh_token")
     private String refreshToken;
 }

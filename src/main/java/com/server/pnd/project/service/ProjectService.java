@@ -7,4 +7,7 @@ import org.springframework.http.ResponseEntity;
 public interface ProjectService {
     // 프로젝트 생성
     ResponseEntity<CustomApiResponse<?>> createProject(String authorizationHeader, ProjectCreatedRequestDto projectCreatedRequestDto);
+
+    // 프로젝트 전체 조회
+    ResponseEntity<CustomApiResponse<?>> searchProjectList(String authorizationHeader);
 }

@@ -2,7 +2,7 @@ package com.server.pnd.domain;
 
 import com.server.pnd.util.entity.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -18,11 +18,12 @@ public class Participation extends BaseEntity {
     private Long id;
 
     @ManyToOne
-    @NotEmpty @JoinColumn(name = "user_id")
+    @NotNull
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
-    @NotEmpty @JoinColumn(name = "project_id")
+    @NotNull @JoinColumn(name = "project_id")
     private Project project;
 
 }
