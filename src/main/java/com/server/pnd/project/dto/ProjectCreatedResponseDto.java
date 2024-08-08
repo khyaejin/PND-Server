@@ -11,9 +11,4 @@ import lombok.Setter;
 @Builder
 public class ProjectCreatedResponseDto {
     private Long projectId;
-    private Long repositoryId;
-    private String period;
-    private String image;
-    private String part;
-    private String title;
 }
