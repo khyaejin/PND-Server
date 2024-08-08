@@ -7,10 +7,9 @@ import com.server.pnd.domain.User;
 import com.server.pnd.participation.repository.ParticipationRepository;
 import com.server.pnd.project.dto.ProjectCreatedRequestDto;
 import com.server.pnd.project.dto.ProjectCreatedResponseDto;
-import com.server.pnd.project.dto.ProjectSearchResponseDto;
+import com.server.pnd.project.dto.ProjectSearchListResponseDto;
 import com.server.pnd.project.repository.ProjectRepository;
 import com.server.pnd.repository.repository.RepositoryRepository;
-import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.jwt.JwtUtil;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -98,13 +97,13 @@ public class ProjectServiceImpl implements ProjectService{
         }
 
         // data
-        List<ProjectSearchResponseDto> data = new ArrayList<>();
+        List<ProjectSearchListResponseDto> data = new ArrayList<>();
         for (Participation participation : participations) {
-            ProjectSearchResponseDto projectSearchResponseDto = ProjectSearchResponseDto.builder()
+            ProjectSearchListResponseDto projectSearchListResponseDto = ProjectSearchListResponseDto.builder()
                     .image(participation.getProject().getImage())
                     .title(participation.getProject().getTitle())
                     .build();
-            data.add(projectSearchResponseDto);
+            data.add(projectSearchListResponseDto);
         }
 
         // 성공 - 조회할 프로젝트가 있는 경우 : 200
