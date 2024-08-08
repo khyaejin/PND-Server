@@ -8,18 +8,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("api/pnd/test")
 public class TestController {
     private final TestService testService;
 
     // 클래스 다이어그램 생성 테스트 API
-    @PostMapping
+    @PostMapping("/diagram")
     public ResponseEntity<CustomApiResponse<?>> createClassDiagram(
             @RequestBody ClassDiagramCreatedRequestDto classDiagramCreatedRequestDto) {
         return testService.createClassDiagram(classDiagramCreatedRequestDto);
