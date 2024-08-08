@@ -123,6 +123,15 @@ public class ProjectServiceImpl implements ProjectService{
         }
         Project project = foundProject.get();
 
+        // 프로젝트 조회 성공 (200)
+        String classDiagram =
+        ProjectSearchDetailResponseDto data = ProjectSearchDetailResponseDto.builder()
+                .title(project.getTitle())
+                .period(project.getPeriod())
+                .createdAt(project.localDateTimeToString())
+                .image(project.getImage())
+                .classDiagram()
+                .build();
 
 
 

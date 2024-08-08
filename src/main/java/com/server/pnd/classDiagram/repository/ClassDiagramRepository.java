@@ -5,6 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DiagramRepository extends JpaRepository<ClassDiagram, Long> {
-
+public interface ClassDiagramRepository extends JpaRepository<ClassDiagram, Long> {
 }
