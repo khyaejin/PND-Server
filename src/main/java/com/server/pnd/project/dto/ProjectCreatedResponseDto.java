@@ -15,4 +15,5 @@ public class ProjectCreatedResponseDto {
     private String period;
     private String image;
     private String part;
+    private String title;
 }

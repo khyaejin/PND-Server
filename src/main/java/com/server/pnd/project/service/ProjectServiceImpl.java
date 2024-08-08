@@ -71,6 +71,7 @@ public class ProjectServiceImpl implements ProjectService{
                 .period(project.getPeriod())
                 .image(project.getImage())
                 .part(project.getPart())
+                .title(project.getTitle())
                 .build();
         // 프로젝트 생성 성공 : 201
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(201, data, "프로젝트 생성 완료했습니다.");
