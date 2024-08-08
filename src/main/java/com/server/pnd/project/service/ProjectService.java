@@ -10,4 +10,7 @@ public interface ProjectService {
 
     // 프로젝트 전체 조회
     ResponseEntity<CustomApiResponse<?>> searchProjectList(String authorizationHeader);
+
+    // 프로젝트 상세 조회
+    ResponseEntity<CustomApiResponse<?>> searchProjectDetail(Long projectId);
 }

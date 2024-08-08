@@ -111,4 +111,10 @@ public class ProjectServiceImpl implements ProjectService{
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, data,"프로젝트 전체 조회가 완료되었습니다.");
         return ResponseEntity.status(200).body(res);
     }
+
+    // 프로젝트 상세 조회
+    @Override
+    public ResponseEntity<CustomApiResponse<?>> searchProjectDetail(Long projectId) {
+        return null;
+    }
 }
