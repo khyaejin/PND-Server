@@ -30,7 +30,7 @@ public class ProjectController {
     // 프로젝트 상세 조회
     @GetMapping("/{project_id}")
     public ResponseEntity<CustomApiResponse<?>> searchProjectDetail(
-            @PathVariable("project") Long projectId){
+            @PathVariable("project_id") Long projectId){
         return projectService.searchProjectDetail(projectId);
     }
 }
