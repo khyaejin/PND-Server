@@ -1,6 +1,7 @@
 package com.server.pnd.test.controller;
 
 import com.server.pnd.project.dto.ProjectCreatedRequestDto;
+import com.server.pnd.test.dto.ClassDiagramCreatedRequestDto;
 import com.server.pnd.test.service.TestService;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class TestController {
 
     // 클래스 다이어그램 생성 테스트 API
     @PostMapping
-    public ResponseEntity<CustomApiResponse<?>> createProject(
+    public ResponseEntity<CustomApiResponse<?>> createClassDiagram(
             @RequestBody ClassDiagramCreatedRequestDto classDiagramCreatedRequestDto) {
         return testService.createClassDiagram(classDiagramCreatedRequestDto);
     }

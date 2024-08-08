@@ -9,4 +9,5 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class ClassDiagramCreatedRequestDto {
+    private Long projectId;
 }
