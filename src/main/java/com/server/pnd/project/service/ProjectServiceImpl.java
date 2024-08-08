@@ -1,8 +1,10 @@
 package com.server.pnd.project.service;
 
+import com.server.pnd.domain.Participation;
 import com.server.pnd.domain.Project;
 import com.server.pnd.domain.Repository;
 import com.server.pnd.domain.User;
+import com.server.pnd.participation.repository.ParticipationRepository;
 import com.server.pnd.project.dto.ProjectCreatedRequestDto;
 import com.server.pnd.project.dto.ProjectCreatedResponseDto;
 import com.server.pnd.project.dto.ProjectSearchResponseDto;
@@ -24,6 +26,7 @@ public class ProjectServiceImpl implements ProjectService{
     private final JwtUtil jwtUtil;
     private final RepositoryRepository repositoryRepository;
     private final ProjectRepository projectRepository;
+    private final ParticipationRepository participationRepository;
 
     @Override
     public ResponseEntity<CustomApiResponse<?>> createProject(String authorizationHeader, ProjectCreatedRequestDto projectCreatedRequestDto) {
@@ -53,7 +56,11 @@ public class ProjectServiceImpl implements ProjectService{
         projectRepository.save(project);
 
         // participation 연관관계 테이블 생성
-
+        Participation participation = Participation.builder()
+                .user(user)
+                .project(project)
+                .build();
+        participationRepository.save(participation);
 
         // data
         ProjectCreatedResponseDto data = ProjectCreatedResponseDto.builder()
