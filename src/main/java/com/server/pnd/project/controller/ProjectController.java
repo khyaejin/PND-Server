@@ -19,4 +19,11 @@ public class ProjectController {
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader, @RequestBody ProjectCreatedRequestDto projectCreatedRequestDto) {
         return projectService.createProject(authorizationHeader, projectCreatedRequestDto);
     }
+
+    // 프로젝트 전체 조회
+    @GetMapping
+    public ResponseEntity<CustomApiResponse<?>> searchProjectList(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader){
+        return projectService.searchProjectList(authorizationHeader);
+    }
 }

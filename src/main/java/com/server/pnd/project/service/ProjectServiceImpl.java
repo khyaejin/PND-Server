@@ -62,4 +62,10 @@ public class ProjectServiceImpl implements ProjectService{
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(201, data, "프로젝트 생성 완료했습니다.");
         return ResponseEntity.status(201).body(res);
     }
+
+    // 프로젝트 전체 조회
+    @Override
+    public ResponseEntity<CustomApiResponse<?>> searchProjectList(String authorizationHeader) {
+        return null;
+    }
 }
