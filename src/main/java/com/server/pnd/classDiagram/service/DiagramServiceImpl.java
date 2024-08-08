@@ -3,7 +3,7 @@
 //import com.server.pnd.diagram.dto.DiagramRequestDto;
 //import com.server.pnd.diagram.dto.DiagramResponseDto;
 //import com.server.pnd.diagram.repository.DiagramRepository;
-//import com.server.pnd.domain.Diagram;
+//import com.server.pnd.domain.ClassDiagram;
 //import com.server.pnd.domain.Project;
 //import com.server.pnd.domain.Repository;
 //import com.server.pnd.domain.User;
@@ -66,7 +66,7 @@
 //            String flowChartText = chatGPTService.getChatGPTResponse(prompt);
 //
 //            // 다이어그램 엔티티 생성 및 데이터 설정
-//            Diagram diagram = Diagram.builder()
+//            ClassDiagram diagram = ClassDiagram.builder()
 //                    .repository(repository)
 //                    .flowchart(flowChartText)
 //                    .build();

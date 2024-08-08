@@ -7,6 +7,7 @@ import com.server.pnd.domain.User;
 import com.server.pnd.participation.repository.ParticipationRepository;
 import com.server.pnd.project.dto.ProjectCreatedRequestDto;
 import com.server.pnd.project.dto.ProjectCreatedResponseDto;
+import com.server.pnd.project.dto.ProjectSearchDetailResponseDto;
 import com.server.pnd.project.dto.ProjectSearchListResponseDto;
 import com.server.pnd.project.repository.ProjectRepository;
 import com.server.pnd.repository.repository.RepositoryRepository;
@@ -120,6 +121,8 @@ public class ProjectServiceImpl implements ProjectService{
         if (foundProject.isEmpty()) {
             return ResponseEntity.status(200).body(CustomApiResponse.createFailWithoutData(404, "해당 ID를 가진 프로젝트가 존재하지 않습니다."));
         }
+        Project project = foundProject.get();
+
 
 
 

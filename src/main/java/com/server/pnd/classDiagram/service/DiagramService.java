@@ -1,7 +1,7 @@
-package com.server.pnd.diagram.service;
+package com.server.pnd.classDiagram.service;
 
-import com.server.pnd.diagram.dto.DiagramRequestDto;
-import com.server.pnd.diagram.dto.DiagramResponseDto;
+import com.server.pnd.classDiagram.dto.DiagramRequestDto;
+import com.server.pnd.classDiagram.dto.DiagramResponseDto;
 import com.server.pnd.util.response.CustomApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
