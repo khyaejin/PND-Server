@@ -3,6 +3,7 @@ package com.server.pnd.domain;
 import com.server.pnd.util.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -18,7 +19,7 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @NotEmpty
+    @NotNull
     @Column(name = "github_id")
     private String githubId;
 

@@ -90,7 +90,7 @@ public class ProjectServiceImpl implements ProjectService{
 
         List<Participation> participations = participationRepository.findByUserId(user.getId());
 
-        // 성공 - 프로젝트가 없는 경우 : 200
+        // 성공 - 조회할 프로젝트가 없는 경우 : 200
         if (participations.isEmpty()) {
             CustomApiResponse<?> res = CustomApiResponse.createSuccess(200,  null,"아직 생성한 프로젝트가 없습니다.");
             return ResponseEntity.status(200).body(res);
@@ -106,7 +106,7 @@ public class ProjectServiceImpl implements ProjectService{
             data.add(projectSearchResponseDto);
         }
 
-        // 성공 - 프로젝트가 있는 경우 : 200
+        // 성공 - 조회할 프로젝트가 있는 경우 : 200
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, data,"프로젝트 전체 조회가 완료되었습니다.");
         return ResponseEntity.status(200).body(res);
     }
