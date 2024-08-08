@@ -10,4 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class ProjectSearchResponseDto {
+    private String image; // 썸네일
+    private String title; // 제목
 }

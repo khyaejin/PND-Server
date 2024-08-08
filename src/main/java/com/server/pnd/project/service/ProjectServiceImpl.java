@@ -50,8 +50,10 @@ public class ProjectServiceImpl implements ProjectService{
                 .image(projectCreatedRequestDto.getImage())
                 .part(projectCreatedRequestDto.getPart())
                 .build();
-        // 저장
         projectRepository.save(project);
+
+        // participation 연관관계 테이블 생성
+
 
         // data
         ProjectCreatedResponseDto data = ProjectCreatedResponseDto.builder()
@@ -90,7 +92,10 @@ public class ProjectServiceImpl implements ProjectService{
         List<ProjectSearchResponseDto> projectSearchResponseDtos = new ArrayList<>();
 
         for (Project project : projects) {
-
+            ProjectSearchResponseDto.builder()
+                    .image(project.getImage())
+                    .title(project.getTitle())
+                    .build();
         }
 
         return null;
