@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService{
                     .openIssues(repository.getOpenIssues())
                     .watchers(repository.getWatchers())
                     .language(repository.getLanguage())
-                    .createdAt(repository.getCreatedAt()).build();
+                    .createdAt(repository.getFormattedCreatedAt()).build();
             responseDtos.add(responseDto);
         }
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, responseDtos, "레포지토리 전체 조회 성공했습니다.");
