@@ -1,16 +1,14 @@
 package com.server.pnd.project.service;
 
-import com.server.pnd.domain.Participation;
-import com.server.pnd.domain.Project;
-import com.server.pnd.domain.Repository;
-import com.server.pnd.domain.User;
+import com.server.pnd.classDiagram.repository.ClassDiagramRepository;
+import com.server.pnd.domain.*;
 import com.server.pnd.participation.repository.ParticipationRepository;
 import com.server.pnd.project.dto.ProjectCreatedRequestDto;
 import com.server.pnd.project.dto.ProjectCreatedResponseDto;
-import com.server.pnd.project.dto.ProjectSearchResponseDto;
+import com.server.pnd.project.dto.ProjectSearchDetailResponseDto;
+import com.server.pnd.project.dto.ProjectSearchListResponseDto;
 import com.server.pnd.project.repository.ProjectRepository;
 import com.server.pnd.repository.repository.RepositoryRepository;
-import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.jwt.JwtUtil;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +26,7 @@ public class ProjectServiceImpl implements ProjectService{
     private final RepositoryRepository repositoryRepository;
     private final ProjectRepository projectRepository;
     private final ParticipationRepository participationRepository;
+    private final ClassDiagramRepository classDiagramRepository;
 
     @Override
     public ResponseEntity<CustomApiResponse<?>> createProject(String authorizationHeader, ProjectCreatedRequestDto projectCreatedRequestDto) {
@@ -98,17 +97,48 @@ public class ProjectServiceImpl implements ProjectService{
         }
 
         // data
-        List<ProjectSearchResponseDto> data = new ArrayList<>();
+        List<ProjectSearchListResponseDto> data = new ArrayList<>();
         for (Participation participation : participations) {
-            ProjectSearchResponseDto projectSearchResponseDto = ProjectSearchResponseDto.builder()
+            ProjectSearchListResponseDto projectSearchListResponseDto = ProjectSearchListResponseDto.builder()
                     .image(participation.getProject().getImage())
                     .title(participation.getProject().getTitle())
                     .build();
-            data.add(projectSearchResponseDto);
+            data.add(projectSearchListResponseDto);
         }
 
         // 성공 - 조회할 프로젝트가 있는 경우 : 200
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, data,"프로젝트 전체 조회가 완료되었습니다.");
         return ResponseEntity.status(200).body(res);
     }
+
+    // 프로젝트 상세 조회
+    @Override
+    public ResponseEntity<CustomApiResponse<?>> searchProjectDetail(Long projectId) {
+        Optional<Project> foundProject = projectRepository.findById(projectId);
+
+        // 프로젝트 ID에 해당하는 프로젝트가 없는 경우 : 404
+        if (foundProject.isEmpty()) {
+            return ResponseEntity.status(404).body(CustomApiResponse.createFailWithoutData(404, "해당 ID를 가진 프로젝트가 존재하지 않습니다."));
+        }
+        Project project = foundProject.get();
+
+        Optional<ClassDiagram> foundClassDiagram = classDiagramRepository.findByProjectId(project.getId());
+        // 클래스다이어그램에 플로우차트 존재하지 않음 : 404
+        if (foundClassDiagram.isEmpty()) {
+            return ResponseEntity.status(404).body(CustomApiResponse.createFailWithoutData(404, "해당 클래스다이어그램에 flowChart가 존재하지 않습니다. (클래스다이어그램 생성시 flowchart 들어가지 않음)"));
+        }
+        ClassDiagram classDiagram = foundClassDiagram.get();
+
+        // data
+        ProjectSearchDetailResponseDto data = ProjectSearchDetailResponseDto.builder()
+                .title(project.getTitle())
+                .period(project.getPeriod())
+                .createdAt(project.localDateTimeToString())
+                .image(project.getImage())
+                .classDiagram(classDiagram.getFlowchart())
+                .build();
+
+        // 프로젝트 조회 성공 (200)
+        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, data,"프로젝트 상세조회에 성공했습니다.");
+        return ResponseEntity.status(200).body(res);    }
 }

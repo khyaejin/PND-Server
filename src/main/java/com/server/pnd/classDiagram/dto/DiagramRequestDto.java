@@ -1,4 +1,4 @@
-package com.server.pnd.diagram.dto;
+package com.server.pnd.classDiagram.dto;
 
 import lombok.*;
 
