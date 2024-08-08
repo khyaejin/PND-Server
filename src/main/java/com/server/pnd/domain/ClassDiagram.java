@@ -11,7 +11,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "CLASSDIAGRAM")
+@Table(name = "CLASS_DIAGRAM")
 public class ClassDiagram extends BaseEntity {
 
     @Id
@@ -24,5 +24,6 @@ public class ClassDiagram extends BaseEntity {
     private Project project;
 
     @NotEmpty
+    @Column(columnDefinition = "TEXT")
     private String flowchart; // GPT가 변형시켜준 플로우차트
 }

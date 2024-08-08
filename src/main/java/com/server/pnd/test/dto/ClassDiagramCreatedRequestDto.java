@@ -1,12 +1,11 @@
 package com.server.pnd.test.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter @Setter
+@Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor // 기본 생성자 추가
 @Builder
 public class ClassDiagramCreatedRequestDto {
     private Long projectId;
