@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -74,7 +75,13 @@ public class ProjectServiceImpl implements ProjectService{
         }
         User user = foundUser.get();
 
+        List<Project> projects =  projectRepository.findByUserId(user.getId());
 
+        // 성공 - 프로젝트가 없는 경우 : 200
+        if (projects.isEmpty()) {
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(200, "아직 생성한 프로젝트가 없습니다.");
+            return ResponseEntity.status(200).body(res);
+        }
         return null;
     }
 }
