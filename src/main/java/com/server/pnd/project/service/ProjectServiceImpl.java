@@ -5,6 +5,7 @@ import com.server.pnd.domain.Repository;
 import com.server.pnd.domain.User;
 import com.server.pnd.project.dto.ProjectCreatedRequestDto;
 import com.server.pnd.project.dto.ProjectCreatedResponseDto;
+import com.server.pnd.project.dto.ProjectSearchResponseDto;
 import com.server.pnd.project.repository.ProjectRepository;
 import com.server.pnd.repository.repository.RepositoryRepository;
 import com.server.pnd.util.jwt.JwtUtil;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,6 +84,15 @@ public class ProjectServiceImpl implements ProjectService{
             CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(200, "아직 생성한 프로젝트가 없습니다.");
             return ResponseEntity.status(200).body(res);
         }
+
+        // 성공 - 프로젝트가 있는 경우 : 200
+        // data
+        List<ProjectSearchResponseDto> projectSearchResponseDtos = new ArrayList<>();
+
+        for (Project project : projects) {
+
+        }
+
         return null;
     }
 }
