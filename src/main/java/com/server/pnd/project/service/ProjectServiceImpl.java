@@ -115,6 +115,15 @@ public class ProjectServiceImpl implements ProjectService{
     // 프로젝트 상세 조회
     @Override
     public ResponseEntity<CustomApiResponse<?>> searchProjectDetail(Long projectId) {
+        Optional<Project> foundProject = projectRepository.findById(projectId);
+
+        // 프로젝트 ID에 해당하는 프로젝트가 없는 경우 : 404
+        if (foundProject.isEmpty()) {
+            return ResponseEntity.status(200).body(CustomApiResponse.createFailWithoutData(404, "해당 ID를 가진 프로젝트가 존재하지 않습니다."));
+        }
+
+
+
         return null;
     }
 }
