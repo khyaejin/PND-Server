@@ -10,6 +10,7 @@ import com.server.pnd.project.dto.ProjectCreatedResponseDto;
 import com.server.pnd.project.dto.ProjectSearchResponseDto;
 import com.server.pnd.project.repository.ProjectRepository;
 import com.server.pnd.repository.repository.RepositoryRepository;
+import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.jwt.JwtUtil;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +53,7 @@ public class ProjectServiceImpl implements ProjectService{
                 .period(projectCreatedRequestDto.getPeriod())
                 .image(projectCreatedRequestDto.getImage())
                 .part(projectCreatedRequestDto.getPart())
+                .title(projectCreatedRequestDto.getTitle())
                 .build();
         projectRepository.save(project);
 
@@ -86,25 +88,26 @@ public class ProjectServiceImpl implements ProjectService{
         }
         User user = foundUser.get();
 
-        List<Project> projects =  projectRepository.findByUserId(user.getId());
+        List<Participation> participations = participationRepository.findByUserId(user.getId());
 
         // 성공 - 프로젝트가 없는 경우 : 200
-        if (projects.isEmpty()) {
-            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(200, "아직 생성한 프로젝트가 없습니다.");
+        if (participations.isEmpty()) {
+            CustomApiResponse<?> res = CustomApiResponse.createSuccess(200,  null,"아직 생성한 프로젝트가 없습니다.");
             return ResponseEntity.status(200).body(res);
         }
 
-        // 성공 - 프로젝트가 있는 경우 : 200
         // data
-        List<ProjectSearchResponseDto> projectSearchResponseDtos = new ArrayList<>();
-
-        for (Project project : projects) {
-            ProjectSearchResponseDto.builder()
-                    .image(project.getImage())
-                    .title(project.getTitle())
+        List<ProjectSearchResponseDto> data = new ArrayList<>();
+        for (Participation participation : participations) {
+            ProjectSearchResponseDto projectSearchResponseDto = ProjectSearchResponseDto.builder()
+                    .image(participation.getProject().getImage())
+                    .title(participation.getProject().getTitle())
                     .build();
+            data.add(projectSearchResponseDto);
         }
 
-        return null;
+        // 성공 - 프로젝트가 있는 경우 : 200
+        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, data,"프로젝트 전체 조회가 완료되었습니다.");
+        return ResponseEntity.status(200).body(res);
     }
 }

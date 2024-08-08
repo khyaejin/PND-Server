@@ -22,7 +22,6 @@ public class Project extends BaseEntity {
     @JoinColumn(name = "repository_id")
     private Repository repository; // 레포지토리 ID
 
-
     @NotNull
     @Column(nullable = false)
     private String title; // 프로젝트 이름
