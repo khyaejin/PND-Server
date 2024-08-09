@@ -1,4 +1,4 @@
-package com.server.pnd.util.config;
+package com.server.pnd.classDiagram.gpt.config;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value; // * lombok이 아닌 annotation의 Value 사용
