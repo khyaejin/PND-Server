@@ -28,47 +28,55 @@ public class TestServiceImpl implements TestService {
         }
         Project project = foundProject.get();
 
-        String flowchart = "classDiagram\n" +
-                "    direction TB\n" +
-                "    \n" +
-                "    class ScaptureServer {\n" +
-                "        -Logger logger\n" +
-                "        +main(args: String[]): void\n" +
-                "    }\n" +
-                "\n" +
-                "    class UserController {\n" +
-                "        -UserService userService\n" +
-                "        +getUser(id: Long): User\n" +
-                "        +createUser(user: User): User\n" +
-                "    }\n" +
-                "\n" +
-                "    class UserService {\n" +
-                "        -UserRepository userRepository\n" +
-                "        +findUserById(id: Long): User\n" +
-                "        +saveUser(user: User): User\n" +
-                "    }\n" +
-                "\n" +
-                "    class UserRepository {\n" +
-                "        +findById(id: Long): User\n" +
-                "        +save(user: User): User\n" +
-                "    }\n" +
-                "\n" +
-                "    class User {\n" +
-                "        -Long id\n" +
-                "        -String name\n" +
-                "        -String email\n" +
-                "        +getId(): Long\n" +
-                "        +getName(): String\n" +
-                "        +getEmail(): String\n" +
-                "        +setId(id: Long): void\n" +
-                "        +setName(name: String): void\n" +
-                "        +setEmail(email: String): void\n" +
-                "    }\n" +
-                "\n" +
-                "    ScaptureServer --> UserController\n" +
-                "    UserController --> UserService\n" +
-                "    UserService --> UserRepository\n" +
-                "    UserRepository --> User\n"; //gpt api를 사용하여 이 부분 가공
+        String flowchart = "       classDiagram\n" +
+                "            GameController --> GameFrame\n" +
+                "            GameController --> WordGenerator\n" +
+                "            GameController --> Timer\n" +
+                "            GameFrame --> Player\n" +
+                "            GameFrame --> Word\n" +
+                "            GameFrame --> Score\n" +
+                "            GameController : +startGame()\n" +
+                "            GameController : +endGame()\n" +
+                "            GameController : +updateGame()\n" +
+                "            class GameController {\n" +
+                "            +List<Word> words\n" +
+                "            +Player player\n" +
+                "            +Score score\n" +
+                "            +Timer timer\n" +
+                "            +startGame()\n" +
+                "            +endGame()\n" +
+                "            +updateGame()\n" +
+                "            }\n" +
+                "            class GameFrame {\n" +
+                "            +displayWord()\n" +
+                "            +displayScore()\n" +
+                "            +displayTime()\n" +
+                "            }\n" +
+                "            class WordGenerator {\n" +
+                "            +generateWord()\n" +
+                "            }\n" +
+                "            class Timer {\n" +
+                "            +int timeLeft\n" +
+                "            +start()\n" +
+                "            +stop()\n" +
+                "            +countdown()\n" +
+                "            }\n" +
+                "            class Player {\n" +
+                "            +String name\n" +
+                "            +int score\n" +
+                "            +typeWord()\n" +
+                "            }\n" +
+                "            class Word {\n" +
+                "            +String text\n" +
+                "            +int position\n" +
+                "            +move()\n" +
+                "            +checkTyped()\n" +
+                "            }\n" +
+                "            class Score {\n" +
+                "            +int points\n" +
+                "            +increment()\n" +
+                "            +reset()\n" +
+                "            }"; //gpt api를 사용하여 이 부분 가공
 
         // save
         ClassDiagram classDiagram = ClassDiagram.builder()
