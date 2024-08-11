@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value; // * lombok이 아닌 annotation의 Value 사용
 import org.springframework.context.annotation.Configuration;
 
-// 구성 요소
+// GPT API의 URL 및 API 키 등 구성을 관리하는 클래스
 
 @Getter
 @Configuration

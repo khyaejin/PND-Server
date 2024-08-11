@@ -1,5 +1,6 @@
 package com.server.pnd.classDiagram.dto;
 
+import com.server.pnd.domain.Repository;
 import lombok.*;
 
 @Getter
@@ -8,5 +9,5 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DiagramRequestDto {
-    private Long repoId; // repo ID
+    private Long repositoryId; // 레포지토리 ID
 }
