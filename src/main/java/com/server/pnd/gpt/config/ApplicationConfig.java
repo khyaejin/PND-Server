@@ -1,4 +1,4 @@
-package com.server.pnd.classDiagram.gpt.config;
+package com.server.pnd.gpt.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

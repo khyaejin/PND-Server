@@ -1,4 +1,4 @@
-package com.server.pnd.classDiagram.gpt.dto;
+package com.server.pnd.gpt.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
