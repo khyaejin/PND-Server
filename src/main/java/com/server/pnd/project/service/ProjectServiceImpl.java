@@ -38,17 +38,17 @@ public class ProjectServiceImpl implements ProjectService{
         }
         User user = foundUser.get();
 
-        Optional<Repository> foundRepository = repositoryRepository.findById(projectCreatedRequestDto.getRepositoryId());
+        Optional<Repo> foundRepository = repositoryRepository.findById(projectCreatedRequestDto.getRepositoryId());
         // 해당 Id에 해당하는 레포가 없는 경우 : 404
         if (foundRepository.isEmpty()) {
             CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 ID를 가진 레포지토리가 존재하지 않습니다.");
             return ResponseEntity.status(404).body(res);
         }
-        Repository repository = foundRepository.get();
+        Repo repo = foundRepository.get();
 
         // 프로젝트 생성
         Project project = Project.builder()
-                .repository(repository)
+                .repo(repo)
                 .period(projectCreatedRequestDto.getPeriod())
                 .image(projectCreatedRequestDto.getImage())
                 .part(projectCreatedRequestDto.getPart())
@@ -117,12 +117,12 @@ public class ProjectServiceImpl implements ProjectService{
         }
         Project project = foundProject.get();
 
-        Optional<ClassDiagram> foundClassDiagram = classDiagramRepository.findByProjectId(project.getId());
+        Optional<Diagram> foundClassDiagram = classDiagramRepository.findByProjectId(project.getId());
         // 클래스다이어그램에 플로우차트 존재하지 않음 : 404
         if (foundClassDiagram.isEmpty()) {
             return ResponseEntity.status(404).body(CustomApiResponse.createFailWithoutData(404, "해당 클래스다이어그램에 flowChart가 존재하지 않습니다. (클래스다이어그램 생성시 flowchart 들어가지 않음)"));
         }
-        ClassDiagram classDiagram = foundClassDiagram.get();
+        Diagram diagram = foundClassDiagram.get();
 
         // data
         ProjectSearchDetailResponseDto data = ProjectSearchDetailResponseDto.builder()
@@ -130,7 +130,7 @@ public class ProjectServiceImpl implements ProjectService{
                 .period(project.getPeriod())
                 .createdAt(project.localDateTimeToString())
                 .image(project.getImage())
-                .classDiagram(classDiagram.getFlowchart())
+                .classDiagram(diagram.getFlowchart())
                 .build();
 
         // 프로젝트 조회 성공 (200)

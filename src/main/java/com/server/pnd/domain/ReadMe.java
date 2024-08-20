@@ -2,7 +2,6 @@ package com.server.pnd.domain;
 
 import com.server.pnd.util.entity.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -11,19 +10,21 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "CLASS_DIAGRAM")
-public class ClassDiagram extends BaseEntity {
+@Table(name = "README")
+public class ReadMe extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
-    @NotNull
-    @JoinColumn(name = "project_id")
-    private Project project;
+    @JoinColumn(name = "repo_id")
+    private Repo repo;
 
-    @NotEmpty
-    @Column(columnDefinition = "TEXT")
-    private String flowchart; // GPT가 변형시켜준 플로우차트
+    @NotNull
+    private String title;
+
+    private String readme_script;
+
+    private String readme_script_gpt;
 }

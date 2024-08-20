@@ -1,9 +1,9 @@
 package com.server.pnd.classDiagram.service;
 
 import com.server.pnd.classDiagram.dto.DiagramRequestDto;
+import com.server.pnd.domain.Repo;
 import com.server.pnd.gpt.dto.ChatCompletionDto;
 import com.server.pnd.gpt.dto.ChatRequestMsgDto;
-import com.server.pnd.domain.Repository;
 import com.server.pnd.repository.repository.RepositoryRepository;
 import com.server.pnd.util.response.CustomApiResponse;
 import jakarta.transaction.Transactional;
@@ -27,8 +27,8 @@ public class DiagramService {
     public ResponseEntity<?> recieveClassDiagramAnswer(DiagramRequestDto requestDto) {
         Long repoId = requestDto.getRepositoryId(); // 프론트엔드에서 받은 repositoryId
 
-        // repositoryId를 사용하여 Repository 객체를 조회 (DB에서 가져오기)
-        Optional<Repository> optionalRepository = repositoryRepository.findById(repoId);
+        // repositoryId를 사용하여 Repo 객체를 조회 (DB에서 가져오기)
+        Optional<Repo> optionalRepository = repositoryRepository.findById(repoId);
 
         // 레포지토리가 존재하지 않는 경우
         if (!optionalRepository.isPresent()) {
@@ -37,8 +37,8 @@ public class DiagramService {
         }
 
         // 레포지토리가 존재하는 경우
-        Repository repository = optionalRepository.get();
-        String repoUrl = repository.getHtmlUrl(); // 레포지토리 링크 가져오기
+        Repo repo = optionalRepository.get();
+        String repoUrl = repo.getHtmlUrl(); // 레포지토리 링크 가져오기
 
         // 메시지 생성
         String systemMessage =
@@ -101,8 +101,8 @@ public class DiagramService {
     public ResponseEntity<?> recieveSequenceDiagramAnswer(DiagramRequestDto requestDto) {
         Long repoId = requestDto.getRepositoryId(); // 프론트엔드에서 받은 repositoryId
 
-        // repositoryId를 사용하여 Repository 객체를 조회 (DB에서 가져오기)
-        Optional<Repository> optionalRepository = repositoryRepository.findById(repoId);
+        // repositoryId를 사용하여 Repo 객체를 조회 (DB에서 가져오기)
+        Optional<Repo> optionalRepository = repositoryRepository.findById(repoId);
 
         // 레포지토리가 존재하지 않는 경우
         if (!optionalRepository.isPresent()) {
@@ -111,8 +111,8 @@ public class DiagramService {
         }
 
         // 레포지토리가 존재하는 경우
-        Repository repository = optionalRepository.get();
-        String repoUrl = repository.getHtmlUrl(); // 레포지토리 링크 가져오기
+        Repo repo = optionalRepository.get();
+        String repoUrl = repo.getHtmlUrl(); // 레포지토리 링크 가져오기
 
         // 메시지 생성
         String systemMessage =
@@ -128,15 +128,15 @@ public class DiagramService {
                         "    participant User as User\n" +
                         "    participant API as API Controller\n" +
                         "    participant Service as Service Layer\n" +
-                        "    participant Repository as Repository\n" +
+                        "    participant Repo as Repo\n" +
                         "    participant DB as Database\n" +
                         "\n" +
                         "    User->>API: Request API endpoint\n" +
                         "    API->>Service: Call Service method\n" +
-                        "    Service->>Repository: Query data\n" +
-                        "    Repository->>DB: Execute database query\n" +
-                        "    DB-->>Repository: Return query result\n" +
-                        "    Repository-->>Service: Return data to Service\n" +
+                        "    Service->>Repo: Query data\n" +
+                        "    Repo->>DB: Execute database query\n" +
+                        "    DB-->>Repo: Return query result\n" +
+                        "    Repo-->>Service: Return data to Service\n" +
                         "    Service-->>API: Return processed data\n" +
                         "    API-->>User: Send response back to User\n" +
                         "```\n";

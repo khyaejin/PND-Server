@@ -1,6 +1,6 @@
 package com.server.pnd.oauth.service;
 
-import com.server.pnd.domain.Repository;
+import com.server.pnd.domain.Repo;
 import com.server.pnd.domain.User;
 import com.server.pnd.repository.repository.RepositoryRepository;
 import com.server.pnd.oauth.dto.SocialLoginResponseDto;
@@ -197,7 +197,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
     public ResponseEntity<CustomApiResponse<?>> getUserRepository(TokenDto tokenDto, UserInfo userInfo) {
         String accessToken = tokenDto.getAccessToken();
         String reqUrl = "https://api.github.com/user/repos";
-        List<Repository> repositories = new ArrayList<>();
+        List<Repo> repositories = new ArrayList<>();
 
         try {
             URL url = new URL(reqUrl);
@@ -231,7 +231,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                         String updatedAt = repo.getString("updated_at");
 
                         // 레포지토리 정보 잘 받아왔나 로그로 확인
-                        logger.info("Repository Name: {}, HTML URL: {}, Stars: {}, Description: {}, Forks: {}, Open Issues: {}, Watchers: {}, Language: {}, Created At: {}, Updated At: {}", name, htmlUrl, stars, description, forksCount, openIssues, watchers, language, createdAt, updatedAt);
+                        logger.info("Repo Name: {}, HTML URL: {}, Stars: {}, Description: {}, Forks: {}, Open Issues: {}, Watchers: {}, Language: {}, Created At: {}, Updated At: {}", name, htmlUrl, stars, description, forksCount, openIssues, watchers, language, createdAt, updatedAt);
 
                         Optional<User> foundUser = userRepository.findByGithubId(userInfo.getGithubId());
 
@@ -241,8 +241,8 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
 
                         User user = foundUser.get();
 
-                        // repository build
-                        Repository repository = Repository.builder()
+                        // repo build
+                        Repo repository = Repo.builder()
                                 .user(user)
                                 .name(name)
                                 .htmlUrl(htmlUrl)
@@ -260,11 +260,11 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                     }
                 }
             } else {
-                CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(responseCode, "Failed to retrieve repository information");
+                CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(responseCode, "Failed to retrieve repo information");
                 return ResponseEntity.status(responseCode).body(res);
             }
         } catch (Exception e) {
-            logger.error("Error fetching repository information", e);
+            logger.error("Error fetching repo information", e);
             CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(400, "Failed to fetch user repositories.");
             return ResponseEntity.status(400).body(res);
         }
