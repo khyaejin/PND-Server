@@ -1,13 +1,13 @@
-package com.server.pnd.project.service;
+package com.server.pnd.repo.service;
 
-import com.server.pnd.classDiagram.repository.ClassDiagramRepository;
+import com.server.pnd.diagram.repository.ClassDiagramRepository;
 import com.server.pnd.domain.*;
 import com.server.pnd.participation.repository.ParticipationRepository;
-import com.server.pnd.project.dto.ProjectCreatedRequestDto;
-import com.server.pnd.project.dto.ProjectCreatedResponseDto;
-import com.server.pnd.project.dto.ProjectSearchDetailResponseDto;
-import com.server.pnd.project.dto.ProjectSearchListResponseDto;
-import com.server.pnd.project.repository.ProjectRepository;
+import com.server.pnd.repo.dto.RepoCreatedRequestDto;
+import com.server.pnd.repo.dto.RepoCreatedResponseDto;
+import com.server.pnd.repo.dto.RepoSearchDetailResponseDto;
+import com.server.pnd.repo.dto.RepoSearchListResponseDto;
+import com.server.pnd.repo.repository.RepoRepository;
 import com.server.pnd.repository.repository.RepositoryRepository;
 import com.server.pnd.util.jwt.JwtUtil;
 import com.server.pnd.util.response.CustomApiResponse;
@@ -21,15 +21,13 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ProjectServiceImpl implements ProjectService{
+public class RepoServiceImpl implements RepoService {
     private final JwtUtil jwtUtil;
-    private final RepositoryRepository repositoryRepository;
-    private final ProjectRepository projectRepository;
-    private final ParticipationRepository participationRepository;
+    private final RepoRepository repoRepository;
     private final ClassDiagramRepository classDiagramRepository;
 
     @Override
-    public ResponseEntity<CustomApiResponse<?>> createProject(String authorizationHeader, ProjectCreatedRequestDto projectCreatedRequestDto) {
+    public ResponseEntity<CustomApiResponse<?>> createRepo(String authorizationHeader, RepoCreatedRequestDto projectCreatedRequestDto) {
         Optional<User> foundUser = jwtUtil.findUserByJwtToken(authorizationHeader);
         // 토큰에 해당하는 유저가 없는 경우 : 404
         if (foundUser.isEmpty()) {
@@ -38,7 +36,7 @@ public class ProjectServiceImpl implements ProjectService{
         }
         User user = foundUser.get();
 
-        Optional<Repo> foundRepository = repositoryRepository.findById(projectCreatedRequestDto.getRepositoryId());
+        Optional<Repo> foundRepository = repoRepository.findById(projectCreatedRequestDto.getRepoId());
         // 해당 Id에 해당하는 레포가 없는 경우 : 404
         if (foundRepository.isEmpty()) {
             CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 ID를 가진 레포지토리가 존재하지 않습니다.");
@@ -46,26 +44,17 @@ public class ProjectServiceImpl implements ProjectService{
         }
         Repo repo = foundRepository.get();
 
-        // 프로젝트 생성
-        Project project = Project.builder()
-                .repo(repo)
+        // 레포지토리 생성
+        Repo repo = Repo.builder()
                 .period(projectCreatedRequestDto.getPeriod())
                 .image(projectCreatedRequestDto.getImage())
-                .part(projectCreatedRequestDto.getPart())
                 .title(projectCreatedRequestDto.getTitle())
                 .build();
-        projectRepository.save(project);
-
-        // participation 연관관계 테이블 생성
-        Participation participation = Participation.builder()
-                .user(user)
-                .project(project)
-                .build();
-        participationRepository.save(participation);
+        repoRepository.save(repo);
 
         // data
-        ProjectCreatedResponseDto data = ProjectCreatedResponseDto.builder()
-                .projectId(project.getId())
+        RepoCreatedResponseDto data = RepoCreatedResponseDto.builder()
+                .repoId(repo.getId())
                 .build();
         // 프로젝트 생성 성공 : 201
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(201, data, "프로젝트 생성 완료했습니다.");
@@ -74,7 +63,7 @@ public class ProjectServiceImpl implements ProjectService{
 
     // 프로젝트 전체 조회
     @Override
-    public ResponseEntity<CustomApiResponse<?>> searchProjectList(String authorizationHeader) {
+    public ResponseEntity<CustomApiResponse<?>> searchRepoList(String authorizationHeader) {
         Optional<User> foundUser = jwtUtil.findUserByJwtToken(authorizationHeader);
         // 토큰에 해당하는 유저가 없는 경우 : 404
         if (foundUser.isEmpty()) {
@@ -83,18 +72,10 @@ public class ProjectServiceImpl implements ProjectService{
         }
         User user = foundUser.get();
 
-        List<Participation> participations = participationRepository.findByUserId(user.getId());
-
-        // 성공 - 조회할 프로젝트가 없는 경우 : 200
-        if (participations.isEmpty()) {
-            CustomApiResponse<?> res = CustomApiResponse.createSuccess(200,  null,"아직 생성한 프로젝트가 없습니다.");
-            return ResponseEntity.status(200).body(res);
-        }
-
         // data
-        List<ProjectSearchListResponseDto> data = new ArrayList<>();
+        List<RepoSearchListResponseDto> data = new ArrayList<>();
         for (Participation participation : participations) {
-            ProjectSearchListResponseDto projectSearchListResponseDto = ProjectSearchListResponseDto.builder()
+            RepoSearchListResponseDto projectSearchListResponseDto = RepoSearchListResponseDto.builder()
                     .image(participation.getProject().getImage())
                     .title(participation.getProject().getTitle())
                     .build();
@@ -108,16 +89,16 @@ public class ProjectServiceImpl implements ProjectService{
 
     // 프로젝트 상세 조회
     @Override
-    public ResponseEntity<CustomApiResponse<?>> searchProjectDetail(Long projectId) {
-        Optional<Project> foundProject = projectRepository.findById(projectId);
+    public ResponseEntity<CustomApiResponse<?>> searchRepoDetail(Long repoId) {
+        Optional<Repo> foundRepo = repoRepository.findById(repoId);
 
         // 프로젝트 ID에 해당하는 프로젝트가 없는 경우 : 404
-        if (foundProject.isEmpty()) {
+        if (foundRepo.isEmpty()) {
             return ResponseEntity.status(404).body(CustomApiResponse.createFailWithoutData(404, "해당 ID를 가진 프로젝트가 존재하지 않습니다."));
         }
-        Project project = foundProject.get();
+        Repo repo = foundRepo.get();
 
-        Optional<Diagram> foundClassDiagram = classDiagramRepository.findByProjectId(project.getId());
+        Optional<Diagram> foundClassDiagram = classDiagramRepository.findByProjectId(repo.getId());
         // 클래스다이어그램에 플로우차트 존재하지 않음 : 404
         if (foundClassDiagram.isEmpty()) {
             return ResponseEntity.status(404).body(CustomApiResponse.createFailWithoutData(404, "해당 클래스다이어그램에 flowChart가 존재하지 않습니다. (클래스다이어그램 생성시 flowchart 들어가지 않음)"));
@@ -125,11 +106,11 @@ public class ProjectServiceImpl implements ProjectService{
         Diagram diagram = foundClassDiagram.get();
 
         // data
-        ProjectSearchDetailResponseDto data = ProjectSearchDetailResponseDto.builder()
-                .title(project.getTitle())
-                .period(project.getPeriod())
-                .createdAt(project.localDateTimeToString())
-                .image(project.getImage())
+        RepoSearchDetailResponseDto data = RepoSearchDetailResponseDto.builder()
+                .title(repo.getTitle())
+                .period(repo.getPeriod())
+                .createdAt(repo.localDateTimeToString())
+                .image(repo.getImage())
                 .classDiagram(diagram.getFlowchart())
                 .build();
 

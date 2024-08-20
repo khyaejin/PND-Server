@@ -1,9 +1,9 @@
 package com.server.pnd.test.service;
 
-import com.server.pnd.classDiagram.repository.ClassDiagramRepository;
+import com.server.pnd.diagram.repository.ClassDiagramRepository;
 import com.server.pnd.domain.Diagram;
 import com.server.pnd.domain.Project;
-import com.server.pnd.project.repository.ProjectRepository;
+import com.server.pnd.repo.repository.RepoRepository;
 import com.server.pnd.test.dto.ClassDiagramCreatedRequestDto;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
-    private final ProjectRepository projectRepository;
+    private final RepoRepository projectRepository;
     private final ClassDiagramRepository classDiagramRepository;
 
     @Override

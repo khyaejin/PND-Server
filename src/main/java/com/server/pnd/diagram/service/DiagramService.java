@@ -1,10 +1,10 @@
-package com.server.pnd.classDiagram.service;
+package com.server.pnd.diagram.service;
 
-import com.server.pnd.classDiagram.dto.DiagramRequestDto;
+import com.server.pnd.diagram.dto.DiagramRequestDto;
 import com.server.pnd.domain.Repo;
 import com.server.pnd.gpt.dto.ChatCompletionDto;
 import com.server.pnd.gpt.dto.ChatRequestMsgDto;
-import com.server.pnd.repository.repository.RepositoryRepository;
+import com.server.pnd.repo.repository.RepoRepository;
 import com.server.pnd.util.response.CustomApiResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class DiagramService {
-    private final RepositoryRepository repositoryRepository;
+    private final RepoRepository repositoryRepository;
     private final QuestionService questionService;
 
     // 클래스 다이어그램
@@ -38,7 +38,7 @@ public class DiagramService {
 
         // 레포지토리가 존재하는 경우
         Repo repo = optionalRepository.get();
-        String repoUrl = repo.getHtmlUrl(); // 레포지토리 링크 가져오기
+        String repoUrl = repo.getRepoURL(); // 레포지토리 링크 가져오기
 
         // 메시지 생성
         String systemMessage =
@@ -112,7 +112,7 @@ public class DiagramService {
 
         // 레포지토리가 존재하는 경우
         Repo repo = optionalRepository.get();
-        String repoUrl = repo.getHtmlUrl(); // 레포지토리 링크 가져오기
+        String repoUrl = repo.getRepoURL(); // 레포지토리 링크 가져오기
 
         // 메시지 생성
         String systemMessage =

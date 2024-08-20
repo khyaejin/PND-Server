@@ -1,6 +1,5 @@
 package com.server.pnd.test.controller;
 
-import com.server.pnd.project.dto.ProjectCreatedRequestDto;
 import com.server.pnd.test.dto.ClassDiagramCreatedRequestDto;
 import com.server.pnd.test.service.TestService;
 import com.server.pnd.util.response.CustomApiResponse;

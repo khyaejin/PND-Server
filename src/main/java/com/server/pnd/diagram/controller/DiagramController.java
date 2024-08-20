@@ -1,7 +1,7 @@
-package com.server.pnd.classDiagram.controller;
+package com.server.pnd.diagram.controller;
 
-import com.server.pnd.classDiagram.dto.DiagramRequestDto;
-import com.server.pnd.classDiagram.service.DiagramService;
+import com.server.pnd.diagram.dto.DiagramRequestDto;
+import com.server.pnd.diagram.service.DiagramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
