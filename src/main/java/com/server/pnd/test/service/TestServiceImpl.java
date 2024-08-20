@@ -1,7 +1,7 @@
 package com.server.pnd.test.service;
 
 import com.server.pnd.classDiagram.repository.ClassDiagramRepository;
-import com.server.pnd.domain.ClassDiagram;
+import com.server.pnd.domain.Diagram;
 import com.server.pnd.domain.Project;
 import com.server.pnd.project.repository.ProjectRepository;
 import com.server.pnd.test.dto.ClassDiagramCreatedRequestDto;
@@ -28,7 +28,7 @@ public class TestServiceImpl implements TestService {
         }
         Project project = foundProject.get();
 
-        String flowchart = "       classDiagram\n" +
+        String flowchart = "       diagram\n" +
                 "            GameController --> GameFrame\n" +
                 "            GameController --> WordGenerator\n" +
                 "            GameController --> Timer\n" +
@@ -79,11 +79,11 @@ public class TestServiceImpl implements TestService {
                 "            }"; //gpt api를 사용하여 이 부분 가공
 
         // save
-        ClassDiagram classDiagram = ClassDiagram.builder()
+        Diagram diagram = Diagram.builder()
                 .project(project)
                 .flowchart(flowchart)
                 .build();
-        classDiagramRepository.save(classDiagram);
+        classDiagramRepository.save(diagram);
         return ResponseEntity.status(201).body(CustomApiResponse.createSuccess(201, null,"플로우차트 생성 완료되었습니다."));
     }
 }

@@ -117,12 +117,12 @@ public class ProjectServiceImpl implements ProjectService{
         }
         Project project = foundProject.get();
 
-        Optional<ClassDiagram> foundClassDiagram = classDiagramRepository.findByProjectId(project.getId());
+        Optional<Diagram> foundClassDiagram = classDiagramRepository.findByProjectId(project.getId());
         // 클래스다이어그램에 플로우차트 존재하지 않음 : 404
         if (foundClassDiagram.isEmpty()) {
             return ResponseEntity.status(404).body(CustomApiResponse.createFailWithoutData(404, "해당 클래스다이어그램에 flowChart가 존재하지 않습니다. (클래스다이어그램 생성시 flowchart 들어가지 않음)"));
         }
-        ClassDiagram classDiagram = foundClassDiagram.get();
+        Diagram diagram = foundClassDiagram.get();
 
         // data
         ProjectSearchDetailResponseDto data = ProjectSearchDetailResponseDto.builder()
@@ -130,7 +130,7 @@ public class ProjectServiceImpl implements ProjectService{
                 .period(project.getPeriod())
                 .createdAt(project.localDateTimeToString())
                 .image(project.getImage())
-                .classDiagram(classDiagram.getFlowchart())
+                .classDiagram(diagram.getFlowchart())
                 .build();
 
         // 프로젝트 조회 성공 (200)
