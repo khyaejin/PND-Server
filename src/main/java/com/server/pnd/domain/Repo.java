@@ -1,8 +1,6 @@
 package com.server.pnd.domain;
 
-import com.server.pnd.util.entity.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -17,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "REPOSITORY")
-public class Repository{
+public class Repo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,6 +1,5 @@
 package com.server.pnd.classDiagram.dto;
 
-import com.server.pnd.domain.Repository;
 import lombok.*;
 
 @Getter

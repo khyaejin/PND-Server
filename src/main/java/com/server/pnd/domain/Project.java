@@ -2,7 +2,6 @@ package com.server.pnd.domain;
 
 import com.server.pnd.util.entity.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -20,7 +19,7 @@ public class Project extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "repository_id")
-    private Repository repository; // 레포지토리 ID
+    private Repo repo; // 레포지토리 ID
 
     @NotNull
     @Column(nullable = false)

@@ -1,6 +1,6 @@
 package com.server.pnd.user.service;
 
-import com.server.pnd.domain.Repository;
+import com.server.pnd.domain.Repo;
 import com.server.pnd.domain.User;
 import com.server.pnd.repository.repository.RepositoryRepository;
 import com.server.pnd.user.dto.SearchProfileResponseDto;
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService{
         }
         User user = foundUser.get();
 
-        List<Repository> repositories= repositoryRepository.findByUserId(user.getId());
+        List<Repo> repositories= repositoryRepository.findByUserId(user.getId());
 
         // 조회 성공 - 해당 회원의 깃허브 레포지토리가 존재하지 않는 경우 : 200
         if (repositories.isEmpty()) {
@@ -68,17 +68,17 @@ public class UserServiceImpl implements UserService{
         // 조회 성공 - 해당 회원의 깃허브 레포지토리가 존재하는 경우 : 200
         List<SearchRepositoryResponseDto> responseDtos = new ArrayList<>();
 
-        for (Repository repository : repositories) {
+        for (Repo repo : repositories) {
             SearchRepositoryResponseDto responseDto = SearchRepositoryResponseDto.builder()
-                    .id(repository.getId())
-                    .name(repository.getName())
-                    .description(repository.getDescription())
-                    .stars(repository.getStars())
-                    .forksCount(repository.getForksCount())
-                    .openIssues(repository.getOpenIssues())
-                    .watchers(repository.getWatchers())
-                    .language(repository.getLanguage())
-                    .createdAt(repository.getFormattedCreatedAt()).build();
+                    .id(repo.getId())
+                    .name(repo.getName())
+                    .description(repo.getDescription())
+                    .stars(repo.getStars())
+                    .forksCount(repo.getForksCount())
+                    .openIssues(repo.getOpenIssues())
+                    .watchers(repo.getWatchers())
+                    .language(repo.getLanguage())
+                    .createdAt(repo.getFormattedCreatedAt()).build();
             responseDtos.add(responseDto);
         }
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, responseDtos, "레포지토리 전체 조회 성공했습니다.");

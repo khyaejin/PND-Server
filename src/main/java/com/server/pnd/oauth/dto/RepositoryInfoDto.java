@@ -1,14 +1,11 @@
 package com.server.pnd.oauth.dto;
 
-import com.server.pnd.domain.Repository;
+import com.server.pnd.domain.Repo;
 import com.server.pnd.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -27,8 +24,8 @@ public class RepositoryInfoDto {
     private String updatedAt;
     private User user;
 
-    public Repository toEntity() {
-        return Repository.builder()
+    public Repo toEntity() {
+        return Repo.builder()
                 .user(user)
                 .name(name)
                 .htmlUrl(htmlUrl)
