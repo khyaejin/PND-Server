@@ -18,29 +18,11 @@ public class Report extends BaseEntity {
     private Long id;
 
     @OneToOne
-    @NotEmpty @JoinColumn(name = "project_id")
-    private Project project;
+    @NotEmpty @JoinColumn(name = "repo_id")
+    private Repo repo;
 
-    @NotEmpty
-    private String description; // 한줄 요약 설명
+    private String title;
 
-    @NotEmpty
-    private String spec; // 사용 스펙
-
-    private String accomplishment; // 성과
-
-    private String weakness; // 문제점 및 문제 해결
-
-    private String strength; // 잘된 점
-
-    private String improvement; // 개선할 점
-
-    private String recommendations; // 학습 추천
-
-    @JoinColumn(name = "custom_question")
-    private String customQuestion; // 프로젝트 맞춤 질문
-
-    @JoinColumn(name = "image_link")
-    private String imageLink; // 이미지 URL
-
+    @JoinColumn(name = "image")
+    private String image; // 이미지 URL
 }

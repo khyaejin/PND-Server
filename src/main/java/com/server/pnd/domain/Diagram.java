@@ -22,18 +22,21 @@ public class Diagram extends BaseEntity {
     @JoinColumn(name = "repo_id")
     private Repo repo;
 
-    @Column(columnDefinition = "TEXT")
-    private String class_script;
-    @Column(columnDefinition = "TEXT")
-    private String class_script_gpt;
+    // 클래스 다이어그램
+    @Column(columnDefinition = "TEXT", name = "class_script")
+    private String classScript;
+    @Column(columnDefinition = "TEXT", name = "class_script_gpt")
+    private String classScriptGpt;
 
-    @Column(columnDefinition = "TEXT")
-    private String sequence_script  ;
-    @Column(columnDefinition = "TEXT")
-    private String sequence_script_gpt;
+    // 시퀀스 다이어그램
+    @Column(columnDefinition = "TEXT", name = "sequence_script")
+    private String sequenceScript  ;
+    @Column(columnDefinition = "TEXT", name = "sequence_script_gpt")
+    private String sequenceScriptGpt;
 
-    @Column(columnDefinition = "TEXT")
-    private String erd_script;
-    @Column(columnDefinition = "TEXT")
-    private String erd_script_gpt;
+    //ERD
+    @Column(columnDefinition = "TEXT", name = "erd_script")
+    private String erdScript;
+    @Column(columnDefinition = "TEXT", name = "erd_script_gpt")
+    private String erdScriptGpt;
 }

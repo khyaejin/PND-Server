@@ -2,7 +2,6 @@ package com.server.pnd.domain;
 
 import com.server.pnd.util.entity.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -18,7 +17,7 @@ public class ReadMe extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "repo_id")
     private Repo repo;
 
@@ -28,5 +27,4 @@ public class ReadMe extends BaseEntity {
     private String readme_script;
 
     private String readme_script_gpt;
-
 }
