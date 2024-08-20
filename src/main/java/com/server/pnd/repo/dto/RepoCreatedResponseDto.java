@@ -1,4 +1,4 @@
-package com.server.pnd.project.dto;
+package com.server.pnd.repo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Builder
-public class ProjectCreatedResponseDto {
-    private Long projectId;
+public class RepoCreatedResponseDto {
+    private Long repoId;
 }

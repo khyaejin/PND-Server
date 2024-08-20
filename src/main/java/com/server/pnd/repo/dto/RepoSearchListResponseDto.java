@@ -1,4 +1,4 @@
-package com.server.pnd.project.dto;
+package com.server.pnd.repo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Builder
-public class ProjectSearchListResponseDto {
+public class RepoSearchListResponseDto {
     private String image; // 썸네일
     private String title; // 제목
 }

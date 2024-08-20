@@ -1,4 +1,4 @@
-package com.server.pnd.classDiagram.repository;
+package com.server.pnd.diagram.repository;
 
 import com.server.pnd.domain.SequenceDiagram;
 import org.springframework.data.jpa.repository.JpaRepository;

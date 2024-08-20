@@ -1,4 +1,4 @@
-package com.server.pnd.classDiagram.service;
+package com.server.pnd.diagram.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
