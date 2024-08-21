@@ -1,6 +1,8 @@
 package com.server.pnd.diagram.service;
 
 import com.server.pnd.diagram.dto.DiagramRequestDto;
+import com.server.pnd.diagram.repository.DiagramRepository;
+import com.server.pnd.domain.Diagram;
 import com.server.pnd.domain.Repo;
 import com.server.pnd.gpt.dto.ChatCompletionDto;
 import com.server.pnd.gpt.dto.ChatRequestMsgDto;
@@ -19,16 +21,17 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class DiagramService {
-    private final RepoRepository repositoryRepository;
+    private final RepoRepository repoRepository;
+    private final DiagramRepository diagramRepository;
     private final QuestionService questionService;
 
-    // 클래스 다이어그램
+    // GPT 클래스 다이어그램
     // 레포지토리 링크와 함께 질문하여 클래스 다이어그램 제작을 위한 플로우차트 답변 받기
     public ResponseEntity<?> recieveClassDiagramAnswer(DiagramRequestDto requestDto) {
         Long repoId = requestDto.getRepositoryId(); // 프론트엔드에서 받은 repositoryId
 
         // repositoryId를 사용하여 Repo 객체를 조회 (DB에서 가져오기)
-        Optional<Repo> optionalRepository = repositoryRepository.findById(repoId);
+        Optional<Repo> optionalRepository = repoRepository.findById(repoId);
 
         // 레포지토리가 존재하지 않는 경우
         if (!optionalRepository.isPresent()) {
@@ -38,6 +41,24 @@ public class DiagramService {
 
         // 레포지토리가 존재하는 경우
         Repo repo = optionalRepository.get();
+
+        // Diagram 엔티티가 존재하는지 확인
+        Optional<Diagram> foundDiagram = diagramRepository.findByRepoId(repoId);
+        Diagram diagram;
+
+        if (foundDiagram.isPresent()) {
+            diagram = foundDiagram.get();
+            // 이미 classScriptGpt가 저장되어 있다면 해당 값을 반환
+            if (!diagram.getClassScriptGpt().isBlank()) {
+                return ResponseEntity.ok(CustomApiResponse.createSuccess(200, diagram.getClassScriptGpt(), "이미 저장된 GPT 스크립트를 반환합니다."));
+            }
+        } else {
+            // Diagram 엔티티가 존재하지 않으면 새로 생성
+            diagram = Diagram.builder()
+                    .repo(repo)
+                    .build();
+        }
+
         String repoUrl = repo.getRepoURL(); // 레포지토리 링크 가져오기
 
         // 메시지 생성
@@ -93,16 +114,20 @@ public class DiagramService {
         // GPT API 호출
         String result = questionService.callGptApi(chatCompletionDto);
 
+        // 결과를 Diagram 엔티티의 classScriptGpt 필드에 저장
+        diagram.updateClassScriptGpt(result);
+        diagramRepository.save(diagram);  // 엔티티를 저장하여 DB에 반영
+
         return ResponseEntity.ok(CustomApiResponse.createSuccess(200, result, "Open AI API와 성공적으로 통신을 하였습니다."));
     }
 
-    // 시퀀스 다이어그램
+    // GPT 시퀀스 다이어그램
     // 레포지토리 링크와 함께 질문하여 시퀀스 다이어그램 제작을 위한 플로우차트 답변 받기
     public ResponseEntity<?> recieveSequenceDiagramAnswer(DiagramRequestDto requestDto) {
         Long repoId = requestDto.getRepositoryId(); // 프론트엔드에서 받은 repositoryId
 
         // repositoryId를 사용하여 Repo 객체를 조회 (DB에서 가져오기)
-        Optional<Repo> optionalRepository = repositoryRepository.findById(repoId);
+        Optional<Repo> optionalRepository = repoRepository.findById(repoId);
 
         // 레포지토리가 존재하지 않는 경우
         if (!optionalRepository.isPresent()) {
@@ -112,6 +137,24 @@ public class DiagramService {
 
         // 레포지토리가 존재하는 경우
         Repo repo = optionalRepository.get();
+
+        // Diagram 엔티티가 존재하는지 확인
+        Optional<Diagram> foundDiagram = diagramRepository.findByRepoId(repoId);
+        Diagram diagram;
+
+        if (foundDiagram.isPresent()) {
+            diagram = foundDiagram.get();
+            // 이미 sequenceScriptGpt가 저장되어 있다면 해당 값을 반환
+            if (!diagram.getSequenceScriptGpt().isBlank()) {
+                return ResponseEntity.ok(CustomApiResponse.createSuccess(200, diagram.getSequenceScriptGpt(), "이미 저장된 GPT 스크립트를 반환합니다."));
+            }
+        } else {
+            // Diagram 엔티티가 존재하지 않으면 새로 생성
+            diagram = Diagram.builder()
+                    .repo(repo)
+                    .build();
+        }
+
         String repoUrl = repo.getRepoURL(); // 레포지토리 링크 가져오기
 
         // 메시지 생성
@@ -154,6 +197,10 @@ public class DiagramService {
 
         // GPT API 호출
         String result = questionService.callGptApi(chatCompletionDto);
+
+        // 결과를 Diagram 엔티티의 sequenceScriptGpt 필드에 저장
+        diagram.updateSequenceScriptGpt(result);
+        diagramRepository.save(diagram);  // 엔티티를 저장하여 DB에 반영
 
         return ResponseEntity.ok(CustomApiResponse.createSuccess(200, result, "Open AI API와 성공적으로 통신을 하였습니다."));
     }

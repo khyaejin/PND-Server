@@ -2,7 +2,7 @@ package com.server.pnd.user.service;
 
 import com.server.pnd.domain.Repo;
 import com.server.pnd.domain.User;
-import com.server.pnd.repository.repository.RepositoryRepository;
+import com.server.pnd.repo.repository.RepoRepository;
 import com.server.pnd.user.dto.SearchProfileResponseDto;
 import com.server.pnd.user.dto.SearchRepositoryResponseDto;
 import com.server.pnd.user.repository.UserRepository;
@@ -20,7 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
-    private final RepositoryRepository repositoryRepository;
+    private final RepoRepository repoRepository;
     private final JwtUtil jwtUtil;
 
     // 프로필 조회
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService{
         }
         User user = foundUser.get();
 
-        List<Repo> repositories= repositoryRepository.findByUserId(user.getId());
+        List<Repo> repositories= repoRepository.findByUserId(user.getId());
 
         // 조회 성공 - 해당 회원의 깃허브 레포지토리가 존재하지 않는 경우 : 200
         if (repositories.isEmpty()) {
@@ -71,13 +71,13 @@ public class UserServiceImpl implements UserService{
         for (Repo repo : repositories) {
             SearchRepositoryResponseDto responseDto = SearchRepositoryResponseDto.builder()
                     .id(repo.getId())
-                    .name(repo.getName())
-                    .description(repo.getDescription())
-                    .stars(repo.getStars())
-                    .forksCount(repo.getForksCount())
-                    .openIssues(repo.getOpenIssues())
-                    .watchers(repo.getWatchers())
-                    .language(repo.getLanguage())
+                    .name(repo.getRepoName())
+                    .description(repo.getRepoDescription())
+                    .stars(repo.getRepoStars())
+                    .forksCount(repo.getRepoForksCount())
+                    .openIssues(repo.getRepoOpenIssues())
+                    .watchers(repo.getRepoWatcher())
+                    .language(repo.getRepoLanguage())
                     .createdAt(repo.getFormattedCreatedAt()).build();
             responseDtos.add(responseDto);
         }

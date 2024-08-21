@@ -2,10 +2,10 @@ package com.server.pnd.oauth.service;
 
 import com.server.pnd.domain.Repo;
 import com.server.pnd.domain.User;
-import com.server.pnd.repository.repository.RepositoryRepository;
 import com.server.pnd.oauth.dto.SocialLoginResponseDto;
 import com.server.pnd.oauth.dto.TokenDto;
 import com.server.pnd.oauth.dto.UserInfo;
+import com.server.pnd.repo.repository.RepoRepository;
 import com.server.pnd.util.jwt.JwtUtil;
 import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.response.CustomApiResponse;
@@ -35,7 +35,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private static final Logger logger = LoggerFactory.getLogger(GithubSocialLoginServiceImpl.class);
-    private final RepositoryRepository repositoryRepository;
+    private final RepoRepository repoRepository;
 
     @Value("${spring.security.oauth2.client.registration.github.client-id}")
     private String githubClientId;
@@ -244,19 +244,19 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                         // repo build
                         Repo repository = Repo.builder()
                                 .user(user)
-                                .name(name)
-                                .htmlUrl(htmlUrl)
-                                .stars(stars)
-                                .description(description)
-                                .forksCount(forksCount)
-                                .openIssues(openIssues)
-                                .language(language)
-                                .watchers(watchers)
+                                .repoName(name)
+                                .repoURL(htmlUrl)
+                                .repoStars(stars)
+                                .repoDescription(description)
+                                .repoForksCount(forksCount)
+                                .repoOpenIssues(openIssues)
+                                .repoLanguage(language)
+                                .repoWatcher(watchers)
                                 .createdAt(createdAt)
                                 .updatedAt(updatedAt).build();
                         repositories.add(repository);
 
-                        repositoryRepository.save(repository);
+                        repoRepository.save(repository);
                     }
                 }
             } else {

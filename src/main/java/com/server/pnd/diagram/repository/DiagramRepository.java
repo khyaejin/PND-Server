@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ClassDiagramRepository extends JpaRepository<Diagram, Long> {
-    Optional<Diagram> findByProjectId(Long id);
+public interface DiagramRepository extends JpaRepository<Diagram, Long> {
+    Optional<Diagram> findByRepoId(Long id);
 }

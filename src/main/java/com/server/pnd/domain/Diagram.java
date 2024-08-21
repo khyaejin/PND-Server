@@ -39,4 +39,14 @@ public class Diagram extends BaseEntity {
     private String erdScript;
     @Column(columnDefinition = "TEXT", name = "erd_script_gpt")
     private String erdScriptGpt;
+
+    // classScriptGpt 필드를 설정하는 메서드
+    public void updateClassScriptGpt(String classScriptGpt) {
+        this.classScriptGpt = classScriptGpt;
+    }
+
+    // sequenceScriptGpt 필드를 설정하는 메서드
+    public void updateSequenceScriptGpt(String sequenceScriptGpt) {
+        this.sequenceScriptGpt = sequenceScriptGpt;
+    }
 }
