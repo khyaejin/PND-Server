@@ -1,4 +1,4 @@
-package com.server.pnd.markdown.dto;
+package com.server.pnd.readme.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Builder
-public class MarkdownSavedResponseDto {
-    private Long markdownId;
+public class ReadmeSavedResponseDto {
+    private Long readmeId;
 }
