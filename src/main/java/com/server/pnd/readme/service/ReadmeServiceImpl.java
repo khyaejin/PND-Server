@@ -66,42 +66,6 @@ public class ReadmeServiceImpl implements ReadmeService{
     }
 
     @Override
-    public ResponseEntity<CustomApiResponse<?>> searchReadmeList(String authorizationHeader) {
-        Optional<User> foundUser = jwtUtil.findUserByJwtToken(authorizationHeader);
-
-        // 토큰에 해당하는 유저가 없는 경우 : 404
-        if (foundUser.isEmpty()) {
-            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "유효하지 않은 토큰이거나, 해당 ID에 해당하는 사용자가 존재하지 않습니다.");
-            return ResponseEntity.status(404).body(res);
-        }
-        User user = foundUser.get();
-
-        // 해당 회원의 마크다운 파일들 가져오기
-        List<Readme> readmes = readmeRepository.findByUserId(user.getId());
-
-        // 조회 성공 - 회원의 마크다운 파일이 존재하지 않는 경우 : 200
-        if (readmes.isEmpty()) {
-            return ResponseEntity.status(200).body(CustomApiResponse.createSuccess(200,null,"사용자의 마크다운 파일이 존재하지 않습니다."));
-        }
-
-        // data
-        List<ReadmeListSearchResponseDto> responseDtos = new ArrayList<>();
-
-        for (Readme readme : readmes) {
-            ReadmeListSearchResponseDto responseDto = ReadmeListSearchResponseDto.builder()
-                    .readmeId(readme.getId())
-                    .content(readme.getReadme_script())
-                    .title(readme.getTitle())
-                    .build();
-            responseDtos.add(responseDto);
-        }
-
-        // 조회 성공 - 회원의 마크다운 파일이 존재하는 경우 : 200
-        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, responseDtos, "마크다운 파일 조회 완료되었습니다.");
-        return ResponseEntity.status(200).body(res);
-    }
-
-    @Override
     public ResponseEntity<CustomApiResponse<?>> searchReadme(Long readmeId) {
         Optional<Readme> foundReadme = readmeRepository.findById(readmeId);
 

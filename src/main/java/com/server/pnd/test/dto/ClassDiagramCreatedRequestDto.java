@@ -8,5 +8,5 @@ import lombok.*;
 @NoArgsConstructor // 기본 생성자 추가
 @Builder
 public class ClassDiagramCreatedRequestDto {
-    private Long projectId;
+    private Long repoId;
 }

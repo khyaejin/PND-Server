@@ -21,13 +21,6 @@ public class ReadmeController {
         return readmeService.savedReadme(readmeSavedRequestDto);
     }
 
-    // 마크다운 문서 전체 조회
-    @GetMapping
-    public ResponseEntity<CustomApiResponse<?>> searchReadmeList(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
-        return readmeService.searchReadmeList(authorizationHeader);
-    }
-
     // 마크다운 문서 세부 조회
     @GetMapping("/{readme_id}")
     public ResponseEntity<CustomApiResponse<?>> searchReadme(@PathVariable("readme_id") Long readmeId) {
