@@ -109,7 +109,7 @@ public class RepoServiceImpl implements RepoService {
         RepoSearchDetailResponseDto data = RepoSearchDetailResponseDto.builder()
                 .title(repo.getTitle())
                 .period(repo.getPeriod())
-                .createdAt(repo.localDateTimeToString())
+                .createdAt(repo.getCreatedAt())
                 .image(repo.getImage())
                 .classDiagram(diagram.getClassScript())
                 .build();

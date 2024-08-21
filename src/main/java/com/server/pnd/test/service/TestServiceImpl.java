@@ -1,9 +1,8 @@
-/*
 package com.server.pnd.test.service;
 
 import com.server.pnd.diagram.repository.DiagramRepository;
 import com.server.pnd.domain.Diagram;
-import com.server.pnd.domain.Project;
+import com.server.pnd.domain.Repo;
 import com.server.pnd.repo.repository.RepoRepository;
 import com.server.pnd.test.dto.ClassDiagramCreatedRequestDto;
 import com.server.pnd.util.response.CustomApiResponse;
@@ -16,18 +15,18 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
-    private final RepoRepository projectRepository;
+    private final RepoRepository repoRepository;
     private final DiagramRepository classDiagramRepository;
 
     @Override
     public ResponseEntity<CustomApiResponse<?>> createClassDiagram(ClassDiagramCreatedRequestDto classDiagramCreatedRequestDto) {
-        Optional<Project> foundProject = projectRepository.findById(classDiagramCreatedRequestDto.getProjectId());
+        Optional<Repo> foundRepo = repoRepository.findById(classDiagramCreatedRequestDto.getRepoId());
 
         // 프로젝트 ID에 해당하는 프로젝트가 없는 경우 : 404
-        if (foundProject.isEmpty()) {
+        if (foundRepo.isEmpty()) {
             return ResponseEntity.status(404).body(CustomApiResponse.createFailWithoutData(404, "해당 ID를 가진 프로젝트가 존재하지 않습니다."));
         }
-        Project project = foundProject.get();
+        Repo repo = foundRepo.get();
 
         String flowchart = "       diagram\n" +
                 "            GameController --> GameFrame\n" +
@@ -81,11 +80,10 @@ public class TestServiceImpl implements TestService {
 
         // save
         Diagram diagram = Diagram.builder()
-                .project(project)
-                .flowchart(flowchart)
+                .repo(repo)
+                .classScriptGpt(flowchart)
                 .build();
         classDiagramRepository.save(diagram);
         return ResponseEntity.status(201).body(CustomApiResponse.createSuccess(201, null,"플로우차트 생성 완료되었습니다."));
     }
 }
-*/

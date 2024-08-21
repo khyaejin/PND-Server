@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "REPO")
-public class Repo extends BaseEntity {
+public class Repo{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
