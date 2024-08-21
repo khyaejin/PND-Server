@@ -1,10 +1,21 @@
 package com.server.pnd.report.controller;
 
+import com.server.pnd.report.service.ReportService;
+import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("api/pnd")
 public class ReportController {
-    // 클래스다이어그램 생성 API?, repositoryId, token 필요함 (그외에 필요한 거 있으면 추가)
+    final private ReportService reportService;
+
+    @PostMapping("/report/{repoId}")
+    public ResponseEntity<CustomApiResponse<?>> createReport(
+            @PathVariable("repoId") Long repoId){
+        return reportService.createReport(repoId);
+    }
+
 }
