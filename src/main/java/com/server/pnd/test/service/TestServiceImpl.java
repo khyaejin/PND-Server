@@ -1,6 +1,7 @@
+/*
 package com.server.pnd.test.service;
 
-import com.server.pnd.diagram.repository.ClassDiagramRepository;
+import com.server.pnd.diagram.repository.DiagramRepository;
 import com.server.pnd.domain.Diagram;
 import com.server.pnd.domain.Project;
 import com.server.pnd.repo.repository.RepoRepository;
@@ -16,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
     private final RepoRepository projectRepository;
-    private final ClassDiagramRepository classDiagramRepository;
+    private final DiagramRepository classDiagramRepository;
 
     @Override
     public ResponseEntity<CustomApiResponse<?>> createClassDiagram(ClassDiagramCreatedRequestDto classDiagramCreatedRequestDto) {
@@ -87,3 +88,4 @@ public class TestServiceImpl implements TestService {
         return ResponseEntity.status(201).body(CustomApiResponse.createSuccess(201, null,"플로우차트 생성 완료되었습니다."));
     }
 }
+*/

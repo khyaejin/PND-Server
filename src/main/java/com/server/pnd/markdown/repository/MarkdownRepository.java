@@ -1,3 +1,4 @@
+/*
 package com.server.pnd.markdown.repository;
 
 import com.server.pnd.domain.Markdown;
@@ -14,3 +15,4 @@ public interface MarkdownRepository extends JpaRepository<Markdown, Long> {
 
     List<Markdown> findByUserId(Long id);
 }
+*/

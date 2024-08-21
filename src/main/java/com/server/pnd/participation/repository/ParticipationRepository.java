@@ -1,3 +1,4 @@
+/*
 package com.server.pnd.participation.repository;
 
 import com.server.pnd.domain.Participation;
@@ -10,3 +11,4 @@ import java.util.List;
 public interface ParticipationRepository extends JpaRepository<Participation, Long> {
     List<Participation> findByUserId(Long id);
 }
+*/

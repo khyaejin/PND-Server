@@ -12,14 +12,14 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class RepositoryInfoDto {
-    private String name;
-    private String htmlUrl;
-    private int stars;
-    private String description;
-    private int forksCount;
-    private int openIssues;
-    private int watchers;
-    private String language;
+    private String repoName;
+    private String repoUrl;
+    private int repoStars;
+    private String repoDescription;
+    private int repoForksCount;
+    private int repoOpenIssues;
+    private int repoWatcher;
+    private String repoLanguage;
     private String createdAt;
     private String updatedAt;
     private User user;
@@ -27,14 +27,14 @@ public class RepositoryInfoDto {
     public Repo toEntity() {
         return Repo.builder()
                 .user(user)
-                .name(name)
-                .htmlUrl(htmlUrl)
-                .stars(stars)
-                .description(description)
-                .forksCount(forksCount)
-                .openIssues(openIssues)
-                .language(language)
-                .watchers(watchers)
+                .repoName(repoName)
+                .repoURL(repoUrl)
+                .repoStars(repoStars)
+                .repoDescription(repoDescription)
+                .repoForksCount(repoForksCount)
+                .repoOpenIssues(repoOpenIssues)
+                .repoLanguage(repoLanguage)
+                .repoWatcher(repoWatcher)
                 .createdAt(createdAt)
                 .updatedAt(updatedAt)
                 .build();

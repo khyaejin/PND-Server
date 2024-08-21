@@ -1,14 +1,12 @@
 package com.server.pnd.repo.service;
 
-import com.server.pnd.diagram.repository.ClassDiagramRepository;
+import com.server.pnd.diagram.repository.DiagramRepository;
 import com.server.pnd.domain.*;
-import com.server.pnd.participation.repository.ParticipationRepository;
 import com.server.pnd.repo.dto.RepoCreatedRequestDto;
 import com.server.pnd.repo.dto.RepoCreatedResponseDto;
 import com.server.pnd.repo.dto.RepoSearchDetailResponseDto;
 import com.server.pnd.repo.dto.RepoSearchListResponseDto;
 import com.server.pnd.repo.repository.RepoRepository;
-import com.server.pnd.repository.repository.RepositoryRepository;
 import com.server.pnd.util.jwt.JwtUtil;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +22,7 @@ import java.util.Optional;
 public class RepoServiceImpl implements RepoService {
     private final JwtUtil jwtUtil;
     private final RepoRepository repoRepository;
-    private final ClassDiagramRepository classDiagramRepository;
+    private final DiagramRepository classDiagramRepository;
 
     @Override
     public ResponseEntity<CustomApiResponse<?>> createRepo(String authorizationHeader, RepoCreatedRequestDto projectCreatedRequestDto) {
