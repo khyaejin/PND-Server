@@ -24,6 +24,7 @@ public class RepoServiceImpl implements RepoService {
     private final RepoRepository repoRepository;
     private final DiagramRepository classDiagramRepository;
 
+    // 레포 생성
     @Override
     public ResponseEntity<CustomApiResponse<?>> createRepo(String authorizationHeader, RepoCreatedRequestDto projectCreatedRequestDto) {
         Optional<User> foundUser = jwtUtil.findUserByJwtToken(authorizationHeader);
@@ -43,7 +44,7 @@ public class RepoServiceImpl implements RepoService {
         Repo repo = foundRepository.get();
 
         // 레포지토리 생성
-        Repo repo = Repo.builder()
+        repo = Repo.builder()
                 .period(projectCreatedRequestDto.getPeriod())
                 .image(projectCreatedRequestDto.getImage())
                 .title(projectCreatedRequestDto.getTitle())
@@ -59,7 +60,7 @@ public class RepoServiceImpl implements RepoService {
         return ResponseEntity.status(201).body(res);
     }
 
-    // 프로젝트 전체 조회
+    // 생성한 레포지토리 전체 조회
     @Override
     public ResponseEntity<CustomApiResponse<?>> searchRepoList(String authorizationHeader) {
         Optional<User> foundUser = jwtUtil.findUserByJwtToken(authorizationHeader);
@@ -71,11 +72,12 @@ public class RepoServiceImpl implements RepoService {
         User user = foundUser.get();
 
         // data
-        List<RepoSearchListResponseDto> data = new ArrayList<>();
-        for (Participation participation : participations) {
+        List<Repo> repos = repoRepository.findByUserId(user.getId());
+        List<RepoSearchListResponseDto> data = List.of();
+        for (Repo repo : repos) {
             RepoSearchListResponseDto projectSearchListResponseDto = RepoSearchListResponseDto.builder()
-                    .image(participation.getProject().getImage())
-                    .title(participation.getProject().getTitle())
+                    .image(repo.getImage())
+                    .title(repo.getTitle())
                     .build();
             data.add(projectSearchListResponseDto);
         }
@@ -96,7 +98,7 @@ public class RepoServiceImpl implements RepoService {
         }
         Repo repo = foundRepo.get();
 
-        Optional<Diagram> foundClassDiagram = classDiagramRepository.findByProjectId(repo.getId());
+        Optional<Diagram> foundClassDiagram = classDiagramRepository.findByRepoId(repo.getId());
         // 클래스다이어그램에 플로우차트 존재하지 않음 : 404
         if (foundClassDiagram.isEmpty()) {
             return ResponseEntity.status(404).body(CustomApiResponse.createFailWithoutData(404, "해당 클래스다이어그램에 flowChart가 존재하지 않습니다. (클래스다이어그램 생성시 flowchart 들어가지 않음)"));
@@ -109,7 +111,7 @@ public class RepoServiceImpl implements RepoService {
                 .period(repo.getPeriod())
                 .createdAt(repo.localDateTimeToString())
                 .image(repo.getImage())
-                .classDiagram(diagram.getFlowchart())
+                .classDiagram(diagram.getClassScript())
                 .build();
 
         // 프로젝트 조회 성공 (200)
