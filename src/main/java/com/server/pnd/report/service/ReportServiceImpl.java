@@ -2,6 +2,7 @@ package com.server.pnd.report.service;
 
 import com.server.pnd.domain.Repo;
 import com.server.pnd.domain.User;
+import com.server.pnd.oauth.service.SocialLoginService;
 import com.server.pnd.repo.repository.RepoRepository;
 import com.server.pnd.report.dto.EventInfoDto;
 import com.server.pnd.report.dto.GitHubEvent;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
-import java.awt.Color;
 import java.io.File;
 import javax.imageio.ImageIO;
 import java.util.Optional;
@@ -24,9 +24,10 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService{
-    final private RepoRepository repoRepository;
-    final private UserRepository userRepository;
+    private final RepoRepository repoRepository;
+    private final UserRepository userRepository;
     private final RestTemplate restTemplate;
+    private final SocialLoginService socialLoginService;
 
     // 레포트 생성
     @Override
@@ -41,19 +42,42 @@ public class ReportServiceImpl implements ReportService{
         User user = repo.getUser();
 
         // 엑세스 토큰, URL 설정
+        socialLoginService.refreshGitHubAccessToken(user);
         String accessToken = user.getAccessToken();
+
         String username = user.getName();
         String url = String.format("https://api.github.com/users/%s/events/public", username);
 
         // 깃허브 api를 사용해 event 불러오기
-        //GitHubEvent[] events = getEventsFromGithub(accessToken, username, url);
+        GitHubEvent[] events = getEventsFromGithub(accessToken, username, url);
 
+        // 레고 블럭 생성 (Node.js 스크립트 실행)
+        ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/index.ts");
+
+        // 환경 변수 설정
+        processBuilder.environment().put("USERNAME", username);
+        processBuilder.environment().put("GITHUB_TOKEN", accessToken);
+
+        // 스크립트 실행 및 결과 확인
+        try {
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                throw new RuntimeException("3D 그래프 생성 중 오류 발생");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 레포트 생성
         makeReportImg();
 
+        // 레포트 불러오기
+        BufferedImage image = loadGeneratedImage();
         return null;
     }
 
-
+    // 깃허브 이벤트 불러오기
     public GitHubEvent[] getEventsFromGithub(String accessToken, String username, String url){
         // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
@@ -84,6 +108,17 @@ public class ReportServiceImpl implements ReportService{
         }
         catch(Exception e){e.printStackTrace();}
 
+    }
+
+    // 이미지 반환
+    private BufferedImage loadGeneratedImage() {
+        try {
+            File file = new File("/Users/gimhyejin/Desktop/imgtest.jpg");
+            return ImageIO.read(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

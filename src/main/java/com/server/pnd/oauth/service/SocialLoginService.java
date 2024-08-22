@@ -1,6 +1,7 @@
 package com.server.pnd.oauth.service;
 
 
+import com.server.pnd.domain.User;
 import com.server.pnd.oauth.dto.TokenDto;
 import com.server.pnd.oauth.dto.UserInfo;
 import com.server.pnd.util.response.CustomApiResponse;
@@ -19,4 +20,8 @@ public interface SocialLoginService {
 
     //레포지토리 정보 가져오지
     ResponseEntity<CustomApiResponse<?>> getUserRepository(TokenDto tokenDto, UserInfo userInfo);
+
+    //refresh token을 이용해 access token update
+    void refreshGitHubAccessToken(User user);
+
 }
