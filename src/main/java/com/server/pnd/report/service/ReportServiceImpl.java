@@ -47,8 +47,29 @@ public class ReportServiceImpl implements ReportService{
         // 깃허브 api를 사용해 event 불러오기
         GitHubEvent[] events = getEventsFromGithub(accessToken, username, url);
 
+        // 레고 블럭 생성 (Node.js 스크립트 실행)
+        ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/index.ts");
+
+        // 환경 변수 설정
+        processBuilder.environment().put("USERNAME", username);
+        processBuilder.environment().put("GITHUB_TOKEN", accessToken);
+
+        // 스크립트 실행 및 결과 확인
+        try {
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                throw new RuntimeException("3D 그래프 생성 중 오류 발생");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 레포트 생성
         makeReportImg();
 
+        // 레포트 불러오기
+        BufferedImage image = loadGeneratedImage();
         return null;
     }
 
@@ -83,6 +104,17 @@ public class ReportServiceImpl implements ReportService{
         }
         catch(Exception e){e.printStackTrace();}
 
+    }
+
+    // 이미지 반환
+    private BufferedImage loadGeneratedImage() {
+        try {
+            File file = new File("/Users/gimhyejin/Desktop/imgtest.jpg");
+            return ImageIO.read(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }
