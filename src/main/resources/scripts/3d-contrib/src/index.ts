@@ -1,49 +1,19 @@
 import * as core from '@actions/core';
-import axios from 'axios';
 import * as aggregate from './aggregate-user-info';
 import * as template from './color-template';
 import * as create from './create-svg';
 import * as f from './file-writer';
 import * as r from './settings-reader';
 
+// Java에서 전달된 JSON 문자열을 받아 처리
+const eventsJson = process.argv[2];
+const events = JSON.parse(eventsJson);
+
+// 이 데이터를 활용해 그래프 생성 로직을 수행
+const aggregatedInfo = aggregate.aggregateUserInfo(events);
+
 export const main = async (): Promise<void> => {
     try {
-        const token = process.env.GITHUB_TOKEN;
-        if (!token) {
-            core.setFailed('GITHUB_TOKEN is empty');
-            return;
-        }
-        const userName = process.argv.length >= 3 ? process.argv[2] : process.env.USERNAME;
-        if (!userName) {
-            core.setFailed('USERNAME is empty');
-            return;
-        }
-        const maxRepos = process.env.MAX_REPOS ? Number(process.env.MAX_REPOS) : 100;
-        if (Number.isNaN(maxRepos)) {
-            core.setFailed('MAX_REPOS is NaN');
-            return;
-        }
-
-        // GitHub API로 데이터 가져오기
-        const headers = {
-            Authorization: `token ${token}`,
-            'Content-Type': 'application/json',
-        };
-
-        const userInfoResponse = await axios.get(
-            `https://api.github.com/users/${userName}`,
-            { headers }
-        );
-        const userInfo = userInfoResponse.data;
-
-        const reposResponse = await axios.get(
-            `https://api.github.com/users/${userName}/repos?per_page=${maxRepos}`,
-            { headers }
-        );
-        const repos = reposResponse.data;
-
-        const aggregatedInfo = aggregate.aggregateUserInfo({ userInfo, repos });
-
         if (process.env.SETTING_JSON) {
             const settingFile = r.readSettingJson(process.env.SETTING_JSON);
             const settingInfos = 'length' in settingFile ? settingFile : [settingFile];
