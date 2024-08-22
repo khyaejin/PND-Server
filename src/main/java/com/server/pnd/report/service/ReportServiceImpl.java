@@ -86,12 +86,9 @@ public class ReportServiceImpl implements ReportService{
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        // 요청 보내기
-        ResponseEntity<EventInfoDto> response = restTemplate.exchange(url, HttpMethod.GET, entity, EventInfoDto.class);
-
-        EventInfoDto eventInfoDto = response.getBody();
-
-        return null;
+        // 요청 보내기 및 응답 받기
+        ResponseEntity<GitHubEvent[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, GitHubEvent[].class);
+        return response.getBody();  // GitHubEvent 배열 반환
     }
 
     // report 생성
