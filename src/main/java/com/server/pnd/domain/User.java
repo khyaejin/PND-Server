@@ -8,6 +8,7 @@ import lombok.*;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -36,6 +37,4 @@ public class User {
     @NotEmpty
     @Column(name = "refresh_token")
     private String refreshToken;
-
-
 }

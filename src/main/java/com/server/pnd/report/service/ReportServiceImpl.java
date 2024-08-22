@@ -2,6 +2,7 @@ package com.server.pnd.report.service;
 
 import com.server.pnd.domain.Repo;
 import com.server.pnd.domain.User;
+import com.server.pnd.oauth.service.SocialLoginService;
 import com.server.pnd.repo.repository.RepoRepository;
 import com.server.pnd.report.dto.EventInfoDto;
 import com.server.pnd.report.dto.GitHubEvent;
@@ -23,9 +24,10 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService{
-    final private RepoRepository repoRepository;
-    final private UserRepository userRepository;
+    private final RepoRepository repoRepository;
+    private final UserRepository userRepository;
     private final RestTemplate restTemplate;
+    private final SocialLoginService socialLoginService;
 
     // 레포트 생성
     @Override
@@ -40,7 +42,9 @@ public class ReportServiceImpl implements ReportService{
         User user = repo.getUser();
 
         // 엑세스 토큰, URL 설정
+        socialLoginService.refreshGitHubAccessToken(user);
         String accessToken = user.getAccessToken();
+
         String username = user.getName();
         String url = String.format("https://api.github.com/users/%s/events/public", username);
 

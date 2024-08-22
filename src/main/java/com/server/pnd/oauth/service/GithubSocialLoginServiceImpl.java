@@ -19,8 +19,12 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -296,6 +300,43 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
             CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, socialLoginResponseDto, "로그인이 성공적으로 완료되었습니다.");
             return ResponseEntity.status(200).body(res);
         }
+    }
+
+    private final RestTemplate restTemplate = new RestTemplate();
+
+
+
+    public void refreshGitHubAccessToken(User user) {
+        String refreshToken = user.getRefreshToken();
+
+        // GitHub OAuth API URL
+        String url = "https://github.com/login/oauth/access_token";
+
+        // Request headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", "application/json");
+
+        // Request body (as a map)
+        Map<String, String> body = new HashMap<>();
+        body.put("client_id", "YOUR_CLIENT_ID");
+        body.put("client_secret", "YOUR_CLIENT_SECRET");
+        body.put("refresh_token", refreshToken);
+        body.put("grant_type", "refresh_token");
+
+        // HTTP entity
+        HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
+
+        // POST request to refresh token
+        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+
+        // Extract new access token from response
+        String newAccessToken = (String) response.getBody().get("access_token");
+
+        // Update user's access token
+        user.setAccessToken(newAccessToken);
+
+        // Save user to the database
+        userRepository.save(user);
     }
 
 }
