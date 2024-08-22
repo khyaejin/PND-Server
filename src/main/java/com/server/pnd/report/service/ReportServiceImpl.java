@@ -42,7 +42,7 @@ public class ReportServiceImpl implements ReportService{
         User user = repo.getUser();
 
         // 엑세스 토큰, URL 설정
-        socialLoginService.refreshGitHubAccessToken(user);
+        //socialLoginService.refreshGitHubAccessToken(user); 토큰 업데이트
         String accessToken = user.getAccessToken();
 
         String username = user.getName();
