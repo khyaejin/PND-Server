@@ -296,6 +296,10 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
             return ResponseEntity.status(201).body(res);
         } else {
             User user = foundUser.get();
+            // access token, refresh token 업데이트
+            user.setAccessToken(userInfo.getAccessToken());
+            user.setRefreshToken(userInfo.getRefreshToken());
+            userRepository.save(user);
             logger.info("User 로그인 성공: {}", user.getName());
             CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, socialLoginResponseDto, "로그인이 성공적으로 완료되었습니다.");
             return ResponseEntity.status(200).body(res);
@@ -312,30 +316,30 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
         // GitHub OAuth API URL
         String url = "https://github.com/login/oauth/access_token";
 
-        // Request headers
+        // 요청 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
 
-        // Request body (as a map)
+        // 요청 본문 설정
         Map<String, String> body = new HashMap<>();
         body.put("client_id", "YOUR_CLIENT_ID");
         body.put("client_secret", "YOUR_CLIENT_SECRET");
         body.put("refresh_token", refreshToken);
         body.put("grant_type", "refresh_token");
 
-        // HTTP entity
+        // HTTP 엔티티 생성
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
 
-        // POST request to refresh token
+        // POST 요청을 통해 새로운 액세스 토큰 발급
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
 
-        // Extract new access token from response
+        // 응답에서 새로운 액세스 토큰 추출
         String newAccessToken = (String) response.getBody().get("access_token");
 
-        // Update user's access token
+        // 사용자의 액세스 토큰 업데이트
         user.setAccessToken(newAccessToken);
 
-        // Save user to the database
+        // 데이터베이스에 사용자 저장
         userRepository.save(user);
     }
 
