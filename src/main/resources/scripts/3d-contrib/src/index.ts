@@ -5,12 +5,22 @@ import * as create from './create-svg';
 import * as f from './file-writer';
 import * as r from './settings-reader';
 
-// Java에서 전달된 JSON 문자열을 받아 처리
+// eventsJson, events 선언
 const eventsJson = process.argv[2];
 const events = JSON.parse(eventsJson);
 
-// 이 데이터를 활용해 그래프 생성 로직을 수행
-const aggregatedInfo = aggregate.aggregateUserInfo(events);
+// events가 전달이 잘 되었나 확인하는 테스트 코드
+console.log(events)
+
+export const main = async (): Promise<void> => {
+    try {
+        const token = process.env.GITHUB_TOKEN;
+        if (!token) {
+            core.setFailed('GITHUB_TOKEN is empty');
+            return;
+        }
+
+        const aggregatedInfo = aggregate.aggregateUserInfo(events);
 
 export const main = async (): Promise<void> => {
     try {
