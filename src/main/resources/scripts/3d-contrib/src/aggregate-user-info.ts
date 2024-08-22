@@ -1,103 +1,43 @@
-import * as client from './github-graphql';
 import * as type from './type';
 
 const OTHER_COLOR = '#444444';
 
-const toNumberContributionLevel = (level: type.ContributionLevel): number => {
-    switch (level) {
-        case 'NONE':
-            return 0;
-        case 'FIRST_QUARTILE':
-            return 1;
-        case 'SECOND_QUARTILE':
-            return 2;
-        case 'THIRD_QUARTILE':
-            return 3;
-        case 'FOURTH_QUARTILE':
-            return 4;
-    }
-};
-
 const compare = (num1: number, num2: number): number => {
-    if (num1 < num2) {
-        return -1;
-    } else if (num1 > num2) {
-        return 1;
-    } else {
-        return 0;
-    }
+    return num1 - num2;
 };
 
 export const aggregateUserInfo = (
-    response: client.ResponseType
+    events: any[]
 ): type.UserInfo => {
-    if (!response.data) {
-        if (response.errors && response.errors.length) {
-            throw new Error(response.errors[0].message);
-        } else {
-            throw new Error('JSON\n' + JSON.stringify(response, null, 2));
-        }
-    }
 
-    const user = response.data.user;
-    const calendar = user.contributionsCollection.contributionCalendar.weeks
-        .flatMap((week) => week.contributionDays)
-        .map((week) => ({
-            contributionCount: week.contributionCount,
-            contributionLevel: toNumberContributionLevel(
-                week.contributionLevel
-            ),
-            date: new Date(week.date),
-        }));
-    const contributesLanguage: { [language: string]: type.LangInfo } = {};
-    user.contributionsCollection.commitContributionsByRepository
-        .filter((repo) => repo.repository.primaryLanguage)
-        .forEach((repo) => {
-            const language = repo.repository.primaryLanguage?.name || '';
-            const color = repo.repository.primaryLanguage?.color || OTHER_COLOR;
-            const contributions = repo.contributions.totalCount;
+    const contributionCalendar = events.map(event => {
+        return {
+            contributionCount: event.type === 'PushEvent' ? event.payload.commits.length : 1,
+            contributionLevel: 1,  // 기여 수준을 단순화하여 사용
+            date: new Date(event.created_at),
+        };
+    });
 
-            const info = contributesLanguage[language];
-            if (info) {
-                info.contributions += contributions;
-            } else {
-                contributesLanguage[language] = {
-                    language: language,
-                    color: color,
-                    contributions: contributions,
-                };
-            }
-        });
-    const languages: Array<type.LangInfo> = Object.values(
-        contributesLanguage
-    ).sort((obj1, obj2) => -compare(obj1.contributions, obj2.contributions));
+    const languages: Array<type.LangInfo> = [];
 
-    const totalForkCount = user.repositories.nodes
-        .map((node) => node.forkCount)
-        .reduce((num1, num2) => num1 + num2, 0);
-    const totalStargazerCount = user.repositories.nodes
-        .map((node) => node.stargazerCount)
-        .reduce((num1, num2) => num1 + num2, 0);
+    const totalCommitContributions = events.filter(event => event.type === 'PushEvent').length;
+    const totalIssueContributions = events.filter(event => event.type === 'IssuesEvent').length;
+    const totalPullRequestContributions = events.filter(event => event.type === 'PullRequestEvent').length;
+    const totalPullRequestReviewContributions = 0;  // 리뷰 기여를 처리할 데이터가 필요할 수 있음
+
     const userInfo: type.UserInfo = {
-        isHalloween:
-            user.contributionsCollection.contributionCalendar.isHalloween,
-        contributionCalendar: calendar,
-        contributesLanguage: languages,
-        totalContributions:
-            user.contributionsCollection.contributionCalendar
-                .totalContributions,
-        totalCommitContributions:
-            user.contributionsCollection.totalCommitContributions,
-        totalIssueContributions:
-            user.contributionsCollection.totalIssueContributions,
-        totalPullRequestContributions:
-            user.contributionsCollection.totalPullRequestContributions,
-        totalPullRequestReviewContributions:
-            user.contributionsCollection.totalPullRequestReviewContributions,
-        totalRepositoryContributions:
-            user.contributionsCollection.totalRepositoryContributions,
-        totalForkCount: totalForkCount,
-        totalStargazerCount: totalStargazerCount,
+        isHalloween: false,  // 할로윈 여부를 결정할 데이터 필요
+        contributionCalendar: contributionCalendar,
+        contributesLanguage: languages,  // 언어 정보는 추가 처리가 필요할 수 있음
+        totalContributions: contributionCalendar.length,
+        totalCommitContributions: totalCommitContributions,
+        totalIssueContributions: totalIssueContributions,
+        totalPullRequestContributions: totalPullRequestContributions,
+        totalPullRequestReviewContributions: totalPullRequestReviewContributions,
+        totalRepositoryContributions: 0,  // 필요시 추가 계산
+        totalForkCount: 0,  // 포크 수는 추가 데이터 처리 필요
+        totalStargazerCount: 0,  // 스타 개수도 마찬가지로 필요시 추가 계산
     };
+
     return userInfo;
 };
