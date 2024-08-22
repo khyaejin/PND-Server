@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
-import java.awt.Color;
 import java.io.File;
 import javax.imageio.ImageIO;
 import java.util.Optional;
@@ -46,14 +45,14 @@ public class ReportServiceImpl implements ReportService{
         String url = String.format("https://api.github.com/users/%s/events/public", username);
 
         // 깃허브 api를 사용해 event 불러오기
-        //GitHubEvent[] events = getEventsFromGithub(accessToken, username, url);
+        GitHubEvent[] events = getEventsFromGithub(accessToken, username, url);
 
         makeReportImg();
 
         return null;
     }
 
-
+    // 깃허브 이벤트 불러오기
     public GitHubEvent[] getEventsFromGithub(String accessToken, String username, String url){
         // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
