@@ -10,7 +10,16 @@ export const aggregateUserInfo = (
     events: any[]
 ): type.UserInfo => {
 
+    /* // event 전달 확인을 위한 테스트 코드 --------
+    console.log(events); // events의 상태 확인
+    if (!events || !Array.isArray(events)) {
+        throw new Error("Invalid 'events' data");
+    }
+    // ------------------------------- */
+
     const contributionCalendar = events.map(event => {
+        console.error("Invalid events data:", events); // 이벤트가 비어있다고 해서 넣은 테스트 코드
+
         return {
             contributionCount: event.type === 'PushEvent' ? event.payload.commits.length : 1,
             contributionLevel: 1,  // 기여 수준을 단순화하여 사용
