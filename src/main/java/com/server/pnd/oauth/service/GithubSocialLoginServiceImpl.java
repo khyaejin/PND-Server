@@ -106,7 +106,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
 
                 // 토큰과 관련 정보 추출
                 if (params.containsKey("access_token")) {
-                    
+
                     accessToken = params.get("access_token");
                     refreshToken = params.get("refresh_token"); // refresh_token 추출
 
@@ -114,7 +114,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                             .accessToken(accessToken)
                             .refreshToken(refreshToken)
                             .build();
-                    
+
                     logger.info("Access Token: {}", accessToken);
                     logger.info("Refresh Token: {}", refreshToken); // refresh_token 로깅
                 }else {
@@ -231,11 +231,30 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                         int openIssues = repo.getInt("open_issues_count");
                         int watchers = repo.getInt("watchers_count");
                         String language = repo.optString("language", "None");
+                        boolean isPrivate = repo.getBoolean("private"); // private 필드를 확인하여 public/private 여부를 설정
+                        String disclosure = isPrivate ? "private" : "public"; // public 또는 private으로 설정
+<<<<<<< Updated upstream
+
+=======
+>>>>>>> Stashed changes
                         String createdAt = repo.getString("created_at");
                         String updatedAt = repo.getString("updated_at");
 
                         // 레포지토리 정보 잘 받아왔나 로그로 확인
-                        logger.info("Repo Name: {}, HTML URL: {}, Stars: {}, Description: {}, Forks: {}, Open Issues: {}, Watchers: {}, Language: {}, Created At: {}, Updated At: {}", name, htmlUrl, stars, description, forksCount, openIssues, watchers, language, createdAt, updatedAt);
+                        logger.info(
+                                "Repo Name: {}, HTML URL: {}, Stars: {}, Description: {}, Forks: {}, Open Issues: {}, Watchers: {}, Language: {}, Disclosure: {}, Created At: {}, Updated At: {}",
+                                name,
+                                htmlUrl,
+                                stars,
+                                description,
+                                forksCount,
+                                openIssues,
+                                watchers,
+                                language,
+                                disclosure,  // visibility 추가
+                                createdAt,
+                                updatedAt
+                        );
 
                         Optional<User> foundUser = userRepository.findByGithubId(userInfo.getGithubId());
 
@@ -256,6 +275,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                                 .repoOpenIssues(openIssues)
                                 .repoLanguage(language)
                                 .repoWatcher(watchers)
+                                .repoDisclosure(disclosure)
                                 .createdAt(createdAt)
                                 .updatedAt(updatedAt).build();
                         repositories.add(repository);
