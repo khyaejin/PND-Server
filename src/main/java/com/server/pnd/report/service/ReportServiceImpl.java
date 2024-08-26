@@ -4,7 +4,6 @@ import com.server.pnd.domain.Repo;
 import com.server.pnd.domain.User;
 import com.server.pnd.oauth.service.SocialLoginService;
 import com.server.pnd.repo.repository.RepoRepository;
-import com.server.pnd.report.dto.EventInfoDto;
 import com.server.pnd.report.dto.GitHubEvent;
 import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.response.CustomApiResponse;
