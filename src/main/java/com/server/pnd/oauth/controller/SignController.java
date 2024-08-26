@@ -57,6 +57,11 @@ public class SignController {
         ResponseEntity<CustomApiResponse<?>> loginResponse = githubSocialLoginService.login(userInfo);
 
         // 5. 레포지토리 정보 가져오기
+        if (loginResponse.getStatusCode().isSameCodeAs(HttpStatus.OK)) {
+            // 로그인 한 경우 바로 리턴
+            return ResponseEntity.status(loginResponse.getStatusCode()).body(loginResponse.getBody());
+        }
+        // 회원가입 한 경우 레포지토리 정보 가져오기
         ResponseEntity<CustomApiResponse<?>> userRepositoryResponses = githubSocialLoginService.getUserRepository(tokenDto, userInfo);
         if (userInfoResponse.getStatusCode() != HttpStatus.OK) {
             return ResponseEntity.status(tokenResponse.getStatusCode()).body(tokenResponse.getBody());
