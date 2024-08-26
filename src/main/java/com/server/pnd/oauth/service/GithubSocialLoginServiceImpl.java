@@ -233,10 +233,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                         String language = repo.optString("language", "None");
                         boolean isPrivate = repo.getBoolean("private"); // private 필드를 확인하여 public/private 여부를 설정
                         String disclosure = isPrivate ? "private" : "public"; // public 또는 private으로 설정
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
                         String createdAt = repo.getString("created_at");
                         String updatedAt = repo.getString("updated_at");
 
