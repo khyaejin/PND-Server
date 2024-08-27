@@ -78,7 +78,6 @@ public class ReadmeServiceImpl implements ReadmeService{
 
         // data
         ReadmeDetailDto data = ReadmeDetailDto.builder()
-                .title(readme.getTitle())
                 .content(readme.getReadme_script())
                 .createdAt(readme.localDateTimeToString())
                 .build();
