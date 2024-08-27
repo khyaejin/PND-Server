@@ -34,7 +34,7 @@ public class Diagram extends BaseEntity {
     @Column(columnDefinition = "TEXT", name = "sequence_script_gpt")
     private String sequenceScriptGpt;
 
-    //ERD
+    // ERD
     @Column(columnDefinition = "TEXT", name = "erd_script")
     private String erdScript;
     @Column(columnDefinition = "TEXT", name = "erd_script_gpt")

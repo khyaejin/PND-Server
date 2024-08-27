@@ -9,13 +9,10 @@ import java.util.Optional;
 @Repository
 public interface DiagramRepository extends JpaRepository<Diagram, Long> {
     Optional<Diagram> findByRepoId(Long id);
-
-    // 해당 userId에 해당하는 테이블들 중 ClassScript가 채워져 있는 테이블의 개수
-    int countByUserIdAndClassScriptIsNotNull(Long userId);
-
-    // 해당 userId에 해당하는 테이블들 중 SequenceScript가 채워져 있는 테이블의 개수
-    int countByUserIdAndSequenceScriptIsNotNull(Long id);
-
-    // 해당 userId에 해당하는 테이블들 중 ErdScript가 채워져 있는 테이블의 개수
-    int countByUserIdAndErdScriptIsNotNull(Long id);
+    // 해당 userId를 가진 User와 연관된 Repo를 가진 Diagram들 중 classScript가 null이 아닌 테이블 개수 리턴
+    int countByRepo_User_IdAndClassScriptIsNotNull(Long userId);
+    // 해당 userId를 가진 User와 연관된 Repo를 가진 Diagram들 중 sequenceScript가 null이 아닌 테이블 개수 리턴
+    int countByRepo_User_IdAndSequenceScriptIsNotNull(Long userId);
+    // 해당 userId를 가진 User와 연관된 Repo를 가진 Diagram들 중 erdScript가 null이 아닌 테이블 개수 리턴
+    int countByRepo_User_IdAndErdScriptIsNotNull(Long userId);
 }
