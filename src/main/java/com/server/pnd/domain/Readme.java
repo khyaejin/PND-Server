@@ -21,9 +21,6 @@ public class Readme extends BaseEntity {
     @JoinColumn(name = "repo_id")
     private Repo repo;
 
-    @NotNull
-    private String title;
-
     private String readme_script;
 
     private String readme_script_gpt;

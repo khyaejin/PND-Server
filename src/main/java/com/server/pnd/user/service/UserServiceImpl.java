@@ -1,8 +1,12 @@
 package com.server.pnd.user.service;
 
+import com.server.pnd.diagram.repository.DiagramRepository;
+import com.server.pnd.domain.Diagram;
 import com.server.pnd.domain.Repo;
 import com.server.pnd.domain.User;
+import com.server.pnd.readme.repository.ReadmeRepository;
 import com.server.pnd.repo.repository.RepoRepository;
+import com.server.pnd.report.repository.ReportRepository;
 import com.server.pnd.user.dto.SearchProfileResponseDto;
 import com.server.pnd.user.dto.SearchRepositoryResponseDto;
 import com.server.pnd.user.repository.UserRepository;
@@ -21,6 +25,9 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final RepoRepository repoRepository;
+    private final ReadmeRepository readmeRepository;
+    private final DiagramRepository diagramRepository;
+    private final ReportRepository reportRepository;
     private final JwtUtil jwtUtil;
 
     // 프로필 조회
@@ -35,11 +42,28 @@ public class UserServiceImpl implements UserService{
         }
         User user = foundUser.get();
 
+        // 리드미
+        int totalReadmes = readmeRepository.countByRepo_User_Id(user.getId()); //userId에 해당하는 리드미 테이블의 개수
+        // 다이어그램
+        int totalClassDiagram = diagramRepository.countByRepo_User_IdAndClassScriptIsNotNull(user.getId()); //userId에 해당하는 다이어그램 테이블들 중 class_script 필드가 채워져 있는 테이블의 개수
+        int totalSequenceDiagram = diagramRepository.countByRepo_User_IdAndSequenceScriptIsNotNull(user.getId()); //userId에 해당하는 다이어그램 테이블들 중 class_script 필드가 채워져 있는 테이블의 개수
+        int totalErDiagram = diagramRepository.countByRepo_User_IdAndErdScriptIsNotNull(user.getId()); //userId에 해당하는 다이어그램 테이블들 중 class_script 필드가 채워져 있는 테이블의 개수
+        int totalDiagram = totalClassDiagram + totalSequenceDiagram + totalErDiagram; // 생성한 다이어그램 총 개수
+        // 리포트
+        int totalReports = reportRepository.countByRepo_User_Id(user.getId());
+        // 총 문서
+        int totalDocs = totalReadmes + totalDiagram + totalReports; // 생성한 문서 총 개수
+
         // 프로필 조회 성공 (200)
         SearchProfileResponseDto data = SearchProfileResponseDto.builder()
                 .name(user.getName())
                 .image(user.getImage())
-                .email(user.getEmail()).build();
+                .email(user.getEmail())
+                .totalDocs(totalDocs)
+                .totalReadmes(totalReadmes)
+                .totalDiagram(totalDiagram)
+                .totalReports(totalReports)
+                .build();
 
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, data, "사용자 정보 조회 완료되었습니다.");
         return ResponseEntity.status(200).body(res);

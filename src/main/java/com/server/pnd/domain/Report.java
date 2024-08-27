@@ -21,8 +21,6 @@ public class Report extends BaseEntity {
     @NotEmpty @JoinColumn(name = "repo_id")
     private Repo repo;
 
-    private String title;
-
     @JoinColumn(name = "image")
     private String image; // 이미지 URL
 }
