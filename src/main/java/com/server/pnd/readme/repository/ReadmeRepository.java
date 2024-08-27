@@ -9,4 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ReadmeRepository extends JpaRepository<Readme, Long> {
+    // 해당 userId를 가진 테이블 개수 리턴
+    int countByUserId(Long id);
+
 }
