@@ -76,6 +76,16 @@ public class UserServiceImpl implements UserService{
     // 회원 탈퇴
     @Override
     public ResponseEntity<CustomApiResponse<?>> deleteUser(String authorizationHeader) {
+        Optional<User> foundUser = jwtUtil.findUserByJwtToken(authorizationHeader);
+
+        // 토큰에 해당하는 유저가 없는 경우 : 404
+        if (foundUser.isEmpty()) {
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "유효하지 않은 토큰이거나, 해당 ID에 해당하는 사용자가 존재하지 않습니다.");
+            return ResponseEntity.status(404).body(res);
+        }
+        User user = foundUser.get();
+
+
         return null;
     }
 
