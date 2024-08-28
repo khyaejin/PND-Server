@@ -70,6 +70,12 @@ public class UserServiceImpl implements UserService{
 
     }
 
+    // 회원 탈퇴
+    @Override
+    public ResponseEntity<CustomApiResponse<?>> deleteUser(String authorizationHeader) {
+        return null;
+    }
+
     @Override
     public ResponseEntity<CustomApiResponse<?>> getAllRepository(String authorizationHeader) {
         Optional<User> foundUser = jwtUtil.findUserByJwtToken(authorizationHeader);
