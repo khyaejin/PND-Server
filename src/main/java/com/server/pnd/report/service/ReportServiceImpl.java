@@ -76,6 +76,18 @@ public class ReportServiceImpl implements ReportService{
         return null;
     }
 
+    @Override
+    public ResponseEntity<CustomApiResponse<?>> searchDetail(Long repoId) {
+        //404 : 해당 레포가 없는 경우
+        Optional<Repo> foundRepo = repoRepository.findById(repoId);
+        if (foundRepo.isEmpty()) {
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 레포를  찾을 수 없습니다.");
+            return ResponseEntity.status(404).body(res);
+        }
+        Repo repo = foundRepo.get();
+        return null;
+    }
+
     // 깃허브 이벤트 불러오기
     public GitHubEvent[] getEventsFromGithub(String accessToken, String username, String url){
         // 헤더 설정
