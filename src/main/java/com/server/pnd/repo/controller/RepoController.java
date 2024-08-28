@@ -18,18 +18,18 @@ public class RepoController {
     private final RepoService repoService;
 
     // 레포 전체 조회
-    @GetMapping()
+    @GetMapping
     public  ResponseEntity<CustomApiResponse<?>> getRepositoryList(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader){
         return repoService.getAllRepository(authorizationHeader);
     }
 
     // 문서가 생성된 레포 전체 조회
-//    @GetMapping
-//    public ResponseEntity<CustomApiResponse<?>> searchRepoList(
-//            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader){
-//        return repoService.searchRepoList(authorizationHeader);
-//    }
+    @GetMapping("/docs")
+    public ResponseEntity<CustomApiResponse<?>> searchRepoList(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader){
+        return repoService.findReposWithExistingDocuments(authorizationHeader);
+    }
 
     // 레포 기본 정보 세팅
     @PutMapping({"/{repo_id}"})

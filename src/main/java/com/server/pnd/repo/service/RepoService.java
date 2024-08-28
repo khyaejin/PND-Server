@@ -6,16 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface RepoService {
-    // 레포 전체 조회
+    // 1. 레포 전체 조회
     ResponseEntity<CustomApiResponse<?>> getAllRepository(String authorizationHeader);
-
-    // 생성된 레포 전체 조회
-
-    // 레포 기본 정보 세팅
+    // 2. 생성된 레포 전체 조회
+    ResponseEntity<CustomApiResponse<?>> findReposWithExistingDocuments(String authorizationHeader);
+    // 3. 레포 기본 정보 세팅
     ResponseEntity<CustomApiResponse<?>> settingRepo(Long repoId, RepoSettingRequestDto repoSettingRequestDto, MultipartFile images);
-    // 레포 정보 수정
+    // 4. 레포 정보 수정
 
-    // 레포 갱신
-
+    // 5. 레포 갱신
 
 }

@@ -3,6 +3,8 @@ package com.server.pnd.diagram.repository;
 import com.server.pnd.domain.Diagram;
 import com.server.pnd.domain.Repo;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -18,4 +20,19 @@ public interface DiagramRepository extends JpaRepository<Diagram, Long> {
     int countByRepo_User_IdAndErdScriptIsNotNull(Long userId);
 
     Optional<Diagram> findByRepo(Repo repo);
+
+    // 해당 repoId를 가지고 class_script가 null이 아닌 diagram 존재하는가 리턴
+    @Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END " +
+            "FROM Diagram d WHERE d.repo.id = :repoId AND d.classScript IS NOT NULL")
+    boolean existsByRepoIdAndClassScriptIsNotNull(@Param("repoId") Long repoId);
+
+    // 해당 repoId를 가지고 sequence_script가 null이 아닌 diagram 존재하는가 리턴
+    @Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END " +
+            "FROM Diagram d WHERE d.repo.id = :repoId AND d.sequenceScript IS NOT NULL")
+    boolean existsByRepoIdAndSequenceScriptIsNotNull(@Param("repoId") Long repoId);
+
+    // 해당 repoId를 가지고 erd_script가 null이 아닌 diagram 존재하는가 리턴
+    @Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END " +
+            "FROM Diagram d WHERE d.repo.id = :repoId AND d.erdScript IS NOT NULL")
+    boolean existsByRepoIdAndErdScriptIsNotNull(@Param("repoId") Long repoId);
 }

@@ -53,7 +53,7 @@ public class DiagramService {
 
         // repositoryId를 사용하여 Repo 객체를 조회 (DB에서 가져오기)
         Optional<Repo> optionalRepository = repoRepository.findById(repoId);
-        if (!optionalRepository.isPresent()) {
+        if (optionalRepository.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("해당 ID의 레포지토리를 찾을 수 없습니다.");
         }
