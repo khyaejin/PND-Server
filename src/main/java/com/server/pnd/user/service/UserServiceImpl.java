@@ -44,15 +44,18 @@ public class UserServiceImpl implements UserService{
 
         // 리드미
         int totalReadmes = readmeRepository.countByRepo_User_Id(user.getId()); //userId에 해당하는 리드미 테이블의 개수
+
         // 다이어그램
         int totalClassDiagram = diagramRepository.countByRepo_User_IdAndClassScriptIsNotNull(user.getId()); //userId에 해당하는 다이어그램 테이블들 중 class_script 필드가 채워져 있는 테이블의 개수
         int totalSequenceDiagram = diagramRepository.countByRepo_User_IdAndSequenceScriptIsNotNull(user.getId()); //userId에 해당하는 다이어그램 테이블들 중 class_script 필드가 채워져 있는 테이블의 개수
         int totalErDiagram = diagramRepository.countByRepo_User_IdAndErdScriptIsNotNull(user.getId()); //userId에 해당하는 다이어그램 테이블들 중 class_script 필드가 채워져 있는 테이블의 개수
-        int totalDiagram = totalClassDiagram + totalSequenceDiagram + totalErDiagram; // 생성한 다이어그램 총 개수
+        // 생성한 다이어그램 총 개수
+        int totalDiagrams = totalClassDiagram + totalSequenceDiagram + totalErDiagram;
+
         // 리포트
         int totalReports = reportRepository.countByRepo_User_Id(user.getId());
         // 총 문서
-        int totalDocs = totalReadmes + totalDiagram + totalReports; // 생성한 문서 총 개수
+        int totalDocs = totalReadmes + totalDiagrams + totalReports; // 생성한 문서 총 개수
 
         // 프로필 조회 성공 (200)
         SearchProfileResponseDto data = SearchProfileResponseDto.builder()
@@ -61,7 +64,7 @@ public class UserServiceImpl implements UserService{
                 .email(user.getEmail())
                 .totalDocs(totalDocs)
                 .totalReadmes(totalReadmes)
-                .totalDiagram(totalDiagram)
+                .totalDiagrams(totalDiagrams)
                 .totalReports(totalReports)
                 .build();
 
