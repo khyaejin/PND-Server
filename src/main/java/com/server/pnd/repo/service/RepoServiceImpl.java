@@ -79,6 +79,12 @@ public class RepoServiceImpl implements RepoService {
         // UserId로 생성된 문서가 하나라도 있는 Repo들 리턴
         List<Repo> repos = repoRepository.findReposWithAnyDocumentByUserId(user.getId());
 
+        // 조회 성공 - 문서를 생성한 레포 존재하지 않음 : 200
+        if (repos.isEmpty()) {
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(200, "문서를 생성한 레포가 존재하지 않습니다.");
+            return ResponseEntity.status(200).body(res);
+        }
+
         // data
         List<ExistRepoResponseDto> data = new ArrayList<>();
         for (Repo repo : repos) {
