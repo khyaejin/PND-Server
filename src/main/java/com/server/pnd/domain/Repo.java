@@ -91,4 +91,15 @@ public class Repo{
             return "";
         }
     }
+
+    // 레포 편집 - 이미지
+    public void editRepoImage(String image) {
+        this.image = image;
+    }
+
+    // 레포 편집 - 이미지 제외
+    public void editRepoWithoutImage(String title, String period) {
+        this.title = title;
+        this.period = period;
+    }
 }

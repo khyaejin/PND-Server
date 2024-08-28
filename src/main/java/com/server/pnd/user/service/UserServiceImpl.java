@@ -93,7 +93,6 @@ public class UserServiceImpl implements UserService{
             foundDiagram.ifPresent(diagramRepository::delete);
             Optional<Report> foundReport = reportRepository.findByRepo(repo);
             foundReport.ifPresent(reportRepository::delete);
-
             // 해당 Repo들 제거
             repoRepository.delete(repo);
         }
