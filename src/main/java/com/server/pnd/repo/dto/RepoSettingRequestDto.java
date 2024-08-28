@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Builder
-public class RepoCreatedRequestDto {
+public class RepoSettingRequestDto {
     private String period;
     private String title;
 }

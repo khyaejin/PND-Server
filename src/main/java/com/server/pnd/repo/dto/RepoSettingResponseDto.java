@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Builder
-public class RepoCreatedResponseDto {
+public class RepoSettingResponseDto {
     private Long repoId;
     private String title;
     private String period;

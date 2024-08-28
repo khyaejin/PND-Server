@@ -1,6 +1,6 @@
 package com.server.pnd.repo.controller;
 
-import com.server.pnd.repo.dto.RepoCreatedRequestDto;
+import com.server.pnd.repo.dto.RepoSettingRequestDto;
 import com.server.pnd.repo.service.RepoService;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +28,9 @@ public class RepoController {
     @PutMapping({"/{repo_id}"})
     public ResponseEntity<CustomApiResponse<?>> settingRepo(
             @PathVariable("repo_id") Long repoId,
-            @RequestBody RepoCreatedRequestDto repoCreatedRequestDto,
+            @RequestPart("data") RepoSettingRequestDto repoSettingRequestDto,
             @RequestPart(value = "image", required = false) MultipartFile images) throws IOException {
-        return repoService.settingRepo(repoId, repoCreatedRequestDto, images);
+        return repoService.settingRepo(repoId, repoSettingRequestDto, images);
     }
 
 //    // 레포 상세 조회
