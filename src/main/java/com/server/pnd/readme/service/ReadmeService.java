@@ -6,9 +6,9 @@ import org.springframework.http.ResponseEntity;
 
 public interface ReadmeService {
 
-    // 마크다운 문서 저장
+    // 리드미  저장
     ResponseEntity<CustomApiResponse<?>> savedReadme(ReadmeSavedRequestDto markdownSavedRequestDto);
 
-    // 마크다운 문서 세부 조회
-    ResponseEntity<CustomApiResponse<?>> searchReadme(Long markdownId);
+    // 리드미 상세 조회
+    ResponseEntity<CustomApiResponse<?>> searchReadme(Long readmeId);
 }

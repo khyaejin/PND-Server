@@ -59,7 +59,6 @@ public class ReadmeServiceImpl implements ReadmeService{
                     .repo(repo)
                     .readme_script(content)
                     .build();
-
         }
 
         // DB에 저장
@@ -74,25 +73,27 @@ public class ReadmeServiceImpl implements ReadmeService{
         return ResponseEntity.status(201).body(res);
     }
 
+    // 리드미 상세 조회
     @Override
     public ResponseEntity<CustomApiResponse<?>> searchReadme(Long readmeId) {
         Optional<Readme> foundReadme = readmeRepository.findById(readmeId);
 
-        // 해당 ID의 마크다운 파일이 DB에 없는 경우 : 404
+        // 해당 ID의 리드미가 DB에 없는 경우 : 404
         if (foundReadme.isEmpty()) {
-            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 마크다운 파일이 DB에 존재하지 않습니다.");
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 레포의 리드미가 존재하지 않습니다.");
             return ResponseEntity.status(404).body(res);
         }
         Readme readme = foundReadme.get();
 
         // data
         ReadmeDetailDto data = ReadmeDetailDto.builder()
-                .content(readme.getReadme_script())
+                .id(readme.getId())
+                .readmeScript(readme.getReadme_script())
                 .createdAt(readme.localDateTimeToString())
                 .build();
 
         // 조회 성공 : 200
-        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, data, "마크다운 파일 조회 완료되었습니다.");
+        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, data, "리드미 상세 조회 완료되었습니다.");
         return ResponseEntity.status(200).body(res);
     }
 }
