@@ -37,9 +37,9 @@ public class RepoServiceImpl implements RepoService {
 
         // 레포지토리 생성
         repo = Repo.builder()
-                .period(projectCreatedRequestDto.getPeriod())
-                .image(projectCreatedRequestDto.getImage())
                 .title(projectCreatedRequestDto.getTitle())
+                .period(projectCreatedRequestDto.getPeriod())
+                .image()
                 .build();
         repoRepository.save(repo);
 
@@ -48,8 +48,8 @@ public class RepoServiceImpl implements RepoService {
                 .repoId(repo.getId())
                 .build();
         // 프로젝트 생성 성공 : 201
-        CustomApiResponse<?> res = CustomApiResponse.createSuccess(201, data, "프로젝트 생성 완료했습니다.");
-        return ResponseEntity.status(201).body(res);
+        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, data, "레포 기본 정보 세팅에 성공하셨습니다.");
+        return ResponseEntity.status(200).body(res);
     }
 
     // 생성한 레포지토리 전체 조회
