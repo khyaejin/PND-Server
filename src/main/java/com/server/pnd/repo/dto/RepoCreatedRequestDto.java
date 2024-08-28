@@ -10,9 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class RepoCreatedRequestDto {
-    private Long repoId;
     private String period;
-    private String image;
-    private String part;
     private String title;
 }

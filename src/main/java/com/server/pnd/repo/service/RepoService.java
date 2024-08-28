@@ -5,12 +5,16 @@ import com.server.pnd.util.response.CustomApiResponse;
 import org.springframework.http.ResponseEntity;
 
 public interface RepoService {
-    // 프로젝트 생성
-    ResponseEntity<CustomApiResponse<?>> createRepo(String authorizationHeader, RepoCreatedRequestDto repoCreatedRequestDto);
-
-    // 프로젝트 전체 조회
+    // 레포 전체 조회
     ResponseEntity<CustomApiResponse<?>> searchRepoList(String authorizationHeader);
+    // 생성된 레포 전체 조회
 
-    // 프로젝트 상세 조회
-    ResponseEntity<CustomApiResponse<?>> searchRepoDetail(Long repoId);
+    // 레포 기본 정보 세팅
+    ResponseEntity<CustomApiResponse<?>> settingRepo(Long repoId, RepoCreatedRequestDto repoCreatedRequestDto);
+
+    // 레포 정보 수정
+
+    // 레포 갱신
+
+
 }
