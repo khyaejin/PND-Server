@@ -23,4 +23,10 @@ public class DiagramController {
     public ResponseEntity<?> recieveSequenceDiagramAnswer(@RequestBody DiagramRequestDto requestDto) {
         return diagramService.recieveSequenceDiagramAnswer(requestDto);
     }
+
+    // ER 다이어그램 GPT 답변 채택하기
+    @PatchMapping("/er-gpt")
+    public ResponseEntity<?> recieveERDiagramAnswer(@RequestBody DiagramRequestDto requestDto) {
+        return diagramService.recieveERDiagramAnswer(requestDto);
+    }
 }

@@ -49,4 +49,7 @@ public class Diagram extends BaseEntity {
     public void updateSequenceScriptGpt(String sequenceScriptGpt) {
         this.sequenceScriptGpt = sequenceScriptGpt;
     }
+
+    // erdScriptGpt 필드를 설정하는 메서드
+    public void updateErScriptGpt(String erdScriptGpt) { this.erdScriptGpt = erdScriptGpt; }
 }

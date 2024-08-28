@@ -37,6 +37,12 @@ public class DiagramService {
         return processDiagramAnswer(requestDto, "sequenceDiagram", Diagram::getSequenceScriptGpt, Diagram::updateSequenceScriptGpt);
     }
 
+    // GPT ER 다이어그램
+    // 레포지토리 링크와 함께 질문하여 ER 다이어그램 제작을 위한 플로우차트 답변 받기
+    public ResponseEntity<?> recieveERDiagramAnswer(DiagramRequestDto requestDto) {
+        return processDiagramAnswer(requestDto, "erDiagram", Diagram::getErdScriptGpt, Diagram::updateErScriptGpt);
+    }
+
     /**
      * GPT 다이어그램 답변을 처리하는 공통 로직을 포함한 메서드.
      * 다이어그램의 유형과 필드 접근 로직을 파라미터로 받아 처리합니다.
