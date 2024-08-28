@@ -46,11 +46,23 @@ public class ReadmeServiceImpl implements ReadmeService{
             return ResponseEntity.status(404).body(res);
         }
 
+        Optional<Readme> foundReadme = readmeRepository.findByRepo(repo);
+        Readme readme;
+
+        // 이미 레포에 리드미가 있는 경우
+        if (foundReadme.isPresent()) {
+            readme = foundReadme.get();
+            readme.setContent(content);
+        }else{
+            // 레포에 리드미가 없는 경우
+            readme = Readme.builder()
+                    .repo(repo)
+                    .readme_script(content)
+                    .build();
+
+        }
+
         // DB에 저장
-        Readme readme = Readme.builder()
-                .repo(repo)
-                .readme_script(content)
-                .build();
         readmeRepository.save(readme);
 
         // data 가공

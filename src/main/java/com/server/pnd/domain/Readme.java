@@ -23,4 +23,9 @@ public class Readme extends BaseEntity {
     private String readme_script;
 
     private String readme_script_gpt;
+
+    // 제목 설정
+    public void setContent(String content) {
+        this.readme_script = content;
+    }
 }
