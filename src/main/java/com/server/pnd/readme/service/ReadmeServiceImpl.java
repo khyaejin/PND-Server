@@ -111,7 +111,7 @@ public class ReadmeServiceImpl implements ReadmeService{
         // content가 비어있거나 공백문자만 있는 경우 : 400
         if (content.isBlank()) {
             CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(400, "내용은 비어있을 수 없습니다.");
-            return ResponseEntity.status(404).body(res);
+            return ResponseEntity.status(400).body(res);
         }
 
         // 내용 수정
