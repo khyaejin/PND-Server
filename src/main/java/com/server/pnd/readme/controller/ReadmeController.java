@@ -31,7 +31,9 @@ public class ReadmeController {
 
     // 리드미 수정
     @PutMapping("/{readme_id}")
-    public ResponseEntity<CustomApiResponse<?>> editReadme(@PathVariable("readme_id") Long readme Id String content) {
-        return readmeService.editReadme(content)
+    public ResponseEntity<CustomApiResponse<?>> editReadme(
+            @PathVariable("readme_id") Long repoId,
+            @RequestBody String content){
+        return readmeService.editReadme(repoId, content);
     }
 }
