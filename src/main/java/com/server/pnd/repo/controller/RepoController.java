@@ -18,6 +18,13 @@ public class RepoController {
     private final RepoService repoService;
 
     // 레포 전체 조회
+    @GetMapping("/repo")
+    public  ResponseEntity<CustomApiResponse<?>> getRepositoryList(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader){
+        return repoService.getAllRepository(authorizationHeader);
+    }
+
+    // 문서가 생성된 레포 전체 조회
     @GetMapping
     public ResponseEntity<CustomApiResponse<?>> searchRepoList(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader){
@@ -33,11 +40,4 @@ public class RepoController {
         return repoService.settingRepo(repoId, repoSettingRequestDto, images);
     }
 
-//    // 레포 상세 조회
-//    @GetMapping("/{repo_id}")
-//    public ResponseEntity<CustomApiResponse<?>> searchRepoDetail(
-//            @PathVariable("repo_id") Long repoId) {
-//
-//        return repoService.searchRepoDetail(repoId);
-//    }
 }
