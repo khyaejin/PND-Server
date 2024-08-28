@@ -29,10 +29,5 @@ public class UserController {
         return userService.deleteUser(authorizationHeader);
     }
 
-    // 레포지토리 전체 조회
-    @GetMapping("/repo")
-    public  ResponseEntity<CustomApiResponse<?>> getRepositoryList(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader){
-        return userService.getAllRepository(authorizationHeader);
-    }
+
 }

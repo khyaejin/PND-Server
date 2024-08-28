@@ -7,7 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface RepoService {
     // 레포 전체 조회
-    ResponseEntity<CustomApiResponse<?>> searchRepoList(String authorizationHeader);
+    ResponseEntity<CustomApiResponse<?>> getAllRepository(String authorizationHeader);
+
     // 생성된 레포 전체 조회
 
     // 레포 기본 정보 세팅

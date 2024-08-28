@@ -10,7 +10,6 @@ public interface UserService {
     //회원 탈퇴
     ResponseEntity<CustomApiResponse<?>> deleteUser(String authorizationHeader);
 
-    // 레포지토리 전체 조회
-    ResponseEntity<CustomApiResponse<?>> getAllRepository(String authorizationHeader);
+
 
 }
