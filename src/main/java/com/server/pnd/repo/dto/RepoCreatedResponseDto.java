@@ -11,4 +11,7 @@ import lombok.Setter;
 @Builder
 public class RepoCreatedResponseDto {
     private Long repoId;
+    private String title;
+    private String period;
+    private String image;
 }

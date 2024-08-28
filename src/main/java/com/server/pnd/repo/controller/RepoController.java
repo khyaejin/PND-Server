@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,8 +27,10 @@ public class RepoController {
     // 레포 기본 정보 세팅
     @PutMapping({"/{repo_id}"})
     public ResponseEntity<CustomApiResponse<?>> settingRepo(
-            @PathVariable("repo_id") Long repoId, @RequestBody RepoCreatedRequestDto repoCreatedRequestDto) {
-        return repoService.settingRepo(repoId, repoCreatedRequestDto);
+            @PathVariable("repo_id") Long repoId,
+            @RequestBody RepoCreatedRequestDto repoCreatedRequestDto,
+            @RequestPart(value = "image", required = false) MultipartFile images) throws IOException {
+        return repoService.settingRepo(repoId, repoCreatedRequestDto, images);
     }
 
 //    // 레포 상세 조회

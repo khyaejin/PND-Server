@@ -12,6 +12,7 @@ import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class RepoServiceImpl implements RepoService {
 
     // 레포 생성
     @Override
-    public ResponseEntity<CustomApiResponse<?>> settingRepo(Long repoId, RepoCreatedRequestDto projectCreatedRequestDto) {
+    public ResponseEntity<CustomApiResponse<?>> settingRepo(Long repoId, RepoCreatedRequestDto projectCreatedRequestDto, MultipartFile image) {
         Optional<Repo> foundRepository = repoRepository.findById(repoId);
         // 해당 Id에 해당하는 레포가 없는 경우 : 404
         if (foundRepository.isEmpty()) {
@@ -35,19 +36,31 @@ public class RepoServiceImpl implements RepoService {
         }
         Repo repo = foundRepository.get();
 
-        // 레포지토리 생성
-        repo = Repo.builder()
-                .title(projectCreatedRequestDto.getTitle())
-                .period(projectCreatedRequestDto.getPeriod())
-                .image()
-                .build();
+        // 레포 기본 정보 세팅 - 이미지 제외
+        String title = projectCreatedRequestDto.getTitle();
+        String period = projectCreatedRequestDto.getPeriod();
+        repo.editRepoWithoutImage(title, period);
+
+        // 프로필 이미지 수정 있을 시
+        if (image != null && !image.isEmpty()) {
+            String imageName = String.valueOf(repo.getId()); // 레포 사진의 이름은 repo의 pk를 이용(한 Repo당 하나의 썸네일 사진)
+            String imageUrl = // s3Service.createRepoImage(image, imageName); 추후 S3 설계 후 설정
+            "https~~";
+            repo.editRepoImage(imageUrl);
+        }
+
+        // 저장
         repoRepository.save(repo);
 
-        // data
+        // data (save 한 repo 정보 가져오기)
         RepoCreatedResponseDto data = RepoCreatedResponseDto.builder()
                 .repoId(repo.getId())
+                .title(repo.getTitle())
+                .period(repo.getPeriod())
+                .image(repo.getImage())
                 .build();
-        // 프로젝트 생성 성공 : 201
+
+        // 레포 세팅 성공 : 200
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, data, "레포 기본 정보 세팅에 성공하셨습니다.");
         return ResponseEntity.status(200).body(res);
     }
