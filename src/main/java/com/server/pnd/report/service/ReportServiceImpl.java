@@ -1,11 +1,13 @@
 package com.server.pnd.report.service;
 
 import com.server.pnd.domain.Repo;
+import com.server.pnd.domain.Report;
 import com.server.pnd.domain.User;
 import com.server.pnd.oauth.service.SocialLoginService;
 import com.server.pnd.repo.repository.RepoRepository;
 import com.server.pnd.report.dto.GitHubEvent;
-import com.server.pnd.user.repository.UserRepository;
+import com.server.pnd.report.dto.ReportDetailDto;
+import com.server.pnd.report.repository.ReportRepository;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -24,7 +26,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService{
     private final RepoRepository repoRepository;
-    private final UserRepository userRepository;
+    private final ReportRepository reportRepository;
     private final RestTemplate restTemplate;
     private final SocialLoginService socialLoginService;
 
@@ -74,6 +76,37 @@ public class ReportServiceImpl implements ReportService{
         // 레포트 불러오기
         BufferedImage image = loadGeneratedImage();
         return null;
+    }
+
+    @Override
+    public ResponseEntity<CustomApiResponse<?>> searchDetail(Long repoId) {
+        // 해당 레포가 없는 경우 : 404
+        Optional<Repo> foundRepo = repoRepository.findById(repoId);
+        if (foundRepo.isEmpty()) {
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 레포를 찾을 수 없습니다.");
+            return ResponseEntity.status(404).body(res);
+        }
+        Repo repo = foundRepo.get();
+
+        // 해당 레포의 레포트가 없는 경우 : 404
+        Optional<Report> foundReport = reportRepository.findByRepo(repo);
+        if (foundReport.isEmpty()) {
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 레포의 레포트가 존재하지 않습니다.");
+            return ResponseEntity.status(404).body(res);
+        }
+        Report report = foundReport.get();
+
+        // data
+        ReportDetailDto data = ReportDetailDto.builder()
+                .id(report.getId())
+                .repoTitle(repo.getTitle())
+                .image(report.getImage())
+                .createdAt(report.localDateTimeToString())
+                .build();
+
+        // 레포트 상세조회 성공 : 200
+        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, data, "레포트 상세 조회 성공했습니다.");
+        return ResponseEntity.status(200).body(res);
     }
 
     // 깃허브 이벤트 불러오기

@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-// Commit 클래스 정의
 @Getter
 @Setter
 @Builder

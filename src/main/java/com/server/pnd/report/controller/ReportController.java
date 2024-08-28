@@ -8,14 +8,22 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/pnd")
+@RequestMapping("api/pnd/report")
 public class ReportController {
     final private ReportService reportService;
 
-    @PostMapping("/report/{repoId}")
+    // 리포트 생성
+    @PostMapping("/{repo_id}")
     public ResponseEntity<CustomApiResponse<?>> createReport(
-            @PathVariable("repoId") Long repoId){
+            @PathVariable("repo_id") Long repoId){
         return reportService.createReport(repoId);
+    }
+
+    // 리포트 상세조회
+    @GetMapping("/{repo_id}")
+    public ResponseEntity<CustomApiResponse<?>> searchDetail(
+            @PathVariable("repo_id") Long repoId){
+        return reportService.searchDetail(repoId);
     }
 
 }

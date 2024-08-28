@@ -31,7 +31,7 @@ public class RepoController {
         return repoService.findReposWithExistingDocuments(authorizationHeader);
     }
 
-    // 레포 기본 정보 세팅
+    // 레포 기본 정보 세팅 및 수정
     @PutMapping({"/{repo_id}"})
     public ResponseEntity<CustomApiResponse<?>> settingRepo(
             @PathVariable("repo_id") Long repoId,
