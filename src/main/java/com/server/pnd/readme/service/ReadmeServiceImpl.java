@@ -80,7 +80,7 @@ public class ReadmeServiceImpl implements ReadmeService{
 
         // 해당 ID의 리드미가 DB에 없는 경우 : 404
         if (foundReadme.isEmpty()) {
-            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 리드미가 존재하지 않습니다.");
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 레포의 리드미가 존재하지 않습니다.");
             return ResponseEntity.status(404).body(res);
         }
         Readme readme = foundReadme.get();
