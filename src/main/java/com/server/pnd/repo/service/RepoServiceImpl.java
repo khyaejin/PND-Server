@@ -51,21 +51,23 @@ public class RepoServiceImpl implements RepoService {
         for (Repo repo : repositories) {
             SearchRepositoryResponseDto responseDto = SearchRepositoryResponseDto.builder()
                     .id(repo.getId())
-                    .name(repo.getRepoName())
-                    .description(repo.getRepoDescription())
-                    .stars(repo.getRepoStars())
-                    .forksCount(repo.getRepoForksCount())
-                    .openIssues(repo.getRepoOpenIssues())
-                    .watchers(repo.getRepoWatcher())
-                    .language(repo.getRepoLanguage())
+                    .repoName(repo.getRepoName())
+                    .repoDescription(repo.getRepoDescription())
+                    .repoStars(repo.getRepoStars())
+                    .repoForksCount(repo.getRepoForksCount())
+                    .repoOpenIssues(repo.getRepoOpenIssues())
+                    .repoWatcher(repo.getRepoWatcher())
+                    .repoLanguage(repo.getRepoLanguage())
+                    .repoDisclosure(repo.getRepoDisclosure())
                     .createdAt(repo.getFormattedCreatedAt()).build();
             responseDtos.add(responseDto);
         }
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, responseDtos, "레포지토리 전체 조회 성공했습니다.");
         return ResponseEntity.status(200).body(res);
     }
+
     // 생성된 레포 전체 조회
-    @Override
+    //@Override
     public ResponseEntity<CustomApiResponse<?>> searchRepoList(String authorizationHeader) {
         Optional<User> foundUser = jwtUtil.findUserByJwtToken(authorizationHeader);
         // 토큰에 해당하는 유저가 없는 경우 : 404
