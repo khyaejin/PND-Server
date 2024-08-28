@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class ReportDetailResponseDto {
+public class ReportDetailDto {
     private Long id;
     private String repoTitle;
     private String image;

@@ -6,9 +6,8 @@ import com.server.pnd.domain.User;
 import com.server.pnd.oauth.service.SocialLoginService;
 import com.server.pnd.repo.repository.RepoRepository;
 import com.server.pnd.report.dto.GitHubEvent;
-import com.server.pnd.report.dto.ReportDetailResponseDto;
+import com.server.pnd.report.dto.ReportDetailDto;
 import com.server.pnd.report.repository.ReportRepository;
-import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -98,9 +97,10 @@ public class ReportServiceImpl implements ReportService{
         Report report = foundReport.get();
 
         // data
-        ReportDetailResponseDto data = ReportDetailResponseDto.builder()
+        ReportDetailDto data = ReportDetailDto.builder()
                 .id(report.getId())
                 .repoTitle(repo.getTitle())
+                .image(report.getImage())
                 .createdAt(report.localDateTimeToString())
                 .build();
 
