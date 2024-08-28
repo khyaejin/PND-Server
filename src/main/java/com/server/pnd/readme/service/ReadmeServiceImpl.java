@@ -75,9 +75,17 @@ public class ReadmeServiceImpl implements ReadmeService{
 
     // 리드미 상세 조회
     @Override
-    public ResponseEntity<CustomApiResponse<?>> searchReadme(Long readmeId) {
-        Optional<Readme> foundReadme = readmeRepository.findById(readmeId);
+    public ResponseEntity<CustomApiResponse<?>> searchReadme(Long repoId) {
+        Optional<Repo> foundRepo = repoRepository.findById(repoId);
 
+        // 해당 Repo ID의 Repo가 DB에 없는 경우 : 404
+        if (foundRepo.isEmpty()) {
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 Id의 레포가 존재하지 않습니다.");
+            return ResponseEntity.status(404).body(res);
+        }
+        Repo repo = foundRepo.get();
+
+        Optional<Readme> foundReadme = readmeRepository.findByRepo(repo);
         // 해당 ID의 리드미가 DB에 없는 경우 : 404
         if (foundReadme.isEmpty()) {
             CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 레포의 리드미가 존재하지 않습니다.");
