@@ -27,7 +27,7 @@ public class ReadmeServiceImpl implements ReadmeService{
     private final ReadmeRepository readmeRepository;
     private final RepoRepository repoRepository;
 
-    // 마크다운 문서 저장
+    // 리드미 문서 저장
     @Override
     public ResponseEntity<CustomApiResponse<?>> savedReadme(ReadmeSavedRequestDto readmeSavedRequestDto) {
         Optional<Repo> foundRepo = repoRepository.findById(readmeSavedRequestDto.getRepoId());
@@ -39,21 +39,30 @@ public class ReadmeServiceImpl implements ReadmeService{
         }
         Repo repo = foundRepo.get();
 
-        // 중복 조회
+        // content가 비어있거나 공백문자만 있는 경우 : 400
         String content = readmeSavedRequestDto.getContent();
-        /*
-        Optional<Readme> foundReadme = readmeRepository.findByTitleAndContent(title,content);
+        if (content.isBlank()) {
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(400, "내용은 비어있을 수 없습니다.");
+            return ResponseEntity.status(404).body(res);
+        }
 
-        // 이미 저장한 마크다운 파일인 경우 : 409
+        Optional<Readme> foundReadme = readmeRepository.findByRepo(repo);
+        Readme readme;
+
+        // 이미 레포에 리드미가 있는 경우
         if (foundReadme.isPresent()) {
-            return ResponseEntity.status(409).body(CustomApiResponse.createFailWithoutData(409, "이미 DB에 저장된 마크다운 파일입니다."));
-        }*/
+            readme = foundReadme.get();
+            readme.setContent(content);
+        }else{
+            // 레포에 리드미가 없는 경우
+            readme = Readme.builder()
+                    .repo(repo)
+                    .readme_script(content)
+                    .build();
+
+        }
 
         // DB에 저장
-        Readme readme = Readme.builder()
-                .readme_script(content)
-                .repo(repo)
-                .build();
         readmeRepository.save(readme);
 
         // data 가공

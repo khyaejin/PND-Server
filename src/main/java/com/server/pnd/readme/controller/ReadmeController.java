@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.*;
 public class ReadmeController {
     private final ReadmeService readmeService;
 
-    // 마크다운 문서 저장
+    // 리드미 문서 저장
     @PostMapping
     public ResponseEntity<CustomApiResponse<?>> savedReadme(
             @RequestBody ReadmeSavedRequestDto readmeSavedRequestDto) {
         return readmeService.savedReadme(readmeSavedRequestDto);
     }
 
-    // 마크다운 문서 세부 조회
+    // 리므디 문서 세부 조회
     @GetMapping("/{readme_id}")
     public ResponseEntity<CustomApiResponse<?>> searchReadme(@PathVariable("readme_id") Long readmeId) {
         return readmeService.searchReadme(readmeId);

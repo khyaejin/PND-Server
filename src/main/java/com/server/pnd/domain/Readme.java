@@ -12,7 +12,6 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "README")
 public class Readme extends BaseEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,4 +23,9 @@ public class Readme extends BaseEntity {
     private String readme_script;
 
     private String readme_script_gpt;
+
+    // 제목 설정
+    public void setContent(String content) {
+        this.readme_script = content;
+    }
 }
