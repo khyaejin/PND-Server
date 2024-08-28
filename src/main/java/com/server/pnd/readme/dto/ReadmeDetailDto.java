@@ -10,7 +10,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class ReadmeDetailDto {
-    private String title;
-    private String content;
+    private Long id;
+    private String readmeTitle;
+    private String readmeScript;
     private String createdAt;
 }

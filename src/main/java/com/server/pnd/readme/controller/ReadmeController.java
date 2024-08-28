@@ -21,7 +21,7 @@ public class ReadmeController {
         return readmeService.savedReadme(readmeSavedRequestDto);
     }
 
-    // 리므디 문서 세부 조회
+    // 리므디 문서 상세 조회
     @GetMapping("/{readme_id}")
     public ResponseEntity<CustomApiResponse<?>> searchReadme(@PathVariable("readme_id") Long readmeId) {
         return readmeService.searchReadme(readmeId);
