@@ -2,11 +2,10 @@ package com.server.pnd.repo.service;
 
 import com.server.pnd.diagram.repository.DiagramRepository;
 import com.server.pnd.domain.*;
-import com.server.pnd.repo.dto.RepoSettingRequestDto;
-import com.server.pnd.repo.dto.RepoSettingResponseDto;
-import com.server.pnd.repo.dto.RepoSearchListResponseDto;
+import com.server.pnd.readme.repository.ReadmeRepository;
+import com.server.pnd.repo.dto.*;
 import com.server.pnd.repo.repository.RepoRepository;
-import com.server.pnd.repo.dto.SearchRepositoryResponseDto;
+import com.server.pnd.report.repository.ReportRepository;
 import com.server.pnd.util.jwt.JwtUtil;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +22,14 @@ import java.util.Optional;
 public class RepoServiceImpl implements RepoService {
     private final JwtUtil jwtUtil;
     private final RepoRepository repoRepository;
-    private final DiagramRepository classDiagramRepository;
+    private final DiagramRepository diagramRepository;
+    private final ReadmeRepository readmeRepository;
+    private final ReportRepository reportRepository;
 
     // 레포 전체 조회
     @Override
     public ResponseEntity<CustomApiResponse<?>> getAllRepository(String authorizationHeader) {
         Optional<User> foundUser = jwtUtil.findUserByJwtToken(authorizationHeader);
-
         // 토큰에 해당하는 유저가 없는 경우 : 404
         if (foundUser.isEmpty()) {
             CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "유효하지 않은 토큰이거나, 해당 ID에 해당하는 사용자가 존재하지 않습니다.");
@@ -37,17 +37,16 @@ public class RepoServiceImpl implements RepoService {
         }
         User user = foundUser.get();
 
-        List<Repo> repositories= repoRepository.findByUserId(user.getId());
-
+        List<Repo> repositories = repoRepository.findByUserId(user.getId());
+        
         // 조회 성공 - 해당 회원의 깃허브 레포지토리가 존재하지 않는 경우 : 200
         if (repositories.isEmpty()) {
-            CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, null, "사용자의 레포지토리가 존재하지 않습니다.");
+            CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, null, "문서를 생성한 레포가 존재하지 않습니다.");
             return ResponseEntity.status(200).body(res);
         }
 
         // 조회 성공 - 해당 회원의 깃허브 레포지토리가 존재하는 경우 : 200
         List<SearchRepositoryResponseDto> responseDtos = new ArrayList<>();
-
         for (Repo repo : repositories) {
             SearchRepositoryResponseDto responseDto = SearchRepositoryResponseDto.builder()
                     .id(repo.getId())
@@ -67,8 +66,8 @@ public class RepoServiceImpl implements RepoService {
     }
 
     // 생성된 레포 전체 조회
-    //@Override
-    public ResponseEntity<CustomApiResponse<?>> searchRepoList(String authorizationHeader) {
+    @Override
+    public ResponseEntity<CustomApiResponse<?>> findReposWithExistingDocuments(String authorizationHeader) {
         Optional<User> foundUser = jwtUtil.findUserByJwtToken(authorizationHeader);
         // 토큰에 해당하는 유저가 없는 경우 : 404
         if (foundUser.isEmpty()) {
@@ -77,19 +76,39 @@ public class RepoServiceImpl implements RepoService {
         }
         User user = foundUser.get();
 
+        // UserId로 생성된 문서가 하나라도 있는 Repo들 리턴
+        List<Repo> repos = repoRepository.findReposWithAnyDocumentByUserId(user.getId());
+
         // data
-        List<Repo> repos = repoRepository.findByUserId(user.getId());
-        List<RepoSearchListResponseDto> data = List.of();
+        List<ExistRepoResponseDto> data = new ArrayList<>();
         for (Repo repo : repos) {
-            RepoSearchListResponseDto projectSearchListResponseDto = RepoSearchListResponseDto.builder()
-                    .image(repo.getImage())
+            // repoId를 가진 readme가 있는지 검색
+            boolean isExistReadme = readmeRepository.existsByRepoId(repo.getId());
+            // repoId를 가지고 class_script필드가 null이 아닌 Diagram이 있는지 검색
+            boolean isExistClassDiagram = diagramRepository.existsByRepoIdAndClassScriptIsNotNull(repo.getId());
+            // repoId를 가지고 sequence_script필드가 null이 아닌 Diagram이 있는지 검색
+            boolean isExistSequenceDiagram = diagramRepository.existsByRepoIdAndSequenceScriptIsNotNull(repo.getId());
+            // repoId를 가지고 erd_script필드가 null이 아닌 Diagram이 있는지 검색
+            boolean isExistErDiagram = diagramRepository.existsByRepoIdAndErdScriptIsNotNull(repo.getId());
+            // repoId를 가진 report가 있는지 검색
+            boolean isExistReport = reportRepository.existsByRepoId(repo.getId());
+
+            ExistRepoResponseDto existRepoResponseDto = ExistRepoResponseDto.builder()
+                    .id(repo.getId())
                     .title(repo.getTitle())
+                    .period(repo.getPeriod())
+                    .image(repo.getImage())
+                    .isExistReadme(isExistReadme)
+                    .isExistClassDiagram(isExistClassDiagram)
+                    .isExistSequenceDiagram(isExistSequenceDiagram)
+                    .isExistErDiagram(isExistErDiagram)
+                    .isExistReport(isExistReport)
                     .build();
-            data.add(projectSearchListResponseDto);
+            data.add(existRepoResponseDto);
         }
 
         // 성공 - 조회할 프로젝트가 있는 경우 : 200
-        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, data,"프로젝트 전체 조회가 완료되었습니다.");
+        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, data,"문서를 생성한 레포 전체 조회 성공했습니다.");
         return ResponseEntity.status(200).body(res);
     }
 

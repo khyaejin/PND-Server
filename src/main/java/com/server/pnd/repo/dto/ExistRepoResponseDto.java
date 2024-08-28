@@ -9,10 +9,15 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Builder
-public class RepoSearchDetailResponseDto {
+public class ExistRepoResponseDto {
+    private Long id;
     private String title;
     private String period;
-    private String createdAt;
     private String image;
-    private String classDiagram;
+    private boolean isExistReadme;
+    private boolean isExistClassDiagram;
+    private boolean isExistSequenceDiagram;
+    private boolean isExistErDiagram;
+    private boolean isExistReport;
+
 }
