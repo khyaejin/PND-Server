@@ -48,8 +48,8 @@ public class ReadmeServiceImpl implements ReadmeService{
 
         // DB에 저장
         Readme readme = Readme.builder()
-                .readme_script(content)
                 .repo(repo)
+                .readme_script(content)
                 .build();
         readmeRepository.save(readme);
 
