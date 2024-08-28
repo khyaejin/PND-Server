@@ -1,9 +1,7 @@
 package com.server.pnd.user.service;
 
 import com.server.pnd.diagram.repository.DiagramRepository;
-import com.server.pnd.domain.Diagram;
-import com.server.pnd.domain.Repo;
-import com.server.pnd.domain.User;
+import com.server.pnd.domain.*;
 import com.server.pnd.readme.repository.ReadmeRepository;
 import com.server.pnd.repo.repository.RepoRepository;
 import com.server.pnd.report.repository.ReportRepository;
@@ -85,8 +83,27 @@ public class UserServiceImpl implements UserService{
         }
         User user = foundUser.get();
 
-        // 회원 탈퇴 성공 : 200
+        // 해당 User를 FK로 가지는 모든 Repo 제거
+        List<Repo> repos = repoRepository.findByUserId(user.getId());
+        for(Repo repo : repos){
+            // 해당 Repo를 FK로 가지는 모든 테이블 제거
+            Optional<Readme> foundReadme = readmeRepository.findByRepo(repo);
+            foundReadme.ifPresent(readmeRepository::delete);
+            Optional<Diagram> foundDiagram = diagramRepository.findByRepo(repo);
+            foundDiagram.ifPresent(diagramRepository::delete);
+            Optional<Report> foundReport = reportRepository.findByRepo(repo);
+            foundReport.ifPresent(reportRepository::delete);
+
+            // 해당 Repo들 제거
+            repoRepository.delete(repo);
+        }
+        // User 제거
         userRepository.delete(user);
+
+        // 삭제
+        userRepository.delete(user);
+
+        // 회원 탈퇴 성공 : 200
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, null, "회원 탈퇴 완료되었습니다.");
         return ResponseEntity.status(200).body(res);
     }
