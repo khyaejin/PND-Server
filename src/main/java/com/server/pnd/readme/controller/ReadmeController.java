@@ -1,5 +1,6 @@
 package com.server.pnd.readme.controller;
 
+import com.server.pnd.readme.dto.ReadmeEditRequestDto;
 import com.server.pnd.readme.dto.ReadmeSavedRequestDto;
 import com.server.pnd.readme.service.ReadmeService;
 import com.server.pnd.util.response.CustomApiResponse;
@@ -21,9 +22,18 @@ public class ReadmeController {
         return readmeService.savedReadme(readmeSavedRequestDto);
     }
 
-    // 리므디 문서 상세 조회
-    @GetMapping("/{readme_id}")
-    public ResponseEntity<CustomApiResponse<?>> searchReadme(@PathVariable("readme_id") Long readmeId) {
-        return readmeService.searchReadme(readmeId);
+    // 리드미 문서 상세 조회
+    @GetMapping("/{repo_id}")
+    public ResponseEntity<CustomApiResponse<?>> searchReadme(@PathVariable("repo_id") Long repoId) {
+        return readmeService.searchReadme(repoId);
+    }
+
+    // 리드미 자동생성
+
+    // 리드미 수정
+    @PutMapping()
+    public ResponseEntity<CustomApiResponse<?>> editReadme(
+            @RequestBody ReadmeEditRequestDto readmeEditRequestDto){
+        return readmeService.editReadme(readmeEditRequestDto);
     }
 }
