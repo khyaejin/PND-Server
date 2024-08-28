@@ -85,8 +85,10 @@ public class UserServiceImpl implements UserService{
         }
         User user = foundUser.get();
 
-
-        return null;
+        // 회원 탈퇴 성공 : 200
+        userRepository.delete(user);
+        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, null, "회원 탈퇴 완료되었습니다.");
+        return ResponseEntity.status(200).body(res);
     }
 
     @Override
