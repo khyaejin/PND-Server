@@ -1,64 +1,108 @@
-// 이벤트 데이터를 기반 사용자 정보 집계, 다양한 테마의 SVG 프로필 이미지를 생성 & 저장 기능을 수행하는 파일
+// GitHub GraphQL 클라이언트와 타입 정의 모듈 가져와서 데이터 처리 및 타입 관리 수행
+import * as client from './github-graphql';
+import * as type from './type';
 
-import * as core from '@actions/core'; // GitHub Actions core 모듈 가져와서 오류 처리 수행
-import * as aggregate from './aggregate-user-info'; // 사용자 정보 집계 모듈 가져와서 데이터 처리 수행
-import * as template from './color-template'; // 다양한 테마 설정 정의 모듈 가져와서 테마 관리 수행
-import * as create from './create-svg'; // SVG 파일 생성 모듈 가져와서 이미지 생성 수행
-import * as f from './file-writer'; // 파일 작성 모듈 가져와서 생성된 파일 저장 수행
-import * as r from './settings-reader'; // 설정 파일 읽기 모듈 가져와서 사용자 설정 처리 수행
+const OTHER_COLOR = '#444444'; // 기본 색상 설정, 언어 색상이 없는 경우 사용
 
-// eventsJson, events 선언
-const eventsJson = process.argv[2]; // 커맨드 라인 인자로 전달된 이벤트 데이터 JSON 가져와서 변수에 저장
-const events = JSON.parse(eventsJson); // JSON 데이터를 JavaScript 객체로 변환하여 변수에 저장
-
-// events가 전달이 잘 되었나 확인하는 테스트 코드
-console.log("Events: ", events); // 이벤트 데이터 제대로 전달되었는지 콘솔에 출력하여 확인
-export const main = async (): Promise<void> => { // main 함수 정의 및 비동기 작업 수행
-    try {
-        // 이벤트 데이터를 바탕으로 유저 정보를 집계
-        const aggregatedInfo = aggregate.aggregateUserInfo(events); // 이벤트 데이터로 사용자 정보 집계 수행
-
-        // 커스텀 설정 파일이 있는지 확인
-        if (process.env.SETTING_JSON) { // 환경 변수에서 커스텀 설정 파일 경로 확인하여 처리 수행
-            const settingFile = r.readSettingJson(process.env.SETTING_JSON); // 설정 파일 읽어서 객체로 저장
-            // 설정 파일이 배열 형식인지 확인하여 설정 정보를 배열로 변환
-            const settingInfos = 'length' in settingFile ? settingFile : [settingFile]; // 설정 파일을 배열 형태로 변환하여 처리 준비
-            // 각 설정 정보를 기반으로 SVG 파일 생성
-            for (const settingInfo of settingInfos) { // 각 설정 정보에 따라 SVG 파일 생성 및 저장 반복 수행
-                const fileName = settingInfo.fileName || 'profile-customize.svg'; // 설정 파일에 파일명 없으면 기본 파일명 사용
-                f.writeFile(fileName, create.createSvg(aggregatedInfo, settingInfo, false)); // 설정 정보로 SVG 파일 생성 후 저장 수행
-            }
-        } else {
-            // 커스텀 설정이 없는 경우 기본 설정 사용 (할로윈 테마 또는 일반 테마)
-            const settings = aggregatedInfo.isHalloween // 할로윈 여부에 따라 테마 설정 결정
-                ? template.HalloweenSettings  // 할로윈 테마 사용
-                : template.NormalSettings;    // 일반 테마 사용
-
-            // 다양한 테마로 SVG 파일 생성 및 저장
-            f.writeFile('profile-green-animate.svg', create.createSvg(aggregatedInfo, settings, true)); // 애니메이션 적용된 기본 테마 SVG 파일 생성 및 저장
-            f.writeFile('profile-green.svg', create.createSvg(aggregatedInfo, settings, false)); // 애니메이션 없는 기본 테마 SVG 파일 생성 및 저장
-
-            // 북반구 계절 테마
-            f.writeFile('profile-season-animate.svg', create.createSvg(aggregatedInfo, template.NorthSeasonSettings, true)); // 애니메이션 적용된 북반구 계절 테마 SVG 파일 생성 및 저장
-            f.writeFile('profile-season.svg', create.createSvg(aggregatedInfo, template.NorthSeasonSettings, false)); // 애니메이션 없는 북반구 계절 테마 SVG 파일 생성 및 저장
-
-            // 남반구 계절 테마
-            f.writeFile('profile-south-season-animate.svg', create.createSvg(aggregatedInfo, template.SouthSeasonSettings, true)); // 애니메이션 적용된 남반구 계절 테마 SVG 파일 생성 및 저장
-            f.writeFile('profile-south-season.svg', create.createSvg(aggregatedInfo, template.SouthSeasonSettings, false)); // 애니메이션 없는 남반구 계절 테마 SVG 파일 생성 및 저장
-
-            // 야경 테마
-            f.writeFile('profile-night-view.svg', create.createSvg(aggregatedInfo, template.NightViewSettings, true)); // 야경 테마 SVG 파일 생성 및 저장
-            f.writeFile('profile-night-green.svg', create.createSvg(aggregatedInfo, template.NightGreenSettings, true)); // 녹색 야경 테마 SVG 파일 생성 및 저장
-            f.writeFile('profile-night-rainbow.svg', create.createSvg(aggregatedInfo, template.NightRainbowSettings, true)); // 무지개 야경 테마 SVG 파일 생성 및 저장
-
-            // Git 블록 테마
-            f.writeFile('profile-gitblock.svg', create.createSvg(aggregatedInfo, template.GitBlockSettings, true)); // Git 블록 테마 SVG 파일 생성 및 저장
-        }
-    } catch (error) {
-        // 오류 발생 시 오류 메시지를 출력하고 작업을 실패로 표시
-        console.error(error); // 오류 메시지 콘솔에 출력하여 문제 확인
-        core.setFailed('error'); // GitHub Actions에서 작업 실패로 표시 수행
+const toNumberContributionLevel = (level: type.ContributionLevel): number => { // 기여 수준을 숫자 값으로 변환하는 함수 정의
+    switch (level) { // 기여 수준에 따른 숫자 반환
+        case 'NONE': // 기여가 없는 경우
+            return 0;
+        case 'FIRST_QUARTILE': // 기여 수준이 첫 번째 사분위
+            return 1;
+        case 'SECOND_QUARTILE': // 기여 수준이 두 번째 사분위
+            return 2;
+        case 'THIRD_QUARTILE': // 기여 수준이 세 번째 사분위
+            return 3;
+        case 'FOURTH_QUARTILE': // 기여 수준이 네 번째 사분위
+            return 4;
     }
 };
 
-void main(); // main 함수 호출하여 전체 작업 실행 수행
+const compare = (num1: number, num2: number): number => { // 두 숫자 비교하여 정렬에 사용
+    if (num1 < num2) { // 첫 번째 숫자가 더 작은 경우
+        return -1; // 오름차순 정렬을 위한 -1 반환
+    } else if (num1 > num2) { // 첫 번째 숫자가 더 큰 경우
+        return 1; // 오름차순 정렬을 위한 1 반환
+    } else { // 두 숫자가 같은 경우
+        return 0; // 변경 없음
+    }
+};
+
+export const aggregateUserInfo = (
+    response: client.ResponseType // GitHub GraphQL API 응답 타입 매개변수로 받음
+): type.UserInfo => { // UserInfo 타입 반환
+    if (!response.data) { // 응답 데이터가 없는 경우 오류 처리
+        if (response.errors && response.errors.length) { // 응답에 오류 메시지가 있는지 확인
+            throw new Error(response.errors[0].message); // 첫 번째 오류 메시지로 예외 발생
+        } else { // 오류 메시지가 없는 경우
+            throw new Error('JSON\n' + JSON.stringify(response, null, 2)); // 응답 전체를 문자열로 변환하여 예외 발생
+        }
+    }
+
+    const user = response.data.user; // 응답 데이터에서 사용자 정보 추출
+    const calendar = user.contributionsCollection.contributionCalendar.weeks // 기여 캘린더에서 주 단위 데이터를 추출하여 평탄화
+        .flatMap((week) => week.contributionDays) // 각 주의 기여 일자를 평탄화하여 배열로 변환
+        .map((week) => ({ // 기여 일자를 필요한 정보로 매핑
+            contributionCount: week.contributionCount, // 기여 횟수 할당
+            contributionLevel: toNumberContributionLevel( // 기여 수준을 숫자로 변환하여 할당
+                week.contributionLevel
+            ),
+            date: new Date(week.date), // 날짜 문자열을 Date 객체로 변환하여 할당
+        }));
+
+    const contributesLanguage: { [language: string]: type.LangInfo } = {}; // 기여한 언어 정보를 객체로 저장
+    user.contributionsCollection.commitContributionsByRepository // 각 리포지토리별 커밋 기여 정보 반복 처리
+        .filter((repo) => repo.repository.primaryLanguage) // 주요 언어가 있는 리포지토리만 필터링
+        .forEach((repo) => { // 각 리포지토리에 대해 반복 처리
+            const language = repo.repository.primaryLanguage?.name || ''; // 언어 이름 가져오기, 없으면 빈 문자열
+            const color = repo.repository.primaryLanguage?.color || OTHER_COLOR; // 언어 색상 가져오기, 없으면 기본 색상 사용
+            const contributions = repo.contributions.totalCount; // 리포지토리의 총 기여 횟수 가져오기
+
+            const info = contributesLanguage[language]; // 해당 언어의 기여 정보 가져오기
+            if (info) { // 이미 기여 정보가 있는 경우
+                info.contributions += contributions; // 기존 기여 횟수에 현재 기여 횟수를 추가
+            } else { // 새로운 언어인 경우
+                contributesLanguage[language] = { // 새로운 언어 정보 생성하여 저장
+                    language: language, // 언어 이름 저장
+                    color: color, // 언어 색상 저장
+                    contributions: contributions, // 기여 횟수 저장
+                };
+            }
+        });
+
+    const languages: Array<type.LangInfo> = Object.values( // 언어 정보 객체를 배열로 변환하여 정렬
+        contributesLanguage
+    ).sort((obj1, obj2) => -compare(obj1.contributions, obj2.contributions)); // 기여 횟수 기준으로 내림차순 정렬
+
+    const totalForkCount = user.repositories.nodes // 리포지토리 노드에서 포크 수 계산
+        .map((node) => node.forkCount) // 각 노드의 포크 수 추출
+        .reduce((num1, num2) => num1 + num2, 0); // 포크 수 합산
+
+    const totalStargazerCount = user.repositories.nodes // 리포지토리 노드에서 스타 개수 계산
+        .map((node) => node.stargazerCount) // 각 노드의 스타 개수 추출
+        .reduce((num1, num2) => num1 + num2, 0); // 스타 개수 합산
+
+    const userInfo: type.UserInfo = { // 최종 사용자 정보 객체 생성하여 필요한 값 할당
+        isHalloween: // 할로윈 여부 데이터 할당
+            user.contributionsCollection.contributionCalendar.isHalloween,
+        contributionCalendar: calendar, // 기여 캘린더 데이터 할당
+        contributesLanguage: languages, // 기여한 언어 정보 할당
+        totalContributions: // 총 기여 횟수 할당
+            user.contributionsCollection.contributionCalendar.totalContributions,
+        totalCommitContributions: // 총 커밋 기여 횟수 할당
+            user.contributionsCollection.totalCommitContributions,
+        totalIssueContributions: // 총 이슈 기여 횟수 할당
+            user.contributionsCollection.totalIssueContributions,
+        totalPullRequestContributions: // 총 풀 리퀘스트 기여 횟수 할당
+            user.contributionsCollection.totalPullRequestContributions,
+        totalPullRequestReviewContributions: // 총 풀 리퀘스트 리뷰 기여 횟수 할당
+            user.contributionsCollection.totalPullRequestReviewContributions,
+        totalRepositoryContributions: // 총 리포지토리 기여 횟수 할당
+            user.contributionsCollection.totalRepositoryContributions,
+        totalForkCount: totalForkCount, // 총 포크 수 할당
+        totalStargazerCount: totalStargazerCount, // 총 스타 개수 할당
+    };
+
+    return userInfo; // 사용자 정보 반환
+};
