@@ -48,7 +48,7 @@ public class DiagramService {
      * 다이어그램의 유형과 필드 접근 로직을 파라미터로 받아 처리합니다.
      *
      * @param requestDto     다이어그램 요청 DTO
-     * @param diagramType    다이어그램 유형 ("classDiagram" 또는 "sequenceDiagram")
+     * @param diagramType    다이어그램 유형 ("classDiagram", "sequenceDiagram", "erDiagram")
      * @param fieldGetter    다이어그램 엔티티에서 GPT 스크립트를 가져오는 함수형 인터페이스
      * @param fieldUpdater   다이어그램 엔티티의 GPT 스크립트를 업데이트하는 함수형 인터페이스
      * @return ResponseEntity  응답 엔티티
@@ -89,7 +89,7 @@ public class DiagramService {
     /**
      * GPT API를 호출하고 다이어그램 엔티티에 결과를 저장하는 메서드.
      *
-     * @param diagramType    다이어그램 유형 ("classDiagram", "sequenceDiagram", "erDiagram"(추가))
+     * @param diagramType    다이어그램 유형 ("classDiagram", "sequenceDiagram", "erDiagram")
      * @param repoUrl        레포지토리 URL
      * @param diagram        다이어그램 엔티티
      * @param fieldUpdater   다이어그램 엔티티의 필드를 업데이트하는 함수형 인터페이스
@@ -200,6 +200,34 @@ public class DiagramService {
                 "별다른 설명할 필요없이 예시로 제공하는 것처럼 다이어그램 코드블록만 제공해줘\n<예시>\n[질문]\n" +
                 "https://github.com/HSU-Likelion-CareerDoctor/CareerDoctor-Backend\n[답변]\n" +
                 "```\n" + example + "```\n";
+    }
+
+
+    /**
+     * 유저가 수정하고 저장한 클래스 다이어그램 스크립트를 조회하는 메서드.
+     *
+     * @param repoId     다이어그램 요청 DTO
+     * @return String        DB에 저장된 클래스 다이어그램 스크립트 호출 결과
+     */
+    public ResponseEntity<?> getClassDiagramScript(Long repoId) {
+
+        // repositoryId를 사용하여 Repo 객체를 조회 (DB에서 가져오기)
+        Optional<Repo> optionalRepository = repoRepository.findById(repoId);
+        if (optionalRepository.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("해당 ID의 레포지토리를 찾을 수 없습니다.");
+        }
+
+        Repo repo = optionalRepository.get();
+        Optional<Diagram> foundDiagram = diagramRepository.findByRepoId(repoId);
+        String foundClassScript = null;
+
+        // 유저가 작성한 다이어그램 스크립트가 이미 존재하는 경우
+        if(!foundDiagram.get().getClassScript().isBlank()) {
+            foundClassScript = foundDiagram.get().getClassScript();
+            return ResponseEntity.ok(CustomApiResponse.createSuccess(200, foundClassScript, "클래스 다이어그램 스크립트가 성공적으로 조회되었습니다."));
+        } else return ResponseEntity.ok(CustomApiResponse.createSuccess(404, null, "생성되어 있는 클래스 다이어그램 스크립트가 존재하지 않습니다."));
+
     }
 
     // 다이어그램 필드를 가져오는 함수형 인터페이스

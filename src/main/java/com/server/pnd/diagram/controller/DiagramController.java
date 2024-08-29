@@ -1,7 +1,9 @@
 package com.server.pnd.diagram.controller;
 
 import com.server.pnd.diagram.dto.DiagramRequestDto;
+import com.server.pnd.diagram.dto.DiagramResponseDto;
 import com.server.pnd.diagram.service.DiagramService;
+import com.server.pnd.domain.Diagram;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +13,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/pnd/diagram")
 public class DiagramController {
     private final DiagramService diagramService;
+
+    /*
+     * 다이어그램 GPT 생성
+     */
 
     // 클래스 다이어그램 GPT 답변 채택하기
     @PatchMapping("/class-gpt")
@@ -28,5 +34,16 @@ public class DiagramController {
     @PatchMapping("/er-gpt")
     public ResponseEntity<?> recieveERDiagramAnswer(@RequestBody DiagramRequestDto requestDto) {
         return diagramService.recieveERDiagramAnswer(requestDto);
+    }
+
+
+    /*
+     * 유저 생성 다이어그램 조회
+     */
+
+    // 클래스 다이어그램 조회
+    @GetMapping("/class")
+    public ResponseEntity<?> getClassDiagramScript(@RequestParam Long repoId) {
+        return diagramService.getClassDiagramScript(repoId);
     }
 }
