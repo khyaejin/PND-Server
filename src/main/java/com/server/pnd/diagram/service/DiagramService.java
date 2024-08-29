@@ -55,7 +55,7 @@ public class DiagramService {
      */
     private ResponseEntity<?> processDiagramAnswer(DiagramRequestDto requestDto, String diagramType,
                                                    DiagramFieldGetter fieldGetter, DiagramFieldUpdater fieldUpdater) {
-        Long repoId = requestDto.getRepositoryId();
+        Long repoId = requestDto.getRepoId();
 
         // repositoryId를 사용하여 Repo 객체를 조회 (DB에서 가져오기)
         Optional<Repo> optionalRepository = repoRepository.findById(repoId);
