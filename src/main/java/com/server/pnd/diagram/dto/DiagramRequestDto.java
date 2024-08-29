@@ -8,5 +8,5 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DiagramRequestDto {
-    private Long repositoryId; // 레포지토리 ID
+    private Long repoId; // 레포지토리 ID
 }
