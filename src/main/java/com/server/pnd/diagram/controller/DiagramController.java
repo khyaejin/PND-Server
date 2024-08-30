@@ -70,4 +70,10 @@ public class DiagramController {
         return diagramService.updateClassDiagramScript(requestDto);
     }
 
+    // 시퀀스 다이어그램 수정
+    @PatchMapping("/sequence")
+    public ResponseEntity<?> updateSequenceDiagramScript(@RequestBody DiagramUpdateRequestDto requestDto) {
+        return diagramService.updateSequenceDiagramScript(requestDto);
+    }
+
 }
