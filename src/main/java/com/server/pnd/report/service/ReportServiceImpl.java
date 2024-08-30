@@ -62,6 +62,7 @@ public class ReportServiceImpl implements ReportService{
         ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/src/index.ts");
 
         // 환경 변수 설정
+        processBuilder.environment().put("GITHUB_DATA", response);
         processBuilder.environment().put("USERNAME", username);
         processBuilder.environment().put("GITHUB_TOKEN", accessToken);
 

@@ -86,17 +86,27 @@ export const aggregateUserInfo = (
     return userInfo;
 };
 
-// main 함수 추가
 const main = async () => {
     try {
-        // GitHub API로부터 받은 JSON 응답을 예시로 사용합니다.
-        const response = await client.fetchGitHubUserData(process.env.GITHUB_TOKEN!, process.env.USERNAME!); // 환경변수에서 토큰과 사용자 이름을 가져옵니다.
+        const githubData = process.env.GITHUB_DATA;
+        const username = process.env.USERNAME;
+        const token = process.env.GITHUB_TOKEN;
+
+        if (!githubData) {
+            throw new Error("GITHUB_DATA 환경 변수가 설정되지 않았습니다.");
+        }
+
+        // JSON 데이터를 파싱합니다.
+        const parsedData = JSON.parse(githubData);
+
+        console.log('GitHub Data:', parsedData);
 
         // aggregateUserInfo 함수 호출하여 사용자 정보 집계
-        const userInfo = aggregateUserInfo(response);
+        const userInfo = aggregateUserInfo(parsedData);
         console.log('Aggregated User Info:', userInfo); // 집계된 사용자 정보 출력
+
     } catch (error) {
-        console.error('Error:', error); // 오류 발생 시 오류 메시지 출력
+        console.error('Error:', error);
     }
 };
 
