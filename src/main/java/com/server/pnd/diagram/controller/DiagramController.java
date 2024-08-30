@@ -52,4 +52,10 @@ public class DiagramController {
     public ResponseEntity<?> getSequenceDiagramScript(@RequestParam Long repoId) {
         return diagramService.getSequenceDiagramScript(repoId);
     }
+
+    // er 다이어그램 조회
+    @GetMapping("/er")
+    public ResponseEntity<?> getErDiagramScript(@RequestParam Long repoId) {
+        return diagramService.getErDiagramScript(repoId);
+    }
 }
