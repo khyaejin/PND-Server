@@ -25,6 +25,9 @@ public class DiagramService {
     private final DiagramRepository diagramRepository;
     private final QuestionService questionService;
 
+    //
+    // 1. 생성
+
     // GPT 클래스 다이어그램
     // 레포지토리 링크와 함께 질문하여 클래스 다이어그램 제작을 위한 플로우차트 답변 받기
     public ResponseEntity<?> recieveClassDiagramAnswer(DiagramRequestDto requestDto) {
@@ -202,23 +205,24 @@ public class DiagramService {
                 "```\n" + example + "```\n";
     }
 
+    //
+    // 2. 조회
 
     /**
      * 유저가 수정하고 저장한 클래스 다이어그램 스크립트를 조회하는 메서드.
      *
      * @param repoId     다이어그램 요청 DTO
-     * @return String        DB에 저장된 클래스 다이어그램 스크립트 호출 결과
+     * @return String    DB에 저장된 클래스 다이어그램 스크립트 호출 결과
      */
     public ResponseEntity<?> getClassDiagramScript(Long repoId) {
 
-        // repositoryId를 사용하여 Repo 객체를 조회 (DB에서 가져오기)
+        // repoId를 사용하여 Repo 객체를 조회 (DB에서 가져오기)
         Optional<Repo> optionalRepository = repoRepository.findById(repoId);
         if (optionalRepository.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("해당 ID의 레포지토리를 찾을 수 없습니다.");
         }
 
-        Repo repo = optionalRepository.get();
         Optional<Diagram> foundDiagram = diagramRepository.findByRepoId(repoId);
         String foundClassScript = null;
 
@@ -229,6 +233,35 @@ public class DiagramService {
         } else return ResponseEntity.ok(CustomApiResponse.createSuccess(404, null, "생성되어 있는 클래스 다이어그램 스크립트가 존재하지 않습니다."));
 
     }
+
+    /**
+     * 유저가 수정하고 저장한 시퀀스 다이어그램 스크립트를 조회하는 메서드.
+     *
+     * @param repoId     다이어그램 요청 DTO
+     * @return String    DB에 저장된 시퀀스 다이어그램 스크립트 호출 결과
+     */
+    public ResponseEntity<?> getSequenceDiagramScript(Long repoId) {
+
+        // repoId를 사용하여 Repo 객체를 조회 (DB에서 가져오기)
+        Optional<Repo> optionalRepository = repoRepository.findById(repoId);
+        if (optionalRepository.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("해당 ID의 레포지토리를 찾을 수 없습니다.");
+        }
+
+        Optional<Diagram> foundDiagram = diagramRepository.findByRepoId(repoId);
+        String foundSequenceScript = null;
+
+        // 유저가 작성한 다이어그램 스크립트가 이미 존재하는 경우
+        if(!foundDiagram.get().getSequenceScript().isBlank()) {
+            foundSequenceScript = foundDiagram.get().getSequenceScript();
+            return ResponseEntity.ok(CustomApiResponse.createSuccess(200, foundSequenceScript, "시퀀스 다이어그램 스크립트가 성공적으로 조회되었습니다."));
+        } else return ResponseEntity.ok(CustomApiResponse.createSuccess(404, null, "생성되어 있는 시퀀스 다이어그램 스크립트가 존재하지 않습니다."));
+
+    }
+
+    //
+    // 그 외 getter, updater 함수들
 
     // 다이어그램 필드를 가져오는 함수형 인터페이스
     @FunctionalInterface
