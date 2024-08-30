@@ -51,6 +51,7 @@ public class Diagram extends BaseEntity {
     // erdScript 필드를 설정하는 메서드
     public void updateErScript(String erdScript) { this.erdScript = erdScript; }
 
+
     // classScriptGpt 필드를 설정하는 메서드
     public void updateClassScriptGpt(String classScriptGpt) { this.classScriptGpt = classScriptGpt; }
 
