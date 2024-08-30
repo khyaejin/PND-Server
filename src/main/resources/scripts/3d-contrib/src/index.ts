@@ -28,6 +28,7 @@ export const aggregateUserInfo = (
             throw new Error('JSON\n' + JSON.stringify(response, null, 2));
         }
     }
+    console.error('response:', response); //response 값 확인
 
     const user = response.data.user;
     const calendar = user.contributionsCollection.contributionCalendar.weeks
@@ -38,25 +39,26 @@ export const aggregateUserInfo = (
             date: new Date(day.date),
         }));
 
-    const contributesLanguage: { [language: string]: type.LangInfo } = {};
-    user.contributionsCollection.commitContributionsByRepository
-        .filter((repo) => repo.repository.primaryLanguage)
-        .forEach((repo) => {
-            const language = repo.repository.primaryLanguage?.name || '';
-            const color = repo.repository.primaryLanguage?.color || OTHER_COLOR;
-            const contributions = repo.contributions.totalCount;
+   const contributesLanguage: { [language: string]: type.LangInfo } = {};
+   user.repositories.nodes
+       .filter((repo) => repo.primaryLanguage !== null) // primaryLanguage가 null이 아닌 리포지토리만 필터링
+       .forEach((repo) => {
+           const language = repo.primaryLanguage?.name || 'Unknown'; // 언어 이름, 없으면 'Unknown'
+           const color = repo.primaryLanguage?.color || OTHER_COLOR; // 언어 색상, 없으면 기본 색상 사용
+           const contributions = repo.forkCount + repo.stargazerCount; // 기여도로 사용할 포크 및 스타 개수 합산
 
-            const info = contributesLanguage[language];
-            if (info) {
-                info.contributions += contributions;
-            } else {
-                contributesLanguage[language] = {
-                    language: language,
-                    color: color,
-                    contributions: contributions,
-                };
-            }
-        });
+           const info = contributesLanguage[language];
+           if (info) {
+               info.contributions += contributions;
+           } else {
+               contributesLanguage[language] = {
+                   language: language,
+                   color: color,
+                   contributions: contributions,
+               };
+           }
+       });
+
 
     const languages: Array<type.LangInfo> = Object.values(contributesLanguage)
         .sort((obj1, obj2) => -compare(obj1.contributions, obj2.contributions));
@@ -96,10 +98,12 @@ const main = async () => {
             throw new Error("GITHUB_DATA 환경 변수가 설정되지 않았습니다.");
         }
 
+        console.log('GitHub Data:', githubData);
+
         // JSON 데이터를 파싱합니다.
         const parsedData = JSON.parse(githubData);
 
-        console.log('GitHub Data:', parsedData);
+        console.log('Parsed Data Structure:', JSON.stringify(parsedData, null, 2));
 
         // aggregateUserInfo 함수 호출하여 사용자 정보 집계
         const userInfo = aggregateUserInfo(parsedData);
