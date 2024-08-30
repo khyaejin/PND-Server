@@ -260,6 +260,34 @@ public class DiagramService {
 
     }
 
+    /**
+     * 유저가 수정하고 저장한 ER 다이어그램 스크립트를 조회하는 메서드.
+     *
+     * @param repoId     다이어그램 요청 DTO
+     * @return String    DB에 저장된 ER 다이어그램 스크립트 호출 결과
+     */
+    public ResponseEntity<?> getErDiagramScript(Long repoId) {
+
+        // repoId를 사용하여 Repo 객체를 조회 (DB에서 가져오기)
+        Optional<Repo> optionalRepository = repoRepository.findById(repoId);
+        if (optionalRepository.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("해당 ID의 레포지토리를 찾을 수 없습니다.");
+        }
+
+        Optional<Diagram> foundDiagram = diagramRepository.findByRepoId(repoId);
+        if (foundDiagram.isPresent()) {
+            Diagram diagram = foundDiagram.get();
+            String foundErScript = diagram.getErdScript(); // ERD 스크립트를 가져옴
+
+            // ER 스크립트가 null이 아니고 비어있지 않은 경우
+            if (foundErScript != null && !foundErScript.isBlank()) {
+                return ResponseEntity.ok(CustomApiResponse.createSuccess(200, foundErScript, "ER 다이어그램 스크립트가 성공적으로 조회되었습니다."));
+            }
+        }
+        return ResponseEntity.ok(CustomApiResponse.createSuccess(404, null, "생성되어 있는 ER 다이어그램이 존재하지 않습니다."));
+    }
+
     //
     // 그 외 getter, updater 함수들
 
