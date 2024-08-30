@@ -46,4 +46,10 @@ public class DiagramController {
     public ResponseEntity<?> getClassDiagramScript(@RequestParam Long repoId) {
         return diagramService.getClassDiagramScript(repoId);
     }
+
+    // 시퀀스 다이어그램 조회
+    @GetMapping("/sequence")
+    public ResponseEntity<?> getSequenceDiagramScript(@RequestParam Long repoId) {
+        return diagramService.getSequenceDiagramScript(repoId);
+    }
 }
