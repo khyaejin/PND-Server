@@ -18,8 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
+import java.io.BufferedReader;
 import java.io.File;
 import javax.imageio.ImageIO;
+import java.io.InputStreamReader;
 import java.util.Optional;
 
 @Service
@@ -29,6 +31,7 @@ public class ReportServiceImpl implements ReportService{
     private final ReportRepository reportRepository;
     private final RestTemplate restTemplate;
     private final SocialLoginService socialLoginService;
+    private final GitHubGraphQLService gitHubGraphQLService;
 
     // 레포트 생성
     @Override
@@ -43,35 +46,60 @@ public class ReportServiceImpl implements ReportService{
         User user = repo.getUser();
 
         // 엑세스 토큰, URL 설정
-        //socialLoginService.refreshGitHubAccessToken(user); 토큰 업데이트
+        // socialLoginService.refreshGitHubAccessToken(user); //토큰 업데이트
         String accessToken = user.getAccessToken();
-
         String username = user.getName();
-        String url = String.format("https://api.github.com/users/%s/events/public", username);
 
-        // 깃허브 api를 사용해 event 불러오기
-        GitHubEvent[] events = getEventsFromGithub(accessToken, username, url);
+
+        // GitHub GraphQL API 사용하여 데이터 가져오기
+        String response = gitHubGraphQLService.fetchUserData(accessToken, username);
+
+        // JSON 파싱 및 처리 (필요한 로직 추가)
+        // GraphQL 응답 데이터를 처리하여 필요한 정보를 추출하고 사용합니다.
+        // 이 부분은 기존의 이벤트 처리 로직을 대체하는 로직으로 추가 구현이 필요합니다.
 
         // 레고 블럭 생성 (Node.js 스크립트 실행)
-        ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/index.ts");
+        ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/src/index.ts");
 
         // 환경 변수 설정
+        processBuilder.environment().put("GITHUB_DATA", response);
         processBuilder.environment().put("USERNAME", username);
         processBuilder.environment().put("GITHUB_TOKEN", accessToken);
 
         // 스크립트 실행 및 결과 확인
         try {
+            System.out.println("Starting Node.js script...");
+
+            // 프로세스 시작
             Process process = processBuilder.start();
+
+            // 표준 출력을 읽어서 출력
+            BufferedReader stdOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
+            String line;
+            while ((line = stdOutput.readLine()) != null) {
+                System.out.println("Node.js Output: " + line);
+            }
+
+            // 표준 오류를 읽어서 출력
+            while ((line = stdError.readLine()) != null) {
+                System.err.println("Node.js Error: " + line);
+            }
+
+            // 프로세스 종료 코드 확인
             int exitCode = process.waitFor();
+            System.out.println("Node.js script finished with exit code: " + exitCode);
+
             if (exitCode != 0) {
-                throw new RuntimeException("3D 그래프 생성 중 오류 발생");
+                throw new RuntimeException("3D 그래프 생성 중 오류 발생, exit code: " + exitCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         // 레포트 생성
-        makeReportImg();
+        // makeReportImg();
 
         // 레포트 불러오기
         BufferedImage image = loadGeneratedImage();
