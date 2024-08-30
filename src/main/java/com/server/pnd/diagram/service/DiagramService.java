@@ -298,7 +298,7 @@ public class DiagramService {
     // 3. 수정
 
     /**
-     * 유저가 수정한 스크립트를 DB에 업데이트하는 메서드.
+     * 유저가 수정한 클래스 다이어그램 스크립트를 DB에 업데이트하는 메서드.
      *
      * @param requestDto 다이어그램 요청 DTO
      * @return ResponseEntity
@@ -326,6 +326,38 @@ public class DiagramService {
         // 4. 다이어그램을 찾을 수 없는 경우
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(CustomApiResponse.createSuccess(404, null, "생성되어 있는 클래스 다이어그램이 존재하지 않습니다."));
+    }
+
+    /**
+     * 유저가 수정한 시퀀스 다이어그램 스크립트를 DB에 업데이트하는 메서드.
+     *
+     * @param requestDto 다이어그램 요청 DTO
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> updateSequenceDiagramScript(DiagramUpdateRequestDto requestDto) {
+
+        // 1. 요청 데이터 검증
+        if (requestDto == null || requestDto.getRepoId() == null || requestDto.getScript() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(CustomApiResponse.createSuccess(400, null, "요청 데이터가 올바르지 않습니다."));
+        }
+
+        // 2. 기존 다이어그램 찾기
+        Optional<Diagram> foundDiagram = diagramRepository.findByRepoId(requestDto.getRepoId());
+        if (foundDiagram.isPresent()) {
+            Diagram diagram = foundDiagram.get();
+
+            // 3. requestDto의 script를 받아 저장하기
+            diagram.updateSequenceScript(requestDto.getScript());
+            diagramRepository.save(diagram);
+
+            return ResponseEntity.ok(CustomApiResponse.createSuccess(200, requestDto.getScript(), "시퀀스 다이어그램 스크립트가 성공적으로 업데이트되었습니다."));
+        }
+
+        // 4. 다이어그램을 찾을 수 없는 경우
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(CustomApiResponse.createSuccess(404, null, "생성되어 있는 시퀀스 다이어그램이 존재하지 않습니다."));
+
     }
 
     //
