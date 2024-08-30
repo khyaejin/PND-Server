@@ -1,7 +1,12 @@
 // GitHub GraphQL 클라이언트와 타입 정의 모듈 가져와서 데이터 처리 및 타입 관리 수행
 import * as client from './github-graphql';
 import * as type from './type';
-
+import * as core from '@actions/core';
+import * as aggregate from './aggregate-user-info';
+import * as template from './color-template';
+import * as create from './create-svg';
+import * as f from './file-writer';
+import * as r from './settings-reader';
 const OTHER_COLOR = '#444444'; // 기본 색상 설정, 언어 색상이 없는 경우 사용
 
 const toNumberContributionLevel = (level: type.ContributionLevel): number => {
@@ -28,7 +33,7 @@ export const aggregateUserInfo = (
             throw new Error('JSON\n' + JSON.stringify(response, null, 2));
         }
     }
-    console.error('response:', response); //response 값 확인
+    console.log('response:', response); //response 값 확인
 
     const user = response.data.user;
     const calendar = user.contributionsCollection.contributionCalendar.weeks
@@ -39,13 +44,15 @@ export const aggregateUserInfo = (
             date: new Date(day.date),
         }));
 
-   const contributesLanguage: { [language: string]: type.LangInfo } = {};
-   user.repositories.nodes
-       .filter((repo) => repo.primaryLanguage !== null) // primaryLanguage가 null이 아닌 리포지토리만 필터링
-       .forEach((repo) => {
-           const language = repo.primaryLanguage?.name || 'Unknown'; // 언어 이름, 없으면 'Unknown'
-           const color = repo.primaryLanguage?.color || OTHER_COLOR; // 언어 색상, 없으면 기본 색상 사용
-           const contributions = repo.forkCount + repo.stargazerCount; // 기여도로 사용할 포크 및 스타 개수 합산
+   const contributesLanguage: { [language: string]: { language: string, color: string, contributions: number } } = {};
+
+   // `contributionCalendar`의 기여 정보를 활용하여 기여도 계산
+   user.contributionsCollection.contributionCalendar.weeks
+       .flatMap((week) => week.contributionDays)
+       .forEach((day) => {
+           const language = 'Unknown'; // 레포지토리 언어 데이터가 없을 경우 기본값 사용
+           const color = OTHER_COLOR;  // 언어 색상 정보가 없을 경우 기본 색상 사용
+           const contributions = day.contributionCount; // 날짜별 기여도 정보를 직접 사용
 
            const info = contributesLanguage[language];
            if (info) {
@@ -59,6 +66,7 @@ export const aggregateUserInfo = (
            }
        });
 
+   console.log(contributesLanguage);
 
     const languages: Array<type.LangInfo> = Object.values(contributesLanguage)
         .sort((obj1, obj2) => -compare(obj1.contributions, obj2.contributions));
@@ -108,6 +116,73 @@ const main = async () => {
         // aggregateUserInfo 함수 호출하여 사용자 정보 집계
         const userInfo = aggregateUserInfo(parsedData);
         console.log('Aggregated User Info:', userInfo); // 집계된 사용자 정보 출력
+
+                if (process.env.SETTING_JSON) {
+                    const settingFile = r.readSettingJson(process.env.SETTING_JSON);
+                    const settingInfos =
+                        'length' in settingFile ? settingFile : [settingFile];
+                    for (const settingInfo of settingInfos) {
+                        const fileName =
+                            settingInfo.fileName || 'profile-customize.svg';
+                        f.writeFile(
+                            fileName,
+                            create.createSvg(userInfo, settingInfo, false)
+                        );
+                    }
+                } else {
+                    const settings = userInfo.isHalloween
+                        ? template.HalloweenSettings
+                        : template.NormalSettings;
+
+                    f.writeFile(
+                        'profile-green-animate.svg',
+                        create.createSvg(userInfo, settings, true)
+                    );
+                    f.writeFile(
+                        'profile-green.svg',
+                        create.createSvg(userInfo, settings, false)
+                    );
+
+                    // Northern hemisphere
+                    f.writeFile(
+                        'profile-season-animate.svg',
+                        create.createSvg(userInfo, template.NorthSeasonSettings, true)
+                    );
+                    f.writeFile(
+                        'profile-season.svg',
+                        create.createSvg(userInfo, template.NorthSeasonSettings, false)
+                    );
+
+                    // Southern hemisphere
+                    f.writeFile(
+                        'profile-south-season-animate.svg',
+                        create.createSvg(userInfo, template.SouthSeasonSettings, true)
+                    );
+                    f.writeFile(
+                        'profile-south-season.svg',
+                        create.createSvg(userInfo, template.SouthSeasonSettings, false)
+                    );
+
+                    f.writeFile(
+                        'profile-night-view.svg',
+                        create.createSvg(userInfo, template.NightViewSettings, true)
+                    );
+
+                    f.writeFile(
+                        'profile-night-green.svg',
+                        create.createSvg(userInfo, template.NightGreenSettings, true)
+                    );
+
+                    f.writeFile(
+                        'profile-night-rainbow.svg',
+                        create.createSvg(userInfo, template.NightRainbowSettings, true)
+                    );
+
+                    f.writeFile(
+                        'profile-gitblock.svg',
+                        create.createSvg(userInfo, template.GitBlockSettings, true)
+                    );
+                }
 
     } catch (error) {
         console.error('Error:', error);
