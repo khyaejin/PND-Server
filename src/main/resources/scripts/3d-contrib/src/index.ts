@@ -67,6 +67,10 @@ export const aggregateUserInfo = (
        });
 
    console.log(contributesLanguage);
+    // 총 기여도 계산
+    const totalContributions = user.contributionsCollection.contributionCalendar.weeks
+        .flatMap((week) => week.contributionDays)
+        .reduce((total, day) => total + day.contributionCount, 0);
 
     const languages: Array<type.LangInfo> = Object.values(contributesLanguage)
         .sort((obj1, obj2) => -compare(obj1.contributions, obj2.contributions));
@@ -83,7 +87,7 @@ export const aggregateUserInfo = (
         isHalloween: user.contributionsCollection.contributionCalendar.isHalloween,
         contributionCalendar: calendar,
         contributesLanguage: languages,
-        totalContributions: user.contributionsCollection.contributionCalendar.totalContributions,
+        totalContributions: totalContributions,
         totalCommitContributions: user.contributionsCollection.totalCommitContributions,
         totalIssueContributions: user.contributionsCollection.totalIssueContributions,
         totalPullRequestContributions: user.contributionsCollection.totalPullRequestContributions,
@@ -92,7 +96,17 @@ export const aggregateUserInfo = (
         totalForkCount: totalForkCount,
         totalStargazerCount: totalStargazerCount,
     };
-
+        console.log('isHalloween:', user.contributionsCollection.contributionCalendar.isHalloween);
+        console.log('calendar:', calendar);
+        console.log('languages:', languages);
+        console.log('totalContributions:', totalContributions);
+        console.log('totalCommitContributions:', user.contributionsCollection.totalCommitContributions);
+        console.log('totalIssueContributions:', user.contributionsCollection.totalIssueContributions);
+        console.log('totalPullRequestContributions:', user.contributionsCollection.totalPullRequestContributions);
+        console.log('totalPullRequestReviewContributions:', user.contributionsCollection.totalPullRequestReviewContributions);
+        console.log('totalRepositoryContributions:', user.contributionsCollection.totalRepositoryContributions);
+        console.log('totalForkCount:', totalForkCount);
+        console.log('totalStargazerCount:', totalStargazerCount);
     return userInfo;
 };
 
@@ -106,12 +120,14 @@ const main = async () => {
             throw new Error("GITHUB_DATA 환경 변수가 설정되지 않았습니다.");
         }
 
-        console.log('GitHub Data:', githubData);
+        // 깃허브 데이터 확인 로그
+        //console.log('GitHub Data:', githubData);
 
-        // JSON 데이터를 파싱합니다.
+        // JSON 데이터를 파싱
         const parsedData = JSON.parse(githubData);
 
-        console.log('Parsed Data Structure:', JSON.stringify(parsedData, null, 2));
+        // 파싱 후 데이터 확인
+        //console.log('Parsed Data Structure:', JSON.stringify(parsedData, null, 2));
 
         // aggregateUserInfo 함수 호출하여 사용자 정보 집계
         const userInfo = aggregateUserInfo(parsedData);
