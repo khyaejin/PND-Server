@@ -76,4 +76,10 @@ public class DiagramController {
         return diagramService.updateSequenceDiagramScript(requestDto);
     }
 
+    // ER 다이어그램 수정
+    @PatchMapping("/er")
+    public ResponseEntity<?> updateErDiagramScript(@RequestBody DiagramUpdateRequestDto requestDto) {
+        return diagramService.updateErDiagramScript(requestDto);
+    }
+
 }
