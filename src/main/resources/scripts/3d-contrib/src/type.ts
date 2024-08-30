@@ -10,13 +10,29 @@ export interface LangInfo {
     contributions: number;
 }
 
-export interface RepositoryInfo {
-    name: string;
-    contributionCalendar: Array<ContributionDay>;
-    contributesLanguage: Array<LangInfo>;
-    totalContributions: number;
-    totalForkCount: number;
-    totalStargazerCount: number;
+export interface RepositoryNode {
+    forkCount: number;
+    stargazerCount: number;
+    primaryLanguage?: {
+        name: string;
+        color: string;
+    };
+    contributionsCollection?: {
+        contributionCalendar: {
+            weeks: {
+                contributionDays: Array<{
+                    contributionCount: number;
+                    contributionLevel: string;
+                    date: string;
+                }>
+            }[]
+        };
+        totalCommitContributions: number;
+        totalIssueContributions: number;
+        totalPullRequestContributions: number;
+        totalPullRequestReviewContributions: number;
+        totalRepositoryContributions: number;
+    };
 }
 
 export interface UserInfo {
