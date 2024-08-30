@@ -224,13 +224,16 @@ public class DiagramService {
         }
 
         Optional<Diagram> foundDiagram = diagramRepository.findByRepoId(repoId);
-        String foundClassScript = null;
+        if (foundDiagram.isPresent()) {
+            Diagram diagram = foundDiagram.get();
+            String foundClassScript = diagram.getClassScript(); // Class 스크립트를 가져옴
 
-        // 유저가 작성한 다이어그램 스크립트가 이미 존재하는 경우
-        if(!foundDiagram.get().getClassScript().isBlank()) {
-            foundClassScript = foundDiagram.get().getClassScript();
-            return ResponseEntity.ok(CustomApiResponse.createSuccess(200, foundClassScript, "클래스 다이어그램 스크립트가 성공적으로 조회되었습니다."));
-        } else return ResponseEntity.ok(CustomApiResponse.createSuccess(404, null, "생성되어 있는 클래스 다이어그램 스크립트가 존재하지 않습니다."));
+            // Class 스크립트가 null이 아니고 비어있지 않은 경우
+            if (foundClassScript != null && !foundClassScript.isBlank()) {
+                return ResponseEntity.ok(CustomApiResponse.createSuccess(200, foundClassScript, "Class 다이어그램 스크립트가 성공적으로 조회되었습니다."));
+            }
+        }
+        return ResponseEntity.ok(CustomApiResponse.createSuccess(404, null, "생성되어 있는 Class 다이어그램이 존재하지 않습니다."));
 
     }
 
@@ -250,13 +253,16 @@ public class DiagramService {
         }
 
         Optional<Diagram> foundDiagram = diagramRepository.findByRepoId(repoId);
-        String foundSequenceScript = null;
+        if (foundDiagram.isPresent()) {
+            Diagram diagram = foundDiagram.get();
+            String foundSequenceScript = diagram.getSequenceScript(); // Sequence 스크립트를 가져옴
 
-        // 유저가 작성한 다이어그램 스크립트가 이미 존재하는 경우
-        if(!foundDiagram.get().getSequenceScript().isBlank()) {
-            foundSequenceScript = foundDiagram.get().getSequenceScript();
-            return ResponseEntity.ok(CustomApiResponse.createSuccess(200, foundSequenceScript, "시퀀스 다이어그램 스크립트가 성공적으로 조회되었습니다."));
-        } else return ResponseEntity.ok(CustomApiResponse.createSuccess(404, null, "생성되어 있는 시퀀스 다이어그램 스크립트가 존재하지 않습니다."));
+            // Sequence 스크립트가 null이 아니고 비어있지 않은 경우
+            if (foundSequenceScript != null && !foundSequenceScript.isBlank()) {
+                return ResponseEntity.ok(CustomApiResponse.createSuccess(200, foundSequenceScript, "Sequence 다이어그램 스크립트가 성공적으로 조회되었습니다."));
+            }
+        }
+        return ResponseEntity.ok(CustomApiResponse.createSuccess(404, null, "생성되어 있는 Sequence 다이어그램이 존재하지 않습니다."));
 
     }
 
