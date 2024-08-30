@@ -1,6 +1,7 @@
 package com.server.pnd.diagram.service;
 
 import com.server.pnd.diagram.dto.DiagramRequestDto;
+import com.server.pnd.diagram.dto.DiagramUpdateRequestDto;
 import com.server.pnd.diagram.repository.DiagramRepository;
 import com.server.pnd.domain.Diagram;
 import com.server.pnd.domain.Repo;
@@ -292,6 +293,39 @@ public class DiagramService {
             }
         }
         return ResponseEntity.ok(CustomApiResponse.createSuccess(404, null, "생성되어 있는 ER 다이어그램이 존재하지 않습니다."));
+    }
+
+    // 3. 수정
+
+    /**
+     * 유저가 수정한 스크립트를 DB에 업데이트하는 메서드.
+     *
+     * @param requestDto 다이어그램 요청 DTO
+     * @return ResponseEntity
+     */
+    public ResponseEntity<?> updateClassDiagramScript(DiagramUpdateRequestDto requestDto) {
+
+        // 1. 요청 데이터 검증
+        if (requestDto == null || requestDto.getRepoId() == null || requestDto.getScript() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(CustomApiResponse.createSuccess(400, null, "요청 데이터가 올바르지 않습니다."));
+        }
+
+        // 2. 기존 다이어그램 찾기
+        Optional<Diagram> foundDiagram = diagramRepository.findByRepoId(requestDto.getRepoId());
+        if (foundDiagram.isPresent()) {
+            Diagram diagram = foundDiagram.get();
+
+            // 3. requestDto의 script를 받아 저장하기
+            diagram.updateClassScript(requestDto.getScript());
+            diagramRepository.save(diagram);
+
+            return ResponseEntity.ok(CustomApiResponse.createSuccess(200, requestDto.getScript(), "클래스 다이어그램 스크립트가 성공적으로 업데이트되었습니다."));
+        }
+
+        // 4. 다이어그램을 찾을 수 없는 경우
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(CustomApiResponse.createSuccess(404, null, "생성되어 있는 클래스 다이어그램이 존재하지 않습니다."));
     }
 
     //

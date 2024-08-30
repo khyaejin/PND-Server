@@ -2,6 +2,7 @@ package com.server.pnd.diagram.controller;
 
 import com.server.pnd.diagram.dto.DiagramRequestDto;
 import com.server.pnd.diagram.dto.DiagramResponseDto;
+import com.server.pnd.diagram.dto.DiagramUpdateRequestDto;
 import com.server.pnd.diagram.service.DiagramService;
 import com.server.pnd.domain.Diagram;
 import lombok.RequiredArgsConstructor;
@@ -58,4 +59,15 @@ public class DiagramController {
     public ResponseEntity<?> getErDiagramScript(@RequestParam Long repoId) {
         return diagramService.getErDiagramScript(repoId);
     }
+
+    /*
+     * 유저 생성 다이어그램 수정
+     */
+
+    // 클래스 다이어그램 수정
+    @PatchMapping("/class")
+    public ResponseEntity<?> updateClassDiagramScript(@RequestBody DiagramUpdateRequestDto requestDto) {
+        return diagramService.updateClassDiagramScript(requestDto);
+    }
+
 }
