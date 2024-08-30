@@ -10,6 +10,15 @@ export interface LangInfo {
     contributions: number;
 }
 
+export interface RepositoryInfo {
+    name: string;
+    contributionCalendar: Array<ContributionDay>;
+    contributesLanguage: Array<LangInfo>;
+    totalContributions: number;
+    totalForkCount: number;
+    totalStargazerCount: number;
+}
+
 export interface UserInfo {
     isHalloween: boolean;
     contributionCalendar: Array<CalendarInfo>;

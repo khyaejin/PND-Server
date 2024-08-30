@@ -21,7 +21,14 @@ public class GitHubGraphQLService {
         String query = "{ \"query\": \"query { user(login: \\\"" + username + "\\\") { "
                 + "contributionsCollection { contributionCalendar { weeks { contributionDays { contributionCount contributionLevel date } } isHalloween } "
                 + "totalCommitContributions totalIssueContributions totalPullRequestContributions totalPullRequestReviewContributions totalRepositoryContributions } "
-                + "repositories(first: 100) { nodes { forkCount stargazerCount primaryLanguage { name color } } } } }\" }";
+                + "repositories(first: 100) { nodes { "
+                + "forkCount "
+                + "stargazerCount "
+                + "primaryLanguage { name color } "
+                + "contributionsCollection { "
+                + "contributionCalendar { weeks { contributionDays { contributionCount contributionLevel date } } } "
+                + "totalCommitContributions totalIssueContributions totalPullRequestContributions totalPullRequestReviewContributions totalRepositoryContributions }"
+                + "} } } }\" }";
 
         // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
@@ -35,4 +42,5 @@ public class GitHubGraphQLService {
         // 응답 본문 반환
         return response.getBody();
     }
+
 }
