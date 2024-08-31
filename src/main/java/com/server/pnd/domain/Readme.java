@@ -22,10 +22,16 @@ public class Readme extends BaseEntity {
 
     private String readme_script;
 
+    @Column(columnDefinition = "LONGTEXT", name = "readme_script_gpt")
     private String readme_script_gpt;
 
     // 제목 설정
     public void setContent(String content) {
         this.readme_script = content;
+    }
+
+    // 리드미 자동 생생 스크립트 저장
+    public void setReadmeScriptGpt(String readme_script_gpt) {
+        this.readme_script_gpt = readme_script_gpt;
     }
 }

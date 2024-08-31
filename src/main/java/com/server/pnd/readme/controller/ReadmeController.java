@@ -29,6 +29,10 @@ public class ReadmeController {
     }
 
     // 리드미 자동생성
+    @PatchMapping("/{repo_id}")
+    public ResponseEntity<CustomApiResponse<?>> generateReadmeWithGpt(@PathVariable("repo_id") Long repoId) {
+        return readmeService.generateReadmeWithGpt(repoId);
+    }
 
     // 리드미 수정
     @PutMapping()
