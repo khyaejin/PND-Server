@@ -14,7 +14,10 @@ public interface ReadmeService {
     ResponseEntity<CustomApiResponse<?>> searchReadme(Long readmeId);
 
     // 리드미 자동 생성
+    ResponseEntity<CustomApiResponse<?>> generateReadmeWithGpt(Long repoId);
 
     // 리드미 수정
     ResponseEntity<CustomApiResponse<?>> editReadme(ReadmeEditRequestDto readmeEditRequestDto);
+
+
 }
