@@ -6,7 +6,7 @@ const OTHER_COLOR = '#444444';
 
 export const createPieLanguage = (
     svg: d3.Selection<SVGSVGElement, unknown, null, unknown>,
-    userInfo: type.UserInfo,
+    repositoryInfo: type.RepositoryInfo,
     x: number,
     y: number,
     width: number,
@@ -14,7 +14,7 @@ export const createPieLanguage = (
     settings: type.PieLangSettings,
     isForcedAnimation: boolean
 ): void => {
-    if (userInfo.totalContributions === 0) {
+    if (repositoryInfo.contributions.length === 0) {
         return;
     }
 

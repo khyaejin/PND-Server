@@ -1,7 +1,7 @@
 import * as client from './github-graphql';
 import * as type from './type';
 import * as core from '@actions/core';
-import * as aggregate from './aggregate-user-info';
+import * as aggregateRepo from './aggregate-repo-info';
 import * as template from './color-template';
 import * as create from './create-svg';
 import * as f from './file-writer';
@@ -23,72 +23,7 @@ const compare = (num1: number, num2: number): number => {
     return num1 - num2; // 비교 결과 반환 (오름차순 정렬)
 };
 
-export const aggregateRepositoryInfo = (
-    response: client.ResponseType // GitHub GraphQL API 응답 타입 매개변수로 받음
-): type.RepositoryInfo[] => {
-    if (!response.data) {
-        if (response.errors && response.errors.length) {
-            throw new Error(response.errors[0].message);
-        } else {
-            throw new Error('JSON\n' + JSON.stringify(response, null, 2));
-        }
-    }
-    console.log('response:', response); // response 값 확인
-
-    const user = response.data.user;
-    const repositories = user.repositories.nodes;
-
-    const repositoryInfos: type.RepositoryInfo[] = repositories.map(repo => {
-        const calendar = repo.contributionsCollection.contributionCalendar.weeks
-            .flatMap(week => week.contributionDays)
-            .map(day => ({
-                contributionCount: day.contributionCount,
-                contributionLevel: toNumberContributionLevel(day.contributionLevel),
-                date: new Date(day.date),
-            }));
-
-        const contributesLanguage: { [language: string]: type.LangInfo } = {};
-
-        repo.contributionsCollection.commitContributionsByRepository
-            .filter(contribution => contribution.repository.primaryLanguage)
-            .forEach(contribution => {
-                const language = contribution.repository.primaryLanguage?.name || 'Unknown';
-                const color = contribution.repository.primaryLanguage?.color || OTHER_COLOR;
-                const contributions = contribution.contributions.totalCount;
-
-                const info = contributesLanguage[language];
-                if (info) {
-                    info.contributions += contributions;
-                } else {
-                    contributesLanguage[language] = {
-                        language: language,
-                        color: color,
-                        contributions: contributions,
-                    };
-                }
-            });
-
-        const languages: Array<type.LangInfo> = Object.values(contributesLanguage)
-            .sort((obj1, obj2) => -compare(obj1.contributions, obj2.contributions));
-
-        const totalContributions = calendar.reduce((total, day) => total + day.contributionCount, 0);
-        const totalForkCount = repo.forkCount;
-        const totalStargazerCount = repo.stargazerCount;
-
-        return {
-            name: repo.name,
-            contributionCalendar: calendar,
-            contributesLanguage: languages,
-            totalContributions: totalContributions,
-            totalForkCount: totalForkCount,
-            totalStargazerCount: totalStargazerCount,
-        };
-    });
-
-    console.log('repositoryInfos:', repositoryInfos); // 각 리포지토리별 정보 출력
-    return repositoryInfos;
-};
-
+// main 함수
 const main = async () => {
     try {
         const githubData = process.env.GITHUB_DATA;
@@ -99,11 +34,15 @@ const main = async () => {
             throw new Error("GITHUB_DATA 환경 변수가 설정되지 않았습니다.");
         }
 
+        console.log('githubData:', githubData);
+
         // JSON 데이터를 파싱
         const parsedData = JSON.parse(githubData);
 
+        console.log('Parsed Data:', parsedData);
+
         // 각 레포지토리별 사용자 정보 집계
-        const repositoryInfos = aggregateRepositoryInfo(parsedData);
+        const repositoryInfos = aggregateRepo.aggregateRepositoryInfo(parsedData);
         console.log('Aggregated Repository Info:', repositoryInfos); // 집계된 레포지토리 정보 출력
 
         repositoryInfos.forEach(repoInfo => {

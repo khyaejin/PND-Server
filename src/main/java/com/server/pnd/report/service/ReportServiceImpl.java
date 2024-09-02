@@ -49,16 +49,17 @@ public class ReportServiceImpl implements ReportService{
         // socialLoginService.refreshGitHubAccessToken(user); //토큰 업데이트
         String accessToken = user.getAccessToken();
         String username = user.getName();
-
+        String repositoryName = repo.getRepoName();
 
         // GitHub GraphQL API 사용하여 데이터 가져오기
-        String response = gitHubGraphQLService.fetchUserData(accessToken, username);
+        String response = gitHubGraphQLService.fetchUserData(accessToken, username, repositoryName);
+        System.err.println("response: " + response);
 
         // JSON 파싱 및 처리 (필요한 로직 추가)
         // GraphQL 응답 데이터를 처리하여 필요한 정보를 추출하고 사용합니다.
         // 이 부분은 기존의 이벤트 처리 로직을 대체하는 로직으로 추가 구현이 필요합니다.
 
-        // 레고 블럭 생성 (Node.js 스크립트 실행)
+        // 레고 블럭 생성 (Node.js 스크립트실행)
         ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/src/index.ts");
 
         // 환경 변수 설정

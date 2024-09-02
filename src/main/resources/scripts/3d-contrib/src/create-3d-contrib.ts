@@ -250,7 +250,7 @@ export const addDefines = (
 
 export const create3DContrib = (
     svg: d3.Selection<SVGSVGElement, unknown, null, unknown>,
-    userInfo: type.UserInfo,
+    repositoryInfo: type.RepositoryInfo,
     x: number,
     y: number,
     width: number,
@@ -258,7 +258,7 @@ export const create3DContrib = (
     settings: type.FullSettings,
     isForcedAnimation = false
 ): void => {
-    if (userInfo.contributionCalendar.length === 0) {
+    if (repositoryInfo.contributions.length === 0) {
         return;
     }
 

@@ -9,31 +9,24 @@ export interface LangInfo {
     color: string;
     contributions: number;
 }
+type RepositoryInfo = {
+  name: string;
+  contributions: Contribution[];
+  languages: LanguageInfo[];
+};
 
-export interface RepositoryNode {
-    forkCount: number;
-    stargazerCount: number;
-    primaryLanguage?: {
-        name: string;
-        color: string;
-    };
-    contributionsCollection?: {
-        contributionCalendar: {
-            weeks: {
-                contributionDays: Array<{
-                    contributionCount: number;
-                    contributionLevel: string;
-                    date: string;
-                }>
-            }[]
-        };
-        totalCommitContributions: number;
-        totalIssueContributions: number;
-        totalPullRequestContributions: number;
-        totalPullRequestReviewContributions: number;
-        totalRepositoryContributions: number;
-    };
-}
+type Contribution = {
+  date: Date;
+  count: number;
+  level: number;
+};
+
+type LanguageInfo = {
+  language: string;
+  color: string;
+  contributions: number;
+};
+
 
 export interface UserInfo {
     isHalloween: boolean;

@@ -14,21 +14,40 @@ public class GitHubGraphQLService {
 
     private final RestTemplate restTemplate;
 
-    public String fetchUserData(String accessToken, String username) {
+    public String fetchUserData(String accessToken, String username, String repositoryName) {
         String url = "https://api.github.com/graphql";
 
         // GraphQL 쿼리 정의
-        String query = "{ \"query\": \"query { user(login: \\\"" + username + "\\\") { "
-                + "contributionsCollection { contributionCalendar { weeks { contributionDays { contributionCount contributionLevel date } } isHalloween } "
-                + "totalCommitContributions totalIssueContributions totalPullRequestContributions totalPullRequestReviewContributions totalRepositoryContributions } "
-                + "repositories(first: 100) { nodes { "
+        String query = "{ \"query\": \"query { repository(owner: \\\"" + username + "\\\", name: \\\"" + repositoryName + "\\\") { "
+                + "name "
                 + "forkCount "
                 + "stargazerCount "
                 + "primaryLanguage { name color } "
-                + "contributionsCollection { "
-                + "contributionCalendar { weeks { contributionDays { contributionCount contributionLevel date } } } "
-                + "totalCommitContributions totalIssueContributions totalPullRequestContributions totalPullRequestReviewContributions totalRepositoryContributions }"
-                + "} } } }\" }";
+                + "defaultBranchRef { "
+                + "target { "
+                + "... on Commit { "
+                + "history(first: 100) { "
+                + "edges { "
+                + "node { "
+                + "committedDate "
+                + "additions "
+                + "deletions "
+                + "changedFiles "
+                + "author { name } "
+                + "} "
+                + "} "
+                + "} "
+                + "} "
+                + "} "
+                + "} "
+                + "languages(first: 10) { "
+                + "edges { "
+                + "node { name color } "
+                + "size "
+                + "} "
+                + "} "
+                + "} "
+                + "}\" }";
 
         // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
