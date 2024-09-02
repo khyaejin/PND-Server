@@ -17,7 +17,7 @@ const radarHeight = (radarWidth * 3) / 4;
 const radarX = width - radarWidth - 40;
 
 export const createSvg = (
-    repoInfo: type.RepositoryInfo, // UserInfo 대신 RepositoryInfo 사용
+    repoInfo: type.RepositoryInfo,
     settings: type.Settings,
     isForcedAnimation: boolean
 ): string => {
@@ -57,7 +57,6 @@ export const createSvg = (
         .attr('fill', settings.backgroundColor);
 
     if (settings.type === 'pie_lang_only') {
-        // pie chart only
         pie.createPieLanguage(
             svg,
             repoInfo,
@@ -69,7 +68,6 @@ export const createSvg = (
             isForcedAnimation
         );
     } else if (settings.type === 'radar_contrib_only') {
-        // radar chart only
         radar.createRadarContrib(
             svg,
             repoInfo,
@@ -81,7 +79,6 @@ export const createSvg = (
             isForcedAnimation
         );
     } else {
-        // 3D-Contrib Calendar
         contrib.create3DContrib(
             svg,
             repoInfo,
@@ -93,7 +90,6 @@ export const createSvg = (
             isForcedAnimation
         );
 
-        // radar chart
         radar.createRadarContrib(
             svg,
             repoInfo,
@@ -105,7 +101,6 @@ export const createSvg = (
             isForcedAnimation
         );
 
-        // pie chart
         pie.createPieLanguage(
             svg,
             repoInfo,
@@ -129,7 +124,7 @@ export const createSvg = (
             .attr('x', positionXContrib)
             .attr('y', positionYContrib)
             .attr('text-anchor', 'end')
-            .text(util.inertThousandSeparator(repoInfo.totalContributions)) // repoInfo에서 totalContributions 사용
+            .text(util.inertThousandSeparator(repoInfo.totalContributions))
             .attr('fill', settings.strongColor);
 
         const contribLabel = settings.l10n
@@ -171,10 +166,8 @@ export const createSvg = (
             .attr('x', positionXStar + 10)
             .attr('y', positionYStar)
             .attr('text-anchor', 'start')
-            .text(util.toScale(repoInfo.totalStargazerCount)) // repoInfo에서 totalStargazerCount 사용
-            .attr('fill', settings.foregroundColor)
-            .append('title')
-            .text(repoInfo.totalStargazerCount);
+            .text(util.toScale(repoInfo.stargazerCount))
+            .attr('fill', settings.foregroundColor);
 
         const positionXFork = (width * 6) / 10;
         const positionYFork = positionYContrib;
@@ -203,16 +196,14 @@ export const createSvg = (
             .attr('x', positionXFork + 4)
             .attr('y', positionYFork)
             .attr('text-anchor', 'start')
-            .text(util.toScale(repoInfo.totalForkCount)) // repoInfo에서 totalForkCount 사용
-            .attr('fill', settings.foregroundColor)
-            .append('title')
-            .text(repoInfo.totalForkCount);
+            .text(util.toScale(repoInfo.forkCount))
+            .attr('fill', settings.foregroundColor);
 
         // ISO 8601 format
-        const startDate = repoInfo.contributionCalendar[0].date;
+        const startDate = repoInfo.contributions[0].date;
         const endDate =
-            repoInfo.contributionCalendar[
-                repoInfo.contributionCalendar.length - 1
+            repoInfo.contributions[
+                repoInfo.contributions.length - 1
             ].date;
         const period = `${util.toIsoDate(startDate)} / ${util.toIsoDate(
             endDate

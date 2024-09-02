@@ -27,7 +27,6 @@ const compare = (num1: number, num2: number): number => {
 const main = async () => {
     try {
         const githubData = process.env.GITHUB_DATA;
-        const username = process.env.USERNAME;
         const token = process.env.GITHUB_TOKEN;
 
         if (!githubData) {
@@ -41,78 +40,76 @@ const main = async () => {
 
         console.log('Parsed Data:', parsedData);
 
-        // 각 레포지토리별 사용자 정보 집계
-        const repositoryInfos = aggregateRepo.aggregateRepositoryInfo(parsedData);
-        console.log('Aggregated Repository Info:', repositoryInfos); // 집계된 레포지토리 정보 출력
+        // 단일 레포지토리에 대한 정보 집계
+        const repoInfo = aggregateRepo.aggregateRepositoryInfo(parsedData);
+        console.log('Aggregated Repository Info:', repoInfo); // 집계된 레포지토리 정보 출력
 
-        repositoryInfos.forEach(repoInfo => {
-            if (process.env.SETTING_JSON) {
-                const settingFile = r.readSettingJson(process.env.SETTING_JSON);
-                const settingInfos =
-                    'length' in settingFile ? settingFile : [settingFile];
-                for (const settingInfo of settingInfos) {
-                    const fileName =
-                        settingInfo.fileName || `profile-${repoInfo.name}-customize.svg`;
-                    f.writeFile(
-                        fileName,
-                        create.createSvg(repoInfo, settingInfo, false)
-                    );
-                }
-            } else {
-                const settings = repoInfo.name.includes("Halloween")
-                    ? template.HalloweenSettings
-                    : template.NormalSettings;
-
+        if (process.env.SETTING_JSON) {
+            const settingFile = r.readSettingJson(process.env.SETTING_JSON);
+            const settingInfos =
+                'length' in settingFile ? settingFile : [settingFile];
+            for (const settingInfo of settingInfos) {
+                const fileName =
+                    settingInfo.fileName || `profile-${repoInfo.name}-customize.svg`;
                 f.writeFile(
-                    `profile-${repoInfo.name}-green-animate.svg`,
-                    create.createSvg(repoInfo, settings, true)
-                );
-                f.writeFile(
-                    `profile-${repoInfo.name}-green.svg`,
-                    create.createSvg(repoInfo, settings, false)
-                );
-
-                // Northern hemisphere
-                f.writeFile(
-                    `profile-${repoInfo.name}-season-animate.svg`,
-                    create.createSvg(repoInfo, template.NorthSeasonSettings, true)
-                );
-                f.writeFile(
-                    `profile-${repoInfo.name}-season.svg`,
-                    create.createSvg(repoInfo, template.NorthSeasonSettings, false)
-                );
-
-                // Southern hemisphere
-                f.writeFile(
-                    `profile-${repoInfo.name}-south-season-animate.svg`,
-                    create.createSvg(repoInfo, template.SouthSeasonSettings, true)
-                );
-                f.writeFile(
-                    `profile-${repoInfo.name}-south-season.svg`,
-                    create.createSvg(repoInfo, template.SouthSeasonSettings, false)
-                );
-
-                f.writeFile(
-                    `profile-${repoInfo.name}-night-view.svg`,
-                    create.createSvg(repoInfo, template.NightViewSettings, true)
-                );
-
-                f.writeFile(
-                    `profile-${repoInfo.name}-night-green.svg`,
-                    create.createSvg(repoInfo, template.NightGreenSettings, true)
-                );
-
-                f.writeFile(
-                    `profile-${repoInfo.name}-night-rainbow.svg`,
-                    create.createSvg(repoInfo, template.NightRainbowSettings, true)
-                );
-
-                f.writeFile(
-                    `profile-${repoInfo.name}-gitblock.svg`,
-                    create.createSvg(repoInfo, template.GitBlockSettings, true)
+                    fileName,
+                    create.createSvg(repoInfo, settingInfo, false)
                 );
             }
-        });
+        } else {
+            const settings = repoInfo.name.includes("Halloween")
+                ? template.HalloweenSettings
+                : template.NormalSettings;
+
+            f.writeFile(
+                `profile-${repoInfo.name}-green-animate.svg`,
+                create.createSvg(repoInfo, settings, true)
+            );
+            f.writeFile(
+                `profile-${repoInfo.name}-green.svg`,
+                create.createSvg(repoInfo, settings, false)
+            );
+
+            // Northern hemisphere
+            f.writeFile(
+                `profile-${repoInfo.name}-season-animate.svg`,
+                create.createSvg(repoInfo, template.NorthSeasonSettings, true)
+            );
+            f.writeFile(
+                `profile-${repoInfo.name}-season.svg`,
+                create.createSvg(repoInfo, template.NorthSeasonSettings, false)
+            );
+
+            // Southern hemisphere
+            f.writeFile(
+                `profile-${repoInfo.name}-south-season-animate.svg`,
+                create.createSvg(repoInfo, template.SouthSeasonSettings, true)
+            );
+            f.writeFile(
+                `profile-${repoInfo.name}-south-season.svg`,
+                create.createSvg(repoInfo, template.SouthSeasonSettings, false)
+            );
+
+            f.writeFile(
+                `profile-${repoInfo.name}-night-view.svg`,
+                create.createSvg(repoInfo, template.NightViewSettings, true)
+            );
+
+            f.writeFile(
+                `profile-${repoInfo.name}-night-green.svg`,
+                create.createSvg(repoInfo, template.NightGreenSettings, true)
+            );
+
+            f.writeFile(
+                `profile-${repoInfo.name}-night-rainbow.svg`,
+                create.createSvg(repoInfo, template.NightRainbowSettings, true)
+            );
+
+            f.writeFile(
+                `profile-${repoInfo.name}-gitblock.svg`,
+                create.createSvg(repoInfo, template.GitBlockSettings, true)
+            );
+        }
 
     } catch (error) {
         console.error('Error:', error);

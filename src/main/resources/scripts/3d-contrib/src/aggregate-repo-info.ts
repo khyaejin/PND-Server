@@ -37,7 +37,7 @@ export const aggregateRepositoryInfo = (
             color: langEdge.node.color || OTHER_COLOR,
             contributions: langEdge.size, // 해당 언어로 작성된 코드의 양
         })
-    ).sort((a, b) => b.contributions - a.contributions); // 기여 크기 순으로 정렬
+    ).sort((a: type.LanguageInfo, b: type.LanguageInfo) => b.contributions - a.contributions); // 기여 크기 순으로 정렬
 
     // 레포지토리 정보 생성
     const repositoryInfo: type.RepositoryInfo = {

@@ -247,7 +247,6 @@ export const addDefines = (
         }
     }
 };
-
 export const create3DContrib = (
     svg: d3.Selection<SVGSVGElement, unknown, null, unknown>,
     repositoryInfo: type.RepositoryInfo,
@@ -262,10 +261,10 @@ export const create3DContrib = (
         return;
     }
 
-    const startTime = userInfo.contributionCalendar[0].date.getTime();
+    const startTime = repositoryInfo.contributions[0].date.getTime(); // repositoryInfo에서 시작 시간을 가져옵니다.
     const dx = width / 64;
     const dy = dx * Math.tan(ANGLE * ((2 * Math.PI) / 360));
-    const weekcount = Math.ceil(userInfo.contributionCalendar.length / 7.0);
+    const weekcount = Math.ceil(repositoryInfo.contributions.length / 7.0); // contributions의 길이를 사용합니다.
     const dxx = dx * 0.9;
     const dyy = dy * 0.9;
 
@@ -274,15 +273,15 @@ export const create3DContrib = (
 
     const group = svg.append('g');
 
-    userInfo.contributionCalendar.forEach((cal) => {
+    repositoryInfo.contributions.forEach((cal) => {
         const dayOfWeek = cal.date.getUTCDay(); // sun = 0, mon = 1, ...
         const week = Math.floor(diffDate(startTime, cal.date.getTime()) / 7);
 
         const baseX = offsetX + (week - dayOfWeek) * dx;
         const baseY = offsetY + (week + dayOfWeek) * dy;
-        // ref. https://github.com/yoshi389111/github-profile-3d-contrib/issues/27
-        const calHeight = Math.log10(cal.contributionCount / 20 + 1) * 144 + 3;
-        const contribLevel = cal.contributionLevel;
+
+        const calHeight = Math.log10(cal.count / 20 + 1) * 144 + 3; // contributionCount를 count로 변경
+        const contribLevel = cal.level; // contributionLevel을 level로 변경
 
         const isAnimate = settings.growingAnimation || isForcedAnimation;
 

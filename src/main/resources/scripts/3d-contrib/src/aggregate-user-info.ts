@@ -37,7 +37,7 @@
 //             .flatMap(week => week.contributionDays)
 //             .map(day => ({
 //                 contributionCount: day.contributionCount,
-//                 contributionLevel: toNumberContributionLevel(day.contributionLevel),
+//                 contributionL    evel: toNumberContributionLevel(day.contributionLevel),
 //                 date: new Date(day.date),
 //             }));
 //
