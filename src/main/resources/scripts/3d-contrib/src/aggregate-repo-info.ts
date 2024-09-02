@@ -3,87 +3,57 @@ import * as type from './type';
 
 const OTHER_COLOR = '#444444'; // 기본 색상 설정, 언어 색상이 없는 경우 사용
 
-const toNumberContributionLevel = (level: type.ContributionLevel): number => {
-    switch (level) {
-        case 'NONE': return 0;
-        case 'FIRST_QUARTILE': return 1;
-        case 'SECOND_QUARTILE': return 2;
-        case 'THIRD_QUARTILE': return 3;
-        case 'FOURTH_QUARTILE': return 4;
-    }
-};
-
-const compare = (num1: number, num2: number): number => {
-    return num2 - num1; // 내림차순 정렬
+// 기여 레벨을 숫자로 변환하는 함수
+const calculateContributionLevel = (changedFiles: number): number => {
+    if (changedFiles >= 50) return 4;
+    if (changedFiles >= 20) return 3;
+    if (changedFiles >= 10) return 2;
+    if (changedFiles >= 5) return 1;
+    return 0;
 };
 
 export const aggregateRepositoryInfo = (
-    response: client.ResponseType
-): type.RepositoryInfo[] => {
-    if (!response.data) {
-        if (response.errors && response.errors.length) {
-            throw new Error(response.errors[0].message);
-        } else {
-            throw new Error('JSON\n' + JSON.stringify(response, null, 2));
-        }
-    }
+    repositoryData: any // GraphQL 쿼리로 가져온 레포지토리 데이터
+): type.RepositoryInfo => {
+    // 커밋 기록을 처리하여 기여 내역으로 변환
+    const contributions: type.Contribution[] = repositoryData.defaultBranchRef.target.history.edges.map(
+        (edge: any) => ({
+            date: new Date(edge.node.committedDate),
+            count: edge.node.additions - edge.node.deletions,
+            level: calculateContributionLevel(edge.node.changedFiles),
+        })
+    );
 
-    const user = response.data.user;
-    const repositories = user.repositories.nodes;
+    // 총 기여 수 계산
+    const totalContributions = contributions.reduce(
+        (total, contribution) => total + contribution.count,
+        0
+    );
 
-    const repositoryInfos: type.RepositoryInfo[] = repositories.map(repo => {
-        const calendar = repo.contributionsCollection.contributionCalendar.weeks
-            .flatMap((week: any) => week.contributionDays)
-            .map((day: any) => ({
-                contributionCount: day.contributionCount,
-                contributionLevel: toNumberContributionLevel(day.contributionLevel),
-                date: new Date(day.date),
-            }));
+    // 언어 사용 정보를 처리
+    const languages: type.LanguageInfo[] = repositoryData.languages.edges.map(
+        (langEdge: any) => ({
+            language: langEdge.node.name,
+            color: langEdge.node.color || OTHER_COLOR,
+            contributions: langEdge.size, // 해당 언어로 작성된 코드의 양
+        })
+    ).sort((a, b) => b.contributions - a.contributions); // 기여 크기 순으로 정렬
 
-        const contributesLanguage: { [language: string]: type.LangInfo } = {};
+    // 레포지토리 정보 생성
+    const repositoryInfo: type.RepositoryInfo = {
+        name: repositoryData.name,
+        forkCount: repositoryData.forkCount,
+        stargazerCount: repositoryData.stargazerCount,
+        primaryLanguage: repositoryData.primaryLanguage,
+        contributions: contributions,
+        languages: languages,
+        totalContributions: totalContributions,
+        totalCommitContributions: contributions.length, // 커밋 개수로 처리
+        totalIssueContributions: 0, // 이슈 데이터가 없으므로 기본값
+        totalPullRequestContributions: 0, // 풀 리퀘스트 데이터가 없으므로 기본값
+        totalPullRequestReviewContributions: 0, // 리뷰 데이터가 없으므로 기본값
+        totalRepositoryContributions: totalContributions, // 전체 기여 계산
+    };
 
-        repo.contributionsCollection.commitContributionsByRepository
-            .filter((contribution: any) => contribution.repository.primaryLanguage)
-            .forEach((contribution: any) => {
-                const language = contribution.repository.primaryLanguage?.name || 'Unknown';
-                const color = contribution.repository.primaryLanguage?.color || OTHER_COLOR;
-                const contributions = contribution.contributions.totalCount;
-
-                const info = contributesLanguage[language];
-                if (info) {
-                    info.contributions += contributions;
-                } else {
-                    contributesLanguage[language] = {
-                        language: language,
-                        color: color,
-                        contributions: contributions,
-                    };
-                }
-            });
-
-        const languages: Array<type.LangInfo> = Object.values(contributesLanguage)
-            .sort((obj1, obj2) => -compare(obj1.contributions, obj2.contributions));
-
-        const totalContributions = calendar.reduce((total, day) => total + day.contributionCount, 0);
-        const totalForkCount = repo.forkCount;
-        const totalStargazerCount = repo.stargazerCount;
-
-        return {
-            forkCount: totalForkCount,
-            stargazerCount: totalStargazerCount,
-            primaryLanguage: repo.primaryLanguage,
-            contributionsCollection: {
-                contributionCalendar: {
-                    weeks: repo.contributionsCollection.contributionCalendar.weeks
-                },
-                totalCommitContributions: repo.contributionsCollection.totalCommitContributions,
-                totalIssueContributions: repo.contributionsCollection.totalIssueContributions,
-                totalPullRequestContributions: repo.contributionsCollection.totalPullRequestContributions,
-                totalPullRequestReviewContributions: repo.contributionsCollection.totalPullRequestReviewContributions,
-                totalRepositoryContributions: repo.contributionsCollection.totalRepositoryContributions
-            }
-        };
-    });
-
-    return repositoryInfos;
+    return repositoryInfo;
 };

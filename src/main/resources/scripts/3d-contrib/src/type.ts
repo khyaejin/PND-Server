@@ -9,38 +9,41 @@ export interface LangInfo {
     color: string;
     contributions: number;
 }
-type RepositoryInfo = {
-  name: string;
-  contributions: Contribution[];
-  languages: LanguageInfo[];
-};
 
-type Contribution = {
+// 레포지토리 내 기여 정보를 담는 인터페이스 정의
+export interface Contribution {
   date: Date;
   count: number;
   level: number;
-};
+}
 
-type LanguageInfo = {
+// 언어 정보를 담는 인터페이스 정의
+export interface LanguageInfo {
   language: string;
   color: string;
   contributions: number;
-};
-
-
-export interface UserInfo {
-    isHalloween: boolean;
-    contributionCalendar: Array<CalendarInfo>;
-    contributesLanguage: Array<LangInfo>;
-    totalContributions: number;
-    totalCommitContributions: number;
-    totalIssueContributions: number;
-    totalPullRequestContributions: number;
-    totalPullRequestReviewContributions: number;
-    totalRepositoryContributions: number;
-    totalForkCount: number;
-    totalStargazerCount: number;
 }
+
+// 레포지토리 정보를 담는 인터페이스 정의
+export interface RepositoryInfo {
+  name: string; // 레포지토리 이름
+  forkCount: number; // 포크 수
+  stargazerCount: number; // 스타 개수
+  primaryLanguage: {
+    name: string;
+    color: string;
+  } | null; // 주요 언어 정보
+  contributions: Contribution[]; // 기여 내역
+  languages: LanguageInfo[]; // 사용된 언어 정보
+  totalContributions: number; // 레포지토리 내 총 기여 수
+  totalCommitContributions: number; // 커밋 기여 수
+  totalIssueContributions: number; // 이슈 기여 수
+  totalPullRequestContributions: number; // 풀 리퀘스트 기여 수
+  totalPullRequestReviewContributions: number; // 풀 리퀘스트 리뷰 기여 수
+  totalRepositoryContributions: number; // 레포지토리 기여 수
+}
+
+
 
 export type ContributionLevel =
     | 'NONE'
