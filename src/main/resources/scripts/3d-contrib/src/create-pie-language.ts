@@ -6,7 +6,7 @@ const OTHER_COLOR = '#444444';
 
 export const createPieLanguage = (
     svg: d3.Selection<SVGSVGElement, unknown, null, unknown>,
-    userInfo: type.UserInfo,
+    repositoryInfo: type.RepositoryInfo, // userInfo 대신 repositoryInfo 사용
     x: number,
     y: number,
     width: number,
@@ -14,16 +14,21 @@ export const createPieLanguage = (
     settings: type.PieLangSettings,
     isForcedAnimation: boolean
 ): void => {
-    if (userInfo.totalContributions === 0) {
+    if (repositoryInfo.contributions.length === 0) {
         return;
     }
 
-    const languages = userInfo.contributesLanguage.slice(0, 5);
+    // 상위 5개의 언어 선택
+    const languages = repositoryInfo.languages.slice(0, 5);
+
+    // 선택된 언어들의 기여도 합산
     const sumContrib = languages
         .map((lang) => lang.contributions)
         .reduce((a, b) => a + b, 0);
-    const otherContributions = userInfo.totalCommitContributions - sumContrib;
-    if (0 < otherContributions) {
+
+    // 기타 언어의 기여도 계산
+    const otherContributions = repositoryInfo.totalCommitContributions - sumContrib;
+    if (otherContributions > 0) {
         languages.push({
             language: OTHER_NAME,
             color: OTHER_COLOR,
@@ -58,7 +63,7 @@ export const createPieLanguage = (
         .append('g')
         .attr('transform', `translate(${radius * 2.1}, ${0})`);
 
-    // markers for label
+    // labels에 대한 markers
     const markers = groupLabel
         .selectAll(null)
         .data(pieData)
@@ -106,7 +111,7 @@ export const createPieLanguage = (
         .outerRadius(radius - margin)
         .innerRadius(radius / 2);
 
-    // pie chart
+    // pie chart 생성
     const paths = group
         .append('g')
         .attr('transform', `translate(${radius}, ${radius})`)

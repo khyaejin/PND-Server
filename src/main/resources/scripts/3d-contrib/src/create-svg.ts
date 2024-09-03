@@ -17,7 +17,7 @@ const radarHeight = (radarWidth * 3) / 4;
 const radarX = width - radarWidth - 40;
 
 export const createSvg = (
-    userInfo: type.UserInfo,
+    repoInfo: type.RepositoryInfo,
     settings: type.Settings,
     isForcedAnimation: boolean
 ): string => {
@@ -57,10 +57,9 @@ export const createSvg = (
         .attr('fill', settings.backgroundColor);
 
     if (settings.type === 'pie_lang_only') {
-        // pie chart only
         pie.createPieLanguage(
             svg,
-            userInfo,
+            repoInfo,
             0,
             0,
             pieWidth,
@@ -69,10 +68,9 @@ export const createSvg = (
             isForcedAnimation
         );
     } else if (settings.type === 'radar_contrib_only') {
-        // radar chart only
         radar.createRadarContrib(
             svg,
-            userInfo,
+            repoInfo,
             0,
             0,
             radarWidth,
@@ -81,10 +79,9 @@ export const createSvg = (
             isForcedAnimation
         );
     } else {
-        // 3D-Contrib Calendar
         contrib.create3DContrib(
             svg,
-            userInfo,
+            repoInfo,
             0,
             0,
             width,
@@ -93,10 +90,9 @@ export const createSvg = (
             isForcedAnimation
         );
 
-        // radar chart
         radar.createRadarContrib(
             svg,
-            userInfo,
+            repoInfo,
             radarX,
             70,
             radarWidth,
@@ -105,10 +101,9 @@ export const createSvg = (
             isForcedAnimation
         );
 
-        // pie chart
         pie.createPieLanguage(
             svg,
-            userInfo,
+            repoInfo,
             40,
             height - pieHeight - 70,
             pieWidth,
@@ -129,7 +124,7 @@ export const createSvg = (
             .attr('x', positionXContrib)
             .attr('y', positionYContrib)
             .attr('text-anchor', 'end')
-            .text(util.inertThousandSeparator(userInfo.totalContributions))
+            .text(util.inertThousandSeparator(repoInfo.totalContributions))
             .attr('fill', settings.strongColor);
 
         const contribLabel = settings.l10n
@@ -140,7 +135,6 @@ export const createSvg = (
             .style('font-size', '24px')
             .attr('x', positionXContrib + 10)
             .attr('y', positionYContrib)
-            .attr('text-anchor', 'start')
             .attr('text-anchor', 'start')
             .text(contribLabel)
             .attr('fill', settings.foregroundColor);
@@ -172,10 +166,8 @@ export const createSvg = (
             .attr('x', positionXStar + 10)
             .attr('y', positionYStar)
             .attr('text-anchor', 'start')
-            .text(util.toScale(userInfo.totalStargazerCount))
-            .attr('fill', settings.foregroundColor)
-            .append('title')
-            .text(userInfo.totalStargazerCount);
+            .text(util.toScale(repoInfo.stargazerCount))
+            .attr('fill', settings.foregroundColor);
 
         const positionXFork = (width * 6) / 10;
         const positionYFork = positionYContrib;
@@ -204,16 +196,14 @@ export const createSvg = (
             .attr('x', positionXFork + 4)
             .attr('y', positionYFork)
             .attr('text-anchor', 'start')
-            .text(util.toScale(userInfo.totalForkCount))
-            .attr('fill', settings.foregroundColor)
-            .append('title')
-            .text(userInfo.totalForkCount);
+            .text(util.toScale(repoInfo.forkCount))
+            .attr('fill', settings.foregroundColor);
 
         // ISO 8601 format
-        const startDate = userInfo.contributionCalendar[0].date;
+        const startDate = repoInfo.contributions[0].date;
         const endDate =
-            userInfo.contributionCalendar[
-                userInfo.contributionCalendar.length - 1
+            repoInfo.contributions[
+                repoInfo.contributions.length - 1
             ].date;
         const period = `${util.toIsoDate(startDate)} / ${util.toIsoDate(
             endDate
