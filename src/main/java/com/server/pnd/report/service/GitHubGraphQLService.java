@@ -24,6 +24,7 @@ public class GitHubGraphQLService {
                 + "stargazerCount "
                 + "primaryLanguage { name color } "
                 + "defaultBranchRef { "
+                + "name "  // 브랜치 이름을 확인하기 위해 추가
                 + "target { "
                 + "... on Commit { "
                 + "history(first: 100) { "
@@ -57,6 +58,8 @@ public class GitHubGraphQLService {
         // 요청 보내기
         HttpEntity<String> entity = new HttpEntity<>(query, headers);
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+
+        System.out.println("GraphQL Query Response: " + response.getBody());
 
         // 응답 본문 반환
         return response.getBody();

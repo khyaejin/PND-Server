@@ -33,12 +33,10 @@ const main = async () => {
             throw new Error("GITHUB_DATA 환경 변수가 설정되지 않았습니다.");
         }
 
-        console.log('githubData:', githubData);
-
         // JSON 데이터를 파싱
         const parsedData = JSON.parse(githubData);
 
-        console.log('Parsed Data:', parsedData);
+        console.log("ParsedData:", JSON.stringify(parsedData, null, 2));
 
         // 단일 레포지토리에 대한 정보 집계
         const repoInfo = aggregateRepo.aggregateRepositoryInfo(parsedData);
