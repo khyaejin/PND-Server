@@ -16,7 +16,7 @@ const toLevel = (value: number): number => {
 
 export const createRadarContrib = (
     svg: d3.Selection<SVGSVGElement, unknown, null, unknown>,
-    userInfo: type.UserInfo,
+    repositoryInfo: type.RepositoryInfo, // 수정된 파라미터 이름
     x: number,
     y: number,
     width: number,
@@ -39,23 +39,23 @@ export const createRadarContrib = (
     const data = [
         {
             name: commitLabel,
-            value: userInfo.totalCommitContributions,
+            value: repositoryInfo.totalCommitContributions,
         },
         {
             name: issueLabel,
-            value: userInfo.totalIssueContributions,
+            value: repositoryInfo.totalIssueContributions,
         },
         {
             name: pullReqLabel,
-            value: userInfo.totalPullRequestContributions,
+            value: repositoryInfo.totalPullRequestContributions,
         },
         {
             name: reviewLabel,
-            value: userInfo.totalPullRequestReviewContributions,
+            value: repositoryInfo.totalPullRequestReviewContributions,
         },
         {
             name: RepoLabel,
-            value: userInfo.totalRepositoryContributions,
+            value: repositoryInfo.totalRepositoryContributions,
         },
     ];
     const total = data.length;
