@@ -58,7 +58,10 @@ public class RepoServiceImpl implements RepoService {
                     .repoWatcher(repo.getRepoWatcher())
                     .repoLanguage(repo.getRepoLanguage())
                     .repoDisclosure(repo.getRepoDisclosure())
-                    .createdAt(repo.getFormattedCreatedAt()).build();
+                    .createdAt(repo.getFormattedCreatedAt())
+                    //repo.getTitle()해서 값이 null이면 false, 들어있으면 true 리턴
+                    .isBaseInfoSet(repo.getTitle() != null)
+                    .build();
             responseDtos.add(responseDto);
         }
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, responseDtos, "레포지토리 전체 조회 성공했습니다.");
