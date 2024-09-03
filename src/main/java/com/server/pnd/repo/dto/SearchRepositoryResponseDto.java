@@ -25,4 +25,6 @@ public class SearchRepositoryResponseDto {
     private String repoDisclosure;// 공개 여부
 
     private String createdAt; //레포지토리 생성 일시
+
+    private boolean isBaseInfoSet; // 레포지토리 기본 정보 세팅 여부
 }
