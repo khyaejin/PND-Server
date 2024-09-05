@@ -15,7 +15,6 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(DEVELOP_FRONT_ADDRESS) // 소셜로그인 시 리다이렉트되는 포트 번호에서 API 요청 허용
-                .allowedOriginPatterns("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowCredentials(true);
     }
