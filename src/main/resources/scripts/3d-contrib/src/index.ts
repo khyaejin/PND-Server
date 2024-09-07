@@ -63,50 +63,50 @@ const main = async () => {
                 `profile-${repoInfo.name}-green-animate.svg`,
                 create.createSvg(repoInfo, settings, true)
             );
-            f.writeFile(
-                `profile-${repoInfo.name}-green.svg`,
-                create.createSvg(repoInfo, settings, false)
-            );
-
-            // Northern hemisphere
-            f.writeFile(
-                `profile-${repoInfo.name}-season-animate.svg`,
-                create.createSvg(repoInfo, template.NorthSeasonSettings, true)
-            );
-            f.writeFile(
-                `profile-${repoInfo.name}-season.svg`,
-                create.createSvg(repoInfo, template.NorthSeasonSettings, false)
-            );
-
-            // Southern hemisphere
-            f.writeFile(
-                `profile-${repoInfo.name}-south-season-animate.svg`,
-                create.createSvg(repoInfo, template.SouthSeasonSettings, true)
-            );
-            f.writeFile(
-                `profile-${repoInfo.name}-south-season.svg`,
-                create.createSvg(repoInfo, template.SouthSeasonSettings, false)
-            );
-
-            f.writeFile(
-                `profile-${repoInfo.name}-night-view.svg`,
-                create.createSvg(repoInfo, template.NightViewSettings, true)
-            );
-
-            f.writeFile(
-                `profile-${repoInfo.name}-night-green.svg`,
-                create.createSvg(repoInfo, template.NightGreenSettings, true)
-            );
-
-            f.writeFile(
-                `profile-${repoInfo.name}-night-rainbow.svg`,
-                create.createSvg(repoInfo, template.NightRainbowSettings, true)
-            );
-
-            f.writeFile(
-                `profile-${repoInfo.name}-gitblock.svg`,
-                create.createSvg(repoInfo, template.GitBlockSettings, true)
-            );
+//             f.writeFile(
+//                 `profile-${repoInfo.name}-green.svg`,
+//                 create.createSvg(repoInfo, settings, false)
+//             );
+//
+//             // Northern hemisphere
+//             f.writeFile(
+//                 `profile-${repoInfo.name}-season-animate.svg`,
+//                 create.createSvg(repoInfo, template.NorthSeasonSettings, true)
+//             );
+//             f.writeFile(
+//                 `profile-${repoInfo.name}-season.svg`,
+//                 create.createSvg(repoInfo, template.NorthSeasonSettings, false)
+//             );
+//
+//             // Southern hemisphere
+//             f.writeFile(
+//                 `profile-${repoInfo.name}-south-season-animate.svg`,
+//                 create.createSvg(repoInfo, template.SouthSeasonSettings, true)
+//             );
+//             f.writeFile(
+//                 `profile-${repoInfo.name}-south-season.svg`,
+//                 create.createSvg(repoInfo, template.SouthSeasonSettings, false)
+//             );
+//
+//             f.writeFile(
+//                 `profile-${repoInfo.name}-night-view.svg`,
+//                 create.createSvg(repoInfo, template.NightViewSettings, true)
+//             );
+//
+//             f.writeFile(
+//                 `profile-${repoInfo.name}-night-green.svg`,
+//                 create.createSvg(repoInfo, template.NightGreenSettings, true)
+//             );
+//
+//             f.writeFile(
+//                 `profile-${repoInfo.name}-night-rainbow.svg`,
+//                 create.createSvg(repoInfo, template.NightRainbowSettings, true)
+//             );
+//
+//             f.writeFile(
+//                 `profile-${repoInfo.name}-gitblock.svg`,
+//                 create.createSvg(repoInfo, template.GitBlockSettings, true)
+//             );
         }
 
     } catch (error) {
