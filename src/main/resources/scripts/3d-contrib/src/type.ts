@@ -12,10 +12,13 @@ export interface LangInfo {
 
 // 레포지토리 내 기여 정보를 담는 인터페이스 정의
 export interface Contribution {
-  date: Date;
-  count: number;
-  level: number;
+    date: Date;
+    count: number;
+    level: number;
+    contributionCount: number;  // 추가
+    contributionLevel: number;  // 추가
 }
+
 
 // 언어 정보를 담는 인터페이스 정의
 export interface LanguageInfo {

@@ -280,8 +280,8 @@ export const create3DContrib = (
         const baseX = offsetX + (week - dayOfWeek) * dx;
         const baseY = offsetY + (week + dayOfWeek) * dy;
 
-        const calHeight = Math.log10(cal.count / 20 + 1) * 144 + 3; // contributionCount를 count로 변경
-        const contribLevel = cal.level; // contributionLevel을 level로 변경
+        const calHeight = Math.log10(cal.contributionCount / 20 + 1) * 144 + 3;
+        const contribLevel = cal.contributionLevel;
 
         const isAnimate = settings.growingAnimation || isForcedAnimation;
 
