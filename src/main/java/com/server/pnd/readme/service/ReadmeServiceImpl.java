@@ -39,7 +39,7 @@ public class ReadmeServiceImpl implements ReadmeService{
         String content = readmeSavedRequestDto.getContent();
         if (content.isBlank()) {
             CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(400, "내용은 비어있을 수 없습니다.");
-            return ResponseEntity.status(404).body(res);
+            return ResponseEntity.status(400).body(res);
         }
 
         Optional<Readme> foundReadme = readmeRepository.findByRepo(repo);
