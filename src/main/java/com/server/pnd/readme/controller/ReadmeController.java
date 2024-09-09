@@ -35,7 +35,7 @@ public class ReadmeController {
     }
 
     // 리드미 수정
-    @PutMapping()
+    @PatchMapping()
     public ResponseEntity<CustomApiResponse<?>> editReadme(
             @RequestBody ReadmeEditRequestDto readmeEditRequestDto){
         return readmeService.editReadme(readmeEditRequestDto);
