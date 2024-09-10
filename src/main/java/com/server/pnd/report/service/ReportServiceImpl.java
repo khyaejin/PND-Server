@@ -55,17 +55,13 @@ public class ReportServiceImpl implements ReportService{
         String response = gitHubGraphQLService.fetchUserData(accessToken, username, repositoryName);
         System.err.println("response: " + response);
 
-        // JSON 파싱 및 처리 (필요한 로직 추가)
-        // GraphQL 응답 데이터를 처리하여 필요한 정보를 추출하고 사용합니다.
-        // 이 부분은 기존의 이벤트 처리 로직을 대체하는 로직으로 추가 구현이 필요합니다.
-
         // 레고 블럭 생성 (Node.js 스크립트실행)
         ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/src/index.ts");
 
         // 환경 변수 설정
         processBuilder.environment().put("GITHUB_DATA", response);
         processBuilder.environment().put("USERNAME", username);
-        processBuilder.environment().put("GITHUB_TOKEN", accessToken);
+//        processBuilder.environment().put("GITHUB_TOKEN", accessToken);
 
         // 스크립트 실행 및 결과 확인
         try {
@@ -80,7 +76,7 @@ public class ReportServiceImpl implements ReportService{
 
             String line;
             while ((line = stdOutput.readLine()) != null) {
-                System.out.println("Node.js Output: " + line);
+                System.out.println(line);
             }
 
             // 표준 오류를 읽어서 출력

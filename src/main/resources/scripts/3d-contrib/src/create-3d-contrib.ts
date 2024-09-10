@@ -2,204 +2,212 @@ import * as d3 from 'd3';
 import * as util from './utils';
 import * as type from './type';
 
-const ANGLE = 30;
-const DARKER_RIGHT = 1;
-const DARKER_LEFT = 0.5;
-const DARKER_TOP = 0;
+const ANGLE = 30; // 3D 효과를 위한 각도 설정 (30도)
+const DARKER_RIGHT = 1; // 오른쪽 패널의 색상을 어둡게 만들 비율
+const DARKER_LEFT = 0.5; // 왼쪽 패널의 색상을 어둡게 만들 비율
+const DARKER_TOP = 0; // 상단 패널의 색상은 어둡게 만들지 않음
 
+// 두 날짜 간의 차이를 일 단위로 계산하는 함수
 const diffDate = (beforeDate: number, afterDate: number): number =>
     Math.floor((afterDate - beforeDate) / (24 * 60 * 60 * 1000));
 
+// 주어진 날짜에 따라 두 색상 간의 그라데이션을 생성하는 함수
 const createGradation = (
-    dayOfMonth: number,
-    color1: string,
-    color2: string
+    dayOfMonth: number, // 달의 일자 (1~31)
+    color1: string, // 시작 색상
+    color2: string // 끝 색상
 ): string => {
-    let ratio;
+    let ratio; // 색상 비율을 결정하는 변수
     if (dayOfMonth <= 7) {
-        ratio = 0.2;
+        ratio = 0.2; // 첫 주
     } else if (dayOfMonth <= 14) {
-        ratio = 0.4;
+        ratio = 0.4; // 둘째 주
     } else if (dayOfMonth <= 21) {
-        ratio = 0.6;
+        ratio = 0.6; // 셋째 주
     } else if (dayOfMonth <= 28) {
-        ratio = 0.8;
+        ratio = 0.8; // 넷째 주
     } else {
-        return color2;
+        return color2; // 다섯째 주 이후에는 두 번째 색상 반환
     }
-    const color = d3.interpolate(color1, color2);
-    return color(ratio);
+    const color = d3.interpolate(color1, color2); // 색상 간의 보간(interpolation)을 통해 그라데이션 생성
+    return color(ratio); // 계산된 비율에 따른 색상 반환
 };
 
+// 날짜와 계절에 따라 적절한 색상을 결정하는 함수
 const decideSeasonColor = (
-    contributionLevel: number,
-    settings: type.SeasonColorSettings,
-    date: Date
+    contributionLevel: number, // 기여 레벨
+    settings: type.SeasonColorSettings, // 계절별 색상 설정
+    date: Date // 날짜
 ): string => {
-    const sunday = new Date(date.getTime());
-    sunday.setDate(sunday.getDate() - sunday.getDay());
+    const sunday = new Date(date.getTime()); // 해당 주의 일요일로 날짜 설정
+    sunday.setDate(sunday.getDate() - sunday.getDay()); // 날짜를 일요일로 변경
 
-    const month = sunday.getUTCMonth();
-    const dayOfMonth = sunday.getUTCDate();
+    const month = sunday.getUTCMonth(); // 월 (0~11)
+    const dayOfMonth = sunday.getUTCDate(); // 해당 월의 일자 (1~31)
 
+    // 월에 따라 계절과 색상을 결정
     switch (month + 1) {
         case 9:
-            // summer -> autumn
+            // 여름 -> 가을
             return createGradation(
                 dayOfMonth,
-                settings.contribColors2[contributionLevel],
-                settings.contribColors3[contributionLevel]
+                settings.contribColors2[contributionLevel], // 여름 색상
+                settings.contribColors3[contributionLevel] // 가을 색상
             );
         case 10:
         case 11:
-            // autumn
+            // 가을
             return settings.contribColors3[contributionLevel];
-
         case 12:
-            // autumn -> winter
+            // 가을 -> 겨울
             return createGradation(
                 dayOfMonth,
                 settings.contribColors3[contributionLevel],
-                settings.contribColors4[contributionLevel]
+                settings.contribColors4[contributionLevel] // 겨울 색상
             );
         case 1:
         case 2:
-            // winter
+            // 겨울
             return settings.contribColors4[contributionLevel];
-
         case 3:
-            // winter -> spring
+            // 겨울 -> 봄
             return createGradation(
                 dayOfMonth,
                 settings.contribColors4[contributionLevel],
-                settings.contribColors1[contributionLevel]
+                settings.contribColors1[contributionLevel] // 봄 색상
             );
         case 4:
         case 5:
-            // spring
+            // 봄
             return settings.contribColors1[contributionLevel];
-
         case 6:
-            // spring -> summer
+            // 봄 -> 여름
             return createGradation(
                 dayOfMonth,
                 settings.contribColors1[contributionLevel],
-                settings.contribColors2[contributionLevel]
+                settings.contribColors2[contributionLevel] // 여름 색상
             );
         case 7:
         case 8:
         default:
-            // summer
+            // 여름
             return settings.contribColors2[contributionLevel];
     }
 };
 
+// 일반적인 색상을 SVG 요소에 적용하는 함수
 const addNormalColor = (
     path: d3.Selection<SVGRectElement, unknown, null, unknown>,
-    contributionLevel: number,
-    settings: type.NormalColorSettings,
-    darker: number
+    contributionLevel: number, // 기여 레벨
+    settings: type.NormalColorSettings, // 일반 색상 설정
+    darker: number // 색상 어두운 정도
 ): void => {
-    const color = settings.contribColors[contributionLevel];
-    path.attr('fill', d3.rgb(color).darker(darker).toString());
+    const color = settings.contribColors[contributionLevel]; // 기여 레벨에 따른 색상 선택
+    path.attr('fill', d3.rgb(color).darker(darker).toString()); // 선택된 색상을 패널에 적용
 };
 
+// 계절에 따른 색상을 SVG 요소에 적용하는 함수
 const addSeasonColor = (
     path: d3.Selection<SVGRectElement, unknown, null, unknown>,
-    contributionLevel: number,
-    settings: type.SeasonColorSettings,
-    darker: number,
-    date: Date
+    contributionLevel: number, // 기여 레벨
+    settings: type.SeasonColorSettings, // 계절 색상 설정
+    darker: number, // 색상 어두운 정도
+    date: Date // 날짜
 ): void => {
-    const color = decideSeasonColor(contributionLevel, settings, date);
-    path.attr('fill', d3.rgb(color).darker(darker).toString());
+    const color = decideSeasonColor(contributionLevel, settings, date); // 날짜에 따른 계절 색상 결정
+    path.attr('fill', d3.rgb(color).darker(darker).toString()); // 선택된 색상을 패널에 적용
 };
 
+// 무지개 색상을 SVG 요소에 애니메이션으로 적용하는 함수
 const addRainbowColor = (
     path: d3.Selection<SVGRectElement, unknown, null, unknown>,
-    contributionLevel: number,
-    settings: type.RainbowColorSettings,
-    darker: number,
-    week: number
+    contributionLevel: number, // 기여 레벨
+    settings: type.RainbowColorSettings, // 무지개 색상 설정
+    darker: number, // 색상 어두운 정도
+    week: number // 주 번호
 ): void => {
-    const offsetHue = week * settings.hueRatio;
-    const saturation = settings.saturation;
-    const lightness = settings.contribLightness[contributionLevel];
+    const offsetHue = week * settings.hueRatio; // 주별로 색상 오프셋 설정
+    const saturation = settings.saturation; // 색상 포화도 설정
+    const lightness = settings.contribLightness[contributionLevel]; // 기여 레벨에 따른 밝기 설정
     const values = [...Array<undefined>(7)]
-        .map((_, i) => (i * 60 + offsetHue) % 360)
-        .map((hue) => `hsl(${hue},${saturation},${lightness})`)
-        .map((c) => d3.rgb(c).darker(darker).toString())
-        .join(';');
+        .map((_, i) => (i * 60 + offsetHue) % 360) // 각 요일에 대한 색상 계산
+        .map((hue) => `hsl(${hue},${saturation},${lightness})`) // HSL 색상 문자열로 변환
+        .map((c) => d3.rgb(c).darker(darker).toString()) // 색상을 어둡게 변환
+        .join(';'); // 애니메이션에 사용할 색상 값을 ';'로 연결
 
     path.append('animate')
-        .attr('attributeName', 'fill')
-        .attr('values', values)
-        .attr('dur', settings.duration)
-        .attr('repeatCount', 'indefinite');
+        .attr('attributeName', 'fill') // 애니메이션 대상 속성 (fill)
+        .attr('values', values) // 애니메이션에서 사용할 색상 값들
+        .attr('dur', settings.duration) // 애니메이션 지속 시간
+        .attr('repeatCount', 'indefinite'); // 애니메이션 무한 반복
 };
 
-type PanelType = 'top' | 'left' | 'right';
+// 비트맵 패턴을 SVG 요소에 적용하는 함수
+type PanelType = 'top' | 'left' | 'right'; // 패널 타입 정의 (상단, 왼쪽, 오른쪽)
 
 const addBitmapPattern = (
     path: d3.Selection<SVGRectElement, unknown, null, unknown>,
-    contributionLevel: number,
-    panel: PanelType
+    contributionLevel: number, // 기여 레벨
+    panel: PanelType // 패널 타입
 ): void => {
-    path.attr('fill', `url(#pattern_${contributionLevel}_${panel})`);
+    path.attr('fill', `url(#pattern_${contributionLevel}_${panel})`); // 패턴을 필로 적용
 };
 
+// 각도를 아크탄젠트(atan)로 변환하는 함수 (3D 효과를 위해 사용)
 const atan = (value: number) => (Math.atan(value) * 360) / 2 / Math.PI;
 
+// 비트맵 패턴을 정의하는 함수
 const addPatternForBitmap = (
     defs: d3.Selection<SVGDefsElement, unknown, null, unknown>,
-    panelPattern: type.PanelPattern,
-    contributionLevel: number,
-    panel: PanelType,
-    backgroundColor: string,
-    foregroundColor: string
+    panelPattern: type.PanelPattern, // 패널 패턴 정보
+    contributionLevel: number, // 기여 레벨
+    panel: PanelType, // 패널 타입
+    backgroundColor: string, // 배경 색상
+    foregroundColor: string // 전경 색상
 ): void => {
-    const width = Math.max(1, panelPattern.width);
-    const height = Math.max(1, panelPattern.bitmap.length);
+    const width = Math.max(1, panelPattern.width); // 패턴의 너비 설정
+    const height = Math.max(1, panelPattern.bitmap.length); // 패턴의 높이 설정
     const pattern = defs
         .append('pattern')
-        .attr('id', `pattern_${contributionLevel}_${panel}`)
+        .attr('id', `pattern_${contributionLevel}_${panel}`) // 패턴 ID 설정
         .attr('x', 0)
         .attr('y', 0)
         .attr('width', width)
         .attr('height', height)
-        .attr('patternUnits', 'userSpaceOnUse');
+        .attr('patternUnits', 'userSpaceOnUse'); // 패턴 단위 설정
     pattern
         .append('rect')
         .attr('x', 0)
         .attr('y', 0)
         .attr('width', width)
         .attr('height', height)
-        .attr('fill', backgroundColor);
+        .attr('fill', backgroundColor); // 배경 색상 적용
     const path = d3.path();
     for (const [y, bitmapValue] of panelPattern.bitmap.entries()) {
         const bitmap =
             typeof bitmapValue === 'string'
-                ? parseInt(bitmapValue, 16)
+                ? parseInt(bitmapValue, 16) // 16진수 문자열을 숫자로 변환
                 : bitmapValue;
         for (let x = 0; x < width; x++) {
             if ((bitmap & (1 << (width - x - 1))) !== 0) {
-                path.rect(x, y, 1, 1);
+                path.rect(x, y, 1, 1); // 비트맵 값에 따라 사각형을 그림
             }
         }
     }
     pattern
         .append('path')
         .attr('stroke', 'none')
-        .attr('fill', foregroundColor)
-        .attr('d', path.toString());
+        .attr('fill', foregroundColor) // 전경 색상 적용
+        .attr('d', path.toString()); // 생성된 경로 데이터를 적용
 };
 
+// SVG 요소에 정의(defs)를 추가하는 함수
 export const addDefines = (
     svg: d3.Selection<SVGSVGElement, unknown, null, unknown>,
-    settings: type.Settings
+    settings: type.Settings // 설정 정보
 ): void => {
     if (settings.type === 'bitmap') {
-        const defs = svg.append('defs');
+        const defs = svg.append('defs'); // defs 요소 추가
 
         for (const [contribLevel, info] of settings.contribPatterns.entries()) {
             addPatternForBitmap(
@@ -247,43 +255,99 @@ export const addDefines = (
         }
     }
 };
+
+// 3D 기여 그래프를 생성하는 함수
 export const create3DContrib = (
     svg: d3.Selection<SVGSVGElement, unknown, null, unknown>,
-    repositoryInfo: type.RepositoryInfo,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    settings: type.FullSettings,
-    isForcedAnimation = false
+    repositoryInfo: type.RepositoryInfo, // 레포지토리 정보
+    x: number, // X 좌표
+    y: number, // Y 좌표
+    width: number, // 너비
+    height: number, // 높이
+    settings: type.FullSettings, // 전체 설정
+    isForcedAnimation = false // 강제 애니메이션 여부
 ): void => {
     if (repositoryInfo.contributions.length === 0) {
-        return;
+        return; // 기여 정보가 없으면 함수 종료
+    }
+    
+    // 1년 동안의 모든 날짜 생성
+    const currentDate = new Date();
+    const oneYearAgo = new Date(currentDate);
+    oneYearAgo.setFullYear(currentDate.getFullYear() - 1);
+
+    const allDates: Date[] = [];
+    for (let d = new Date(oneYearAgo); d <= currentDate; d.setDate(d.getDate() + 1)) {
+        allDates.push(new Date(d.getTime())); // Date 객체를 복사하여 배열에 추가
     }
 
-    const startTime = repositoryInfo.contributions[0].date.getTime(); // repositoryInfo에서 시작 시간을 가져옵니다.
-    const dx = width / 64;
-    const dy = dx * Math.tan(ANGLE * ((2 * Math.PI) / 360));
-    const weekcount = Math.ceil(repositoryInfo.contributions.length / 7.0); // contributions의 길이를 사용합니다.
-    const dxx = dx * 0.9;
-    const dyy = dy * 0.9;
+    // 모든 날짜에 대해 기본 블럭 설정
+    const fullYearData = allDates.map(date => ({
+        date: date,
+        contributionCount: 0,
+        contributionLevel: 0,
+    }));
 
-    const offsetX = dx * 7;
-    const offsetY = height - (weekcount + 7) * dy;
+    // 실제 기여 데이터를 병합
+    repositoryInfo.contributions.forEach(cal => {
+        const dateKey = cal.date.toISOString().split('T')[0]; // 날짜만 추출하여 키로 사용
+        const existing = fullYearData.find(entry => entry.date.toISOString().split('T')[0] === dateKey);
+        if (existing) {
+            existing.contributionCount += cal.contributionCount;
+            existing.contributionLevel = Math.max(existing.contributionLevel, cal.contributionLevel);
+        }
+    });
 
-    const group = svg.append('g');
 
-    repositoryInfo.contributions.forEach((cal) => {
-        const dayOfWeek = cal.date.getUTCDay(); // sun = 0, mon = 1, ...
-        const week = Math.floor(diffDate(startTime, cal.date.getTime()) / 7);
+    // Map을 배열로 변환하여 사용
+    const contributionsArray = Array.from(aggregatedContributions.values());
+    // console.log("contributionsArray", contributionsArray);
 
-        const baseX = offsetX + (week - dayOfWeek) * dx;
-        const baseY = offsetY + (week + dayOfWeek) * dy;
+    // 날짜 순으로 정렬
+    contributionsArray.sort((a, b) => a.date.getTime() - b.date.getTime());
 
-        const calHeight = Math.log10(cal.contributionCount / 20 + 1) * 144 + 3;
-        const contribLevel = cal.contributionLevel;
 
-        const isAnimate = settings.growingAnimation || isForcedAnimation;
+    const startTime = contributionsArray[0].date.getTime(); // 기여 시작 시간을 가져옴
+    // const startTime = repositoryInfo.contributions[0].date.getTime(); // 기여 시작 시간을 가져옴
+    
+    // 주석
+    console.log("startTime" , startTime);
+    const dx = width / 64; // 주간 칸 너비 계산(64)
+    const dy = dx * Math.tan(ANGLE * ((2 * Math.PI) / 360)); // 주간 칸 높이 계산 (3D 효과를 위해 각도 적용)
+    const weekcount = Math.ceil(contributionsArray.length / 7.0); // 총 주 수 계산
+    // const weekcount = Math.ceil(repositoryInfo.contributions.length / 7.0); // 총 주 수 계산
+    
+    // 주석
+    // console.log("repositoryInfo.contributions" , repositoryInfo.contributions);
+
+    const dxx = dx * 0.9; // 칸 너비에 0.9 비율 적용
+    const dyy = dy * 0.9; // 칸 높이에 0.9 비율 적용
+
+    const offsetX = dx * 40; // X 좌표 오프셋
+    // const offsetX = dx * 7; // 기존
+    const offsetY = height - (weekcount + 7) * dy; // Y 좌표 오프셋
+
+    const group = svg.append('g'); // 새로운 그룹 요소 추가
+
+    contributionsArray.forEach((cal) => {
+        const dayOfWeek = cal.date.getUTCDay(); // 기여 날짜의 요일 가져오기 (일요일 = 0)
+        const week = Math.floor(diffDate(startTime, cal.date.getTime()) / 7); // 해당 기여가 속한 주 계산
+        
+        // 확인을 위한 로그
+        // console.log(`startTime : ${startTime}, cal.date.getTime() : ${cal.date.getTime()}`);
+        
+        const baseX = offsetX + (week - dayOfWeek) * dx; // 기여의 X 좌표 계산
+        const baseY = offsetY + (week + dayOfWeek) * dy; // 기여의 Y 좌표 계산
+
+        // 로그 추가: 각 블록의 위치와 관련된 값들을 출력
+        console.log(`Date: ${cal.date}, DayOfWeek: ${dayOfWeek}, Week: ${week}`);
+        console.log(`BaseX: ${baseX}, BaseY: ${baseY}`);
+
+
+        const calHeight = Math.log10(cal.contributionCount / 20 + 1) * 144 + 3; // 기여 수에 따른 칸 높이 계산
+        const contribLevel = cal.contributionLevel; // 기여 레벨 가져오기
+
+        const isAnimate = settings.growingAnimation || isForcedAnimation; // 애니메이션 여부 결정
 
         const bar = group
             .append('g')
@@ -292,7 +356,7 @@ export const create3DContrib = (
                 `translate(${util.toFixed(baseX)} ${util.toFixed(
                     baseY - calHeight
                 )})`
-            );
+            ); // 기여 그래프의 위치 설정
         if (isAnimate && contribLevel !== 0) {
             bar.append('animateTransform')
                 .attr('attributeName', 'transform')
@@ -304,22 +368,22 @@ export const create3DContrib = (
                     )};${util.toFixed(baseX)} ${util.toFixed(
                         baseY - calHeight
                     )}`
-                )
-                .attr('dur', '3s')
-                .attr('repeatCount', '1');
+                ) // 애니메이션을 위한 위치 변환 설정
+                .attr('dur', '3s') // 애니메이션 지속 시간
+                .attr('repeatCount', '1'); // 애니메이션 반복 횟수 (한 번만 실행)
         }
 
         const widthTop =
             settings.type === 'bitmap'
-                ? Math.max(1, settings.contribPatterns[contribLevel].top.width)
+                ? Math.max(1, settings.contribPatterns[contribLevel].top.width) // 비트맵 패턴의 너비 계산
                 : dxx;
         const topPanel = bar
             .append('rect')
             .attr('stroke', 'none')
             .attr('x', 0)
             .attr('y', 0)
-            .attr('width', util.toFixed(widthTop))
-            .attr('height', util.toFixed(widthTop))
+            .attr('width', util.toFixed(widthTop)) // 상단 패널의 너비 설정
+            .attr('height', util.toFixed(widthTop)) // 상단 패널의 높이 설정
             .attr(
                 'transform',
                 `skewY(${-ANGLE}) skewX(${util.toFixed(
@@ -327,10 +391,11 @@ export const create3DContrib = (
                 )}) scale(${util.toFixed(dxx / widthTop)} ${util.toFixed(
                     (2 * dyy) / widthTop
                 )})`
-            );
+            ); // 3D 효과를 위한 변환 적용
 
+        // 패널에 색상 적용
         if (settings.type === 'normal') {
-            addNormalColor(topPanel, contribLevel, settings, DARKER_TOP);
+            addNormalColor(topPanel, contribLevel, settings, DARKER_TOP); // 일반 색상 적용
         } else if (settings.type === 'season') {
             addSeasonColor(
                 topPanel,
@@ -338,19 +403,19 @@ export const create3DContrib = (
                 settings,
                 DARKER_TOP,
                 cal.date
-            );
+            ); // 계절 색상 적용
         } else if (settings.type === 'rainbow') {
-            addRainbowColor(topPanel, contribLevel, settings, DARKER_TOP, week);
+            addRainbowColor(topPanel, contribLevel, settings, DARKER_TOP, week); // 무지개 색상 적용
         } else if (settings.type === 'bitmap') {
-            addBitmapPattern(topPanel, contribLevel, 'top');
+            addBitmapPattern(topPanel, contribLevel, 'top'); // 비트맵 패턴 적용
         }
 
         const widthLeft =
             settings.type === 'bitmap'
-                ? Math.max(1, settings.contribPatterns[contribLevel].left.width)
+                ? Math.max(1, settings.contribPatterns[contribLevel].left.width) // 왼쪽 패널 너비 계산
                 : dxx;
-        const scaleLeft = Math.sqrt(dxx ** 2 + dyy ** 2) / widthLeft;
-        const heightLeft = calHeight / scaleLeft;
+        const scaleLeft = Math.sqrt(dxx ** 2 + dyy ** 2) / widthLeft; // 왼쪽 패널 스케일 계산
+        const heightLeft = calHeight / scaleLeft; // 왼쪽 패널 높이 계산
         const leftPanel = bar
             .append('rect')
             .attr('stroke', 'none')
@@ -363,8 +428,9 @@ export const create3DContrib = (
                 `skewY(${ANGLE}) scale(${util.toFixed(
                     dxx / widthLeft
                 )} ${util.toFixed(scaleLeft)})`
-            );
+            ); // 왼쪽 패널 변환 적용
 
+        // 왼쪽 패널에 색상 적용
         if (settings.type === 'normal') {
             addNormalColor(leftPanel, contribLevel, settings, DARKER_LEFT);
         } else if (settings.type === 'season') {
@@ -395,7 +461,7 @@ export const create3DContrib = (
                     `${util.toFixed(3 / scaleLeft)};${util.toFixed(heightLeft)}`
                 )
                 .attr('dur', '3s')
-                .attr('repeatCount', '1');
+                .attr('repeatCount', '1'); // 애니메이션 설정
         }
 
         const widthRight =
@@ -403,10 +469,10 @@ export const create3DContrib = (
                 ? Math.max(
                       1,
                       settings.contribPatterns[contribLevel].right.width
-                  )
+                  ) // 오른쪽 패널 너비 계산
                 : dxx;
-        const scaleRight = Math.sqrt(dxx ** 2 + dyy ** 2) / widthRight;
-        const heightRight = calHeight / scaleRight;
+        const scaleRight = Math.sqrt(dxx ** 2 + dyy ** 2) / widthRight; // 오른쪽 패널 스케일 계산
+        const heightRight = calHeight / scaleRight; // 오른쪽 패널 높이 계산
         const rightPanel = bar
             .append('rect')
             .attr('stroke', 'none')
@@ -421,8 +487,9 @@ export const create3DContrib = (
                 )}) skewY(${-ANGLE}) scale(${util.toFixed(
                     dxx / widthRight
                 )} ${util.toFixed(scaleRight)})`
-            );
+            ); // 오른쪽 패널 변환 적용
 
+        // 오른쪽 패널에 색상 적용
         if (settings.type === 'normal') {
             addNormalColor(rightPanel, contribLevel, settings, DARKER_RIGHT);
         } else if (settings.type === 'season') {
@@ -455,7 +522,7 @@ export const create3DContrib = (
                     )}`
                 )
                 .attr('dur', '3s')
-                .attr('repeatCount', '1');
+                .attr('repeatCount', '1'); // 애니메이션 설정
         }
     });
 };

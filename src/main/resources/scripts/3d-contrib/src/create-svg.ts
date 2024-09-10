@@ -6,8 +6,13 @@ import * as radar from './create-radar-contrib';
 import * as util from './utils';
 import * as type from './type';
 
-const width = 1920;
-const height = 1080;
+// // 수정한 사이즈
+// const width = 1920;
+// const height = 1080;
+
+// 원래 사이즈
+const width = 1280;
+const height = 850;
 
 const pieHeight = 200 * 1.3;
 const pieWidth = pieHeight * 2;
