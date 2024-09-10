@@ -290,7 +290,7 @@ export const create3DContrib = (
             lastContributionDate = contributionDate;
         }
     });
-    
+
     // 최소 5개월 동안의 블록을 생성하기 위해 5개월 전 날짜를 계산
     const fiveMonthsAgo = new Date(lastContributionDate);
     fiveMonthsAgo.setMonth(fiveMonthsAgo.getMonth() - 5);
@@ -361,8 +361,8 @@ export const create3DContrib = (
 
 
     // 중앙에서 살짝 왼쪽 아래로 이동시키기 위해 X, Y 오프셋 계산 (비율 기반) -> 5개월~1년 모두 괜찮은 위치인지 확인 필요
-    const offsetX = (width - graphWidth) / 2 - graphWidth * 0.5; // X 좌표를 그래프 너비의 10%만큼 왼쪽으로 이동
-    const offsetY = (height - graphHeight) / 2 + graphHeight * 0.3; // Y 좌표를 그래프 높이의 10%만큼 아래로 이동
+    const offsetX = (width - graphWidth) / 2 - graphWidth * 1.5; // X 좌표를 그래프 너비의 10%만큼 왼쪽으로 이동
+    const offsetY = (height - graphHeight) / 2 + graphHeight * 0.1; // Y 좌표를 그래프 높이의 10%만큼 아래로 이동
 
 
     const group = svg.append('g'); // 새로운 그룹 요소 추가
