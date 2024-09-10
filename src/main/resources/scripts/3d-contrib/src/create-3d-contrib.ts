@@ -256,7 +256,7 @@ export const addDefines = (
     }
 };
 
-// 3D 기여 그래프를 생성하는 함수
+// 3D 기여 그래프를 생성하는 함수 ----------------------------------------------------
 export const create3DContrib = (
     svg: d3.Selection<SVGSVGElement, unknown, null, unknown>,
     repositoryInfo: type.RepositoryInfo, // 레포지토리 정보
@@ -270,15 +270,51 @@ export const create3DContrib = (
     if (repositoryInfo.contributions.length === 0) {
         return; // 기여 정보가 없으면 함수 종료
     }
-    
-    // 1년 동안의 모든 날짜 생성
+      
+    // 최종적으로 생성할 시작 날짜와 종료 날짜를 계산
     const currentDate = new Date();
     const oneYearAgo = new Date(currentDate);
     oneYearAgo.setFullYear(currentDate.getFullYear() - 1);
 
+    // 기여 데이터 중 가장 이른 날짜와 가장 늦은 날짜를 찾기 위해 초기화
+    let firstContributionDate = new Date(repositoryInfo.contributions[0].date);
+    let lastContributionDate = new Date(repositoryInfo.contributions[0].date);
+
+    // 모든 기여 데이터의 날짜를 비교하여 가장 이른 날짜와 가장 늦은 날짜를 찾음
+    repositoryInfo.contributions.forEach(contribution => {
+        const contributionDate = new Date(contribution.date);
+        if (contributionDate < firstContributionDate) {
+            firstContributionDate = contributionDate;
+        }
+        if (contributionDate > lastContributionDate) {
+            lastContributionDate = contributionDate;
+        }
+    });
+    
+    // 최소 5개월 동안의 블록을 생성하기 위해 5개월 전 날짜를 계산
+    const fiveMonthsAgo = new Date(lastContributionDate);
+    fiveMonthsAgo.setMonth(fiveMonthsAgo.getMonth() - 5);
+
+    // 실제 시작 날짜는 첫 기여 날짜와 5개월 전 날짜 중 더 이른 날짜로 설정
+    const startDate = firstContributionDate < fiveMonthsAgo ? firstContributionDate : fiveMonthsAgo;
+
+    // 실제 종료 날짜는 현재 날짜와 최대 1년 전 날짜 중 더 늦은 날짜로 설정
+    const endDate = lastContributionDate > oneYearAgo ? lastContributionDate : oneYearAgo;
+
+    // 기본 블록 날짜 배열 생성
     const allDates: Date[] = [];
-    for (let d = new Date(oneYearAgo); d <= currentDate; d.setDate(d.getDate() + 1)) {
+    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
         allDates.push(new Date(d.getTime())); // Date 객체를 복사하여 배열에 추가
+    }
+
+    // 일주일 단위로 직사각형을 맞추기 위해 추가 날짜 생성
+    const remainder = allDates.length % 7;
+    if (remainder !== 0) {
+        const extraDays = 7 - remainder;
+        for (let i = 0; i < extraDays; i++) {
+            endDate.setDate(endDate.getDate() + 1);
+            allDates.push(new Date(endDate.getTime()));
+        }
     }
 
     // 모든 날짜에 대해 기본 블럭 설정
@@ -298,20 +334,16 @@ export const create3DContrib = (
         }
     });
 
-
-    // Map을 배열로 변환하여 사용
-    const contributionsArray = Array.from(aggregatedContributions.values());
-    // console.log("contributionsArray", contributionsArray);
+    // fullYearData를 그대로 사용
+    const contributionsArray = fullYearData;
 
     // 날짜 순으로 정렬
     contributionsArray.sort((a, b) => a.date.getTime() - b.date.getTime());
 
+    // 기여 시작 시간을 가져옴
+    const startTime = contributionsArray[0].date.getTime(); 
 
-    const startTime = contributionsArray[0].date.getTime(); // 기여 시작 시간을 가져옴
     // const startTime = repositoryInfo.contributions[0].date.getTime(); // 기여 시작 시간을 가져옴
-    
-    // 주석
-    console.log("startTime" , startTime);
     const dx = width / 64; // 주간 칸 너비 계산(64)
     const dy = dx * Math.tan(ANGLE * ((2 * Math.PI) / 360)); // 주간 칸 높이 계산 (3D 효과를 위해 각도 적용)
     const weekcount = Math.ceil(contributionsArray.length / 7.0); // 총 주 수 계산
@@ -323,9 +355,15 @@ export const create3DContrib = (
     const dxx = dx * 0.9; // 칸 너비에 0.9 비율 적용
     const dyy = dy * 0.9; // 칸 높이에 0.9 비율 적용
 
-    const offsetX = dx * 40; // X 좌표 오프셋
-    // const offsetX = dx * 7; // 기존
-    const offsetY = height - (weekcount + 7) * dy; // Y 좌표 오프셋
+    // 전체 기여 그래프의 너비와 높이 계산
+    const graphWidth = dx * 7; // 한 주에 7일이므로 7개의 블록
+    const graphHeight = weekcount * dy; // 전체 주 수에 따른 높이 계산
+
+
+    // 중앙에서 살짝 왼쪽 아래로 이동시키기 위해 X, Y 오프셋 계산 (비율 기반) -> 5개월~1년 모두 괜찮은 위치인지 확인 필요
+    const offsetX = (width - graphWidth) / 2 - graphWidth * 0.5; // X 좌표를 그래프 너비의 10%만큼 왼쪽으로 이동
+    const offsetY = (height - graphHeight) / 2 + graphHeight * 0.3; // Y 좌표를 그래프 높이의 10%만큼 아래로 이동
+
 
     const group = svg.append('g'); // 새로운 그룹 요소 추가
 
