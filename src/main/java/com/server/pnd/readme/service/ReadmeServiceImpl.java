@@ -121,7 +121,10 @@ public class ReadmeServiceImpl implements ReadmeService{
             String existingScript = readme.getReadme_script_gpt();
             // readme_script_gpt가 이미 존재하는 경우, 이를 반환
             if(existingScript != null && !existingScript.isBlank()) {
-                return ResponseEntity.ok(CustomApiResponse.createSuccess(200, existingScript, "이미 저장된 GPT 스크립트를 반환합니다."));
+                ReadmeAutoCreateResponseDto data = ReadmeAutoCreateResponseDto.builder()
+                        .readme_script_gpt(existingScript)
+                        .build();
+                return ResponseEntity.ok(CustomApiResponse.createSuccess(200, data, "이미 저장된 GPT 스크립트를 반환합니다."));
             }
         } else {
             // Readme 엔티티가 존재하지 않으면 새로 생성
