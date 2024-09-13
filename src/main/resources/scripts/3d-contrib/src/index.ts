@@ -37,11 +37,11 @@ const main = async () => {
         // JSON 데이터를 파싱
         const parsedData = JSON.parse(githubData);
 
-        console.log("ParsedData:", JSON.stringify(parsedData, null, 2));
+        // console.log("ParsedData:", JSON.stringify(parsedData, null, 2));
 
         // 단일 레포지토리에 대한 정보 집계
         const repoInfo = aggregateRepo.aggregateRepositoryInfo(parsedData);
-        console.log('Aggregated Repository Info:', repoInfo); // 집계된 레포지토리 정보 출력
+        // console.log('Aggregated Repository Info:', repoInfo); // 집계된 레포지토리 정보 출력
 
         if (process.env.SETTING_JSON) {
             const settingFile = r.readSettingJson(process.env.SETTING_JSON);
@@ -59,55 +59,71 @@ const main = async () => {
             const settings = repoInfo.name.includes("Halloween")
                 ? template.HalloweenSettings
                 : template.NormalSettings;
-
+            
+            const generatedFileNameGreen = `profile-${repoInfo.name}-green.svg`;
             f.writeFile(
-                `profile-${repoInfo.name}-green-animate.svg`,
+                generatedFileNameGreen,
                 create.createSvg(repoInfo, settings, true)
             );
+            console.log(generatedFileNameGreen);
+
             // f.writeFile(
             //     `profile-${repoInfo.name}-green.svg`,
             //     create.createSvg(repoInfo, settings, false)
             // );
 
             // Northern hemisphere
+            const generatedFileNameSeason = `profile-${repoInfo.name}-season-animate.svg`;
             f.writeFile(
-                `profile-${repoInfo.name}-season-animate.svg`,
+                generatedFileNameSeason,
                 create.createSvg(repoInfo, template.NorthSeasonSettings, true)
             );
+            console.log(generatedFileNameSeason); 
             // f.writeFile(
             //     `profile-${repoInfo.name}-season.svg`,
             //     create.createSvg(repoInfo, template.NorthSeasonSettings, false)
             // );
 
             // Southern hemisphere
+            const generatedFileNameSouthSeason = `profile-${repoInfo.name}-south-season-animate.svg`;
             f.writeFile(
-                `profile-${repoInfo.name}-south-season-animate.svg`,
+                generatedFileNameSouthSeason,
                 create.createSvg(repoInfo, template.SouthSeasonSettings, true)
             );
+            console.log(generatedFileNameSouthSeason);
             // f.writeFile(
             //     `profile-${repoInfo.name}-south-season.svg`,
             //     create.createSvg(repoInfo, template.SouthSeasonSettings, false)
             // );
 
+            const generatedFileNameNightView = `profile-${repoInfo.name}-night-view.svg`;
             f.writeFile(
-                `profile-${repoInfo.name}-night-view.svg`,
+                generatedFileNameNightView,
                 create.createSvg(repoInfo, template.NightViewSettings, true)
             );
+            // 파일 이름 출력
+            console.log(generatedFileNameNightView);
 
+            const generatedFileNameNightGreen = `profile-${repoInfo.name}-night-green.svg`;
             f.writeFile(
-                `profile-${repoInfo.name}-night-green.svg`,
+                generatedFileNameNightGreen,
                 create.createSvg(repoInfo, template.NightGreenSettings, true)
             );
+            console.log(generatedFileNameNightGreen);
 
+            const generatedFileNameNighRainbow = `profile-${repoInfo.name}-night-rainbow.svg`;
             f.writeFile(
-                `profile-${repoInfo.name}-night-rainbow.svg`,
+                generatedFileNameNighRainbow,
                 create.createSvg(repoInfo, template.NightRainbowSettings, true)
             );
+            console.log(generatedFileNameNighRainbow);
 
+            const generatedFileNameGitblock = `profile-${repoInfo.name}-gitblock.svg`;
             f.writeFile(
-                `profile-${repoInfo.name}-gitblock.svg`,
+                generatedFileNameGitblock,
                 create.createSvg(repoInfo, template.GitBlockSettings, true)
             );
+            console.log(generatedFileNameGitblock);
         }
 
     } catch (error) {

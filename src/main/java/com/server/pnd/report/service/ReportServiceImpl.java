@@ -44,47 +44,45 @@ public class ReportServiceImpl implements ReportService{
 
     // 레포트 생성
     @Override
-    public ResponseEntity<CustomApiResponse<?>> createReport(Long repoId) throws IOException {
-        //404 : 해당 레포가 없는 경우
-        Optional<Repo> foundRepo = repoRepository.findById(repoId);
-        if (foundRepo.isEmpty()) {
-            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 레포를 찾을 수 없습니다.");
-            return ResponseEntity.status(404).body(res);
-        }
-        Repo repo = foundRepo.get();
-        Optional<User> foundUser = Optional.ofNullable(repo.getUser());
+    public ResponseEntity<CustomApiResponse<?>> createReport(Long repoId) {
+        Report report;
 
-        //404 : 해당 유저가 없는 경우
-        if (foundUser.isEmpty()) {
-            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 레포의 유저를 찾을 수 없습니다.");
-            return ResponseEntity.status(404).body(res);
-        }
-        User user = foundUser.get();
-
-        // 엑세스 토큰, URL 설정
-        // socialLoginService.refreshGitHubAccessToken(user); //토큰 업데이트
-        String accessToken = user.getAccessToken();
-        String username = user.getName();
-        String repositoryName = repo.getRepoName();
-
-        // GitHub GraphQL API 사용하여 데이터 가져오기
-        String response = gitHubGraphQLService.fetchUserData(accessToken, username, repositoryName);
-        System.err.println("response: " + response);
-
-        // 깃허브 레포트 생성 (Node.js 스크립트실행)
-        ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/src/index.ts");
-
-        // 환경 변수 설정
-        processBuilder.environment().put("GITHUB_DATA", response);
-        processBuilder.environment().put("USERNAME", username);
-
-        // svg file 이름
-        String svgFileName = null;
-
-        // 스크립트 실행 및 결과 확인
         try {
+            // 404 : 해당 레포가 없는 경우
+            Optional<Repo> foundRepo = repoRepository.findById(repoId);
+            if (foundRepo.isEmpty()) {
+                CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 레포를 찾을 수 없습니다.");
+                return ResponseEntity.status(404).body(res);
+            }
+            Repo repo = foundRepo.get();
+            Optional<User> foundUser = Optional.ofNullable(repo.getUser());
+
+            // 404 : 해당 유저가 없는 경우
+            if (foundUser.isEmpty()) {
+                CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 레포의 유저를 찾을 수 없습니다.");
+                return ResponseEntity.status(404).body(res);
+            }
+            User user = foundUser.get();
+
+            // 엑세스 토큰, URL 설정
+            // socialLoginService.refreshGitHubAccessToken(user); // 토큰 업데이트
+            String accessToken = user.getAccessToken();
+            String username = user.getName();
+            String repositoryName = repo.getRepoName();
+
+            // GitHub GraphQL API 사용하여 데이터 가져오기
+            String response = gitHubGraphQLService.fetchUserData(accessToken, username, repositoryName);
+            System.err.println("response: " + response);
+
+            // 깃허브 레포트 생성 (Node.js 스크립트실행)
+            ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/src/index.ts");
+
+            // 환경 변수 설정
+            processBuilder.environment().put("GITHUB_DATA", response);
+            processBuilder.environment().put("USERNAME", username);
+
+            // 스크립트 실행 및 결과 확인
             System.out.println("Starting Node.js script...");
-            // 프로세스 시작
             Process process = processBuilder.start();
 
             // 표준 출력 읽기
@@ -108,59 +106,79 @@ public class ReportServiceImpl implements ReportService{
                 throw new RuntimeException("3D 그래프 생성 중 오류 발생, exit code: " + exitCode);
             }
 
+            String[] imageUrl = new String[7]; // 배포 이미지 url
+
             if (!generatedFileNames.isEmpty()) {
                 System.out.println("Generated SVG files: " + String.join(", ", generatedFileNames));
-                // 여기서 파일 이름 리스트를 사용하여 추가 작업을 수행할 수 있습니다.
-                svgFileName = generatedFileNames.toString();
-                System.out.println(svgFileName);
-            } else {
+
+                String dirName = username + repositoryName;
+
+                for (String svgFileName : generatedFileNames) {
+                    // file 가져오기
+                    File file = new File("../profile-3d-contrib/" + svgFileName);
+
+                    // file 이름 설정
+                    String fileName = dirName + "/" + file.getName();
+
+                    // S3에 파일 업로드
+                    String imageUrl = s3Service.upload(file, dirName, fileName);
+
+                    // 생성된 Report에 대한 정보 출력
+                    System.out.println("Report created with image URL: " + imageUrl);
+
+                }
+
+                // DB 저장
+                Report report = Report.builder()
+                        .repo(repo)
+                        .imageGitblock(imageUrl)
+                        .imageGreen(imageGreenUrl)
+                        .imageNightGreen(imageNightGreenUrl)
+                        .imageNightRainbow(imageNightRainbowUrl)
+                        .imageNightView(imageNightViewUrl)
+                        .imageSeason(imageSeasonUrl)
+                        .imageSouthSeason(imageSouthSeasonUrl)
+                        .build();
+                reportRepository.save(report);
+
+                // 201 : 레포트 생성 성공
+                CreateReportResponseDto data = CreateReportResponseDto.builder()
+                        .repoTitle(repo.getTitle()) // 레포의 제목
+                        .image("Uploaded multiple images") // 필요에 따라 첫 번째 이미지를 사용하거나 다중 이미지 정보를 표시할 수 있습니다.
+                        .createdAt(reportRepository.findByRepo(repo).get().localDateTimeToString()) // 마지막으로 저장된 Report의 시간 가져오기
+                        .build();
+
+                CustomApiResponse<?> res = CustomApiResponse.createSuccess(201, data, "레포트 생성 성공했습니다.");
+                return ResponseEntity.status(201).body(res);
+            }
+            else {
                 throw new RuntimeException("SVG 파일 생성 중 오류 발생, 파일 이름을 찾을 수 없음.");
             }
+
+            // 201 : 레포트 생성 성공
+            CreateReportResponseDto data = CreateReportResponseDto.builder()
+                    .id(report.getId())
+                    .repoTitle(repo.getTitle()) // 레포의 제목
+                    .image(imageUrl)
+                    .createdAt(report.localDateTimeToString())
+                    .build();
+
+            CustomApiResponse<?> res = CustomApiResponse.createSuccess(201, data, "레포트 생성 성공했습니다.");
+            return ResponseEntity.status(201).body(res);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(500, "서버 오류로 인해 레포트를 생성할 수 없습니다.");
+            return ResponseEntity.status(500).body(res);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(500, "프로세스 실행 중 오류가 발생했습니다.");
+            return ResponseEntity.status(500).body(res);
         } catch (Exception e) {
             e.printStackTrace();
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(500, "알 수 없는 오류가 발생했습니다.");
+            return ResponseEntity.status(500).body(res);
         }
-
-        String dirName = username + repositoryName;
-        int index = 1;
-
-        // file 가져오기
-        File file = new File("../profile-3d-contrib/profile-green-animate.svg");
-
-        // file 이름 설정
-        String fileName = dirName + "/" + file.getName();
-
-        String imageUrl = s3Service.upload(file, dirName, fileName);
-
-
-        // 여러장
-//        List<MultipartFile> images;
-//        for (MultipartFile image : images) {
-//            String filename = dirName + index;
-//            String imageUrl = s3Service.upload(image, dirName, filename);
-//            Image stadiumImage = Image.builder()
-//                    .stadium(stadium)
-//                    .image(imageUrl)
-//                    .build();
-//            imageRepository.save(stadiumImage);
-//            index++;
-//        }
-        // DB
-        Report report = Report.builder()
-                .repo(repo)
-                .image(imageUrl)
-                .build();
-        reportRepository.save(report); // 저장
-
-        // 201 : 레포트 생성 성공
-        CreateReportResponseDto data = CreateReportResponseDto.builder()
-                .id(report.getId())
-                .repoTitle(repo.getTitle()) //레포의 제목
-                .image(imageUrl)
-                .createdAt(report.localDateTimeToString())
-                .build();
-
-        CustomApiResponse<?> res = CustomApiResponse.createSuccess(201, data, "레포트 생성 성공했습니다.");
-        return ResponseEntity.status(201).body(res);
     }
 
     @Override
