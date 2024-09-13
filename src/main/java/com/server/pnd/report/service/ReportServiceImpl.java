@@ -136,9 +136,42 @@ public class ReportServiceImpl implements ReportService{
                     i++;
                 }
 
-                // DB 저장
-                Report report = Report.builder()
-                        .repo(repo)
+                Optional<Report> foundReport = reportRepository.findByRepo(repo);
+
+                // 이미 존재하는 report가 있는지 확인
+                if (foundReport.isPresent()) {
+                    // 기존 report 가져오기
+                    Report report = foundReport.get();
+
+                    // 기존 필드 수정
+                    report.setImageGreen(imageUrl[0]);
+                    report.setImageSeason(imageUrl[1]);
+                    report.setImageSouthSeason(imageUrl[2]);
+                    report.setImageNightView(imageUrl[3]);
+                    report.setImageNightGreen(imageUrl[4]);
+                    report.setImageNightRainbow(imageUrl[5]);
+                    report.setImageGitblock(imageUrl[6]);
+
+                    // DB에 업데이트
+                    reportRepository.save(report);
+                } else {
+                    // 존재하지 않는 경우 새 레코드를 삽입
+                    Report report = Report.builder()
+                            .repo(repo)
+                            .imageGreen(imageUrl[0])
+                            .imageSeason(imageUrl[1])
+                            .imageSouthSeason(imageUrl[2])
+                            .imageNightView(imageUrl[3])
+                            .imageNightGreen(imageUrl[4])
+                            .imageNightRainbow(imageUrl[5])
+                            .imageGitblock(imageUrl[6])
+                            .build();
+                    reportRepository.save(report);
+                }
+
+                // 201 : 레포트 생성 성공
+                CreateReportResponseDto data = CreateReportResponseDto.builder()
+                        .repoTitle(repo.getTitle()) // 레포의 제목
                         .imageGreen(imageUrl[0])
                         .imageSeason(imageUrl[1])
                         .imageSouthSeason(imageUrl[2])
@@ -146,13 +179,6 @@ public class ReportServiceImpl implements ReportService{
                         .imageNightGreen(imageUrl[4])
                         .imageNightRainbow(imageUrl[5])
                         .imageGitblock(imageUrl[6])
-                        .build();
-                reportRepository.save(report);
-
-                // 201 : 레포트 생성 성공
-                CreateReportResponseDto data = CreateReportResponseDto.builder()
-                        .repoTitle(repo.getTitle()) // 레포의 제목
-                        .image("Uploaded multiple images") // 필요에 따라 첫 번째 이미지를 사용하거나 다중 이미지 정보를 표시할 수 있습니다.
                         .createdAt(reportRepository.findByRepo(repo).get().localDateTimeToString()) // 마지막으로 저장된 Report의 시간 가져오기
                         .build();
 
