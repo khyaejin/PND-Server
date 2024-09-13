@@ -378,8 +378,8 @@ export const create3DContrib = (
         const baseY = offsetY + (week + dayOfWeek) * dy; // 기여의 Y 좌표 계산
 
         // 로그 추가: 각 블록의 위치와 관련된 값들을 출력
-        console.log(`Date: ${cal.date}, DayOfWeek: ${dayOfWeek}, Week: ${week}`);
-        console.log(`BaseX: ${baseX}, BaseY: ${baseY}`);
+        //console.log(`Date: ${cal.date}, DayOfWeek: ${dayOfWeek}, Week: ${week}`);
+        //console.log(`BaseX: ${baseX}, BaseY: ${baseY}`);
 
 
         const calHeight = Math.log10(cal.contributionCount / 20 + 1) * 144 + 3; // 기여 수에 따른 칸 높이 계산

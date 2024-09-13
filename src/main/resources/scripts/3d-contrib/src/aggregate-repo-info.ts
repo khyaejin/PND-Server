@@ -18,7 +18,7 @@ export const aggregateRepositoryInfo = (
     const repository = repositoryData.data.repository;
 
     const target = repository.defaultBranchRef?.target;
-    console.log('Target content:', JSON.stringify(target, null, 2));
+    //console.log('Target content:', JSON.stringify(target, null, 2));
 
     const contributions: type.Contribution[] = target.history.edges.map(
         (edge: any) => ({

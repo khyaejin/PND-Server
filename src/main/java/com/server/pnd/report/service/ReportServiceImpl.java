@@ -20,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -111,11 +113,17 @@ public class ReportServiceImpl implements ReportService{
 
                 String dirName = username + repositoryName;
 
-                int i=0;
+                int i = 0;
                 for (String svgFileName : generatedFileNames) {
+                    if (i >= imageUrl.length) {
+                        break; // 배열 크기를 초과하지 않도록 안전 장치
+                    }
+
+                    // 경로확인
+                    // System.out.println("Current working directory: " + Paths.get("").toAbsolutePath().toString());
 
                     // file 가져오기
-                    File file = new File("../profile-3d-contrib/" + svgFileName);
+                    File file = new File("./src/main/resources/profile-3d-contrib/" + svgFileName);
 
                     // file 이름 설정
                     String fileName = dirName + "/" + file.getName();
@@ -124,7 +132,7 @@ public class ReportServiceImpl implements ReportService{
                     imageUrl[i] = s3Service.upload(file, dirName, fileName);
 
                     // 생성된 Report에 대한 정보 출력
-                    System.out.println("Report created with image URL: " + imageUrl);
+                    System.out.println("Report created with image URL: " + imageUrl[i]);
 
                     i++;
                 }
@@ -152,6 +160,7 @@ public class ReportServiceImpl implements ReportService{
                 CustomApiResponse<?> res = CustomApiResponse.createSuccess(201, data, "레포트 생성 성공했습니다.");
                 return ResponseEntity.status(201).body(res);
             }
+
             else {
                 throw new RuntimeException("SVG 파일 생성 중 오류 발생, 파일 이름을 찾을 수 없음.");
             }
