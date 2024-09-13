@@ -2,7 +2,7 @@ package com.server.pnd.domain;
 
 import com.server.pnd.util.entity.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -18,7 +18,8 @@ public class Report extends BaseEntity {
     private Long id;
 
     @OneToOne
-    @NotEmpty @JoinColumn(name = "repo_id")
+    @NotNull
+    @JoinColumn(name = "repo_id")
     private Repo repo;
 
     @JoinColumn(name = "image_green")

@@ -126,10 +126,9 @@ public class ReportServiceImpl implements ReportService{
                     File file = new File("./src/main/resources/profile-3d-contrib/" + svgFileName);
 
                     // file 이름 설정
-                    String fileName = dirName + "/" + file.getName();
 
                     // S3에 파일 업로드 & 파일(사진) 링크 저장
-                    imageUrl[i] = s3Service.upload(file, dirName, fileName);
+                    imageUrl[i] = s3Service.upload(file, username, svgFileName);
 
                     // 생성된 Report에 대한 정보 출력
                     System.out.println("Report created with image URL: " + imageUrl[i]);

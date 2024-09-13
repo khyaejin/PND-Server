@@ -23,8 +23,8 @@ public class S3Service {
     private String userImageBucket;
     private final AmazonS3 amazonS3;
 
-    public String upload(File file, String dirName, String fileName) {
-        String name = dirName + "/" + fileName;
+    public String upload(File file, String userName, String fileName) {
+        String name = userName + "/" + fileName;
 
         // 메타데이터 설정
         ObjectMetadata metadata = new ObjectMetadata();
