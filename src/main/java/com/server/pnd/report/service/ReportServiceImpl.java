@@ -10,6 +10,7 @@ import com.server.pnd.report.dto.GitHubEvent;
 import com.server.pnd.report.dto.ReportDetailDto;
 import com.server.pnd.report.repository.ReportRepository;
 import com.server.pnd.s3.config.S3Config;
+import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.response.CustomApiResponse;
 import com.server.pnd.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +36,8 @@ import java.util.Optional;
 public class ReportServiceImpl implements ReportService{
     private final RepoRepository repoRepository;
     private final ReportRepository reportRepository;
+    private final UserRepository userRepository;
     private final RestTemplate restTemplate;
-    private final SocialLoginService socialLoginService;
     private final GitHubGraphQLService gitHubGraphQLService;
     private final S3Service s3Service;
     private final S3Config s3Config;
@@ -47,20 +48,18 @@ public class ReportServiceImpl implements ReportService{
         //404 : 해당 레포가 없는 경우
         Optional<Repo> foundRepo = repoRepository.findById(repoId);
         if (foundRepo.isEmpty()) {
-            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 레포지토리를 찾을 수 없습니다.");
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 레포를 찾을 수 없습니다.");
             return ResponseEntity.status(404).body(res);
         }
         Repo repo = foundRepo.get();
+        Optional<User> foundUser = Optional.ofNullable(repo.getUser());
 
         //404 : 해당 유저가 없는 경우
-        Optional<Repo> foundRepo = repoRepository.findById(repoId);
-        if (foundRepo.isEmpty()) {
-            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 레포지토리를 찾을 수 없습니다.");
+        if (foundUser.isEmpty()) {
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 레포의 유저를 찾을 수 없습니다.");
             return ResponseEntity.status(404).body(res);
         }
-        Repo repo = foundRepo.get();
-
-        User user = repo.getUser();
+        User user = foundUser.get();
 
         // 엑세스 토큰, URL 설정
         // socialLoginService.refreshGitHubAccessToken(user); //토큰 업데이트
@@ -82,10 +81,8 @@ public class ReportServiceImpl implements ReportService{
         // 스크립트 실행 및 결과 확인
         try {
             System.out.println("Starting Node.js script...");
-
             // 프로세스 시작
             Process process = processBuilder.start();
-
             // 프로세스 종료 코드 확인
             int exitCode = process.waitFor();
             System.out.println("Node.js script finished with exit code: " + exitCode);
@@ -130,20 +127,18 @@ public class ReportServiceImpl implements ReportService{
                 .repo(repo)
                 .image(imageUrl)
                 .build();
+        reportRepository.save(report); // 저장
 
-
-
-        // 201 : 성공
+        // 201 : 레포트 생성 성공
         CreateReportResponseDto data = CreateReportResponseDto.builder()
-                .id()
-                .repoTitle()
-                .image()
-                .createdAt().build();
-
+                .id(report.getId())
+                .repoTitle(repo.getTitle()) //레포의 제목
+                .image(imageUrl)
+                .createdAt(report.localDateTimeToString())
+                .build();
 
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(201, data, "레포트 생성 성공했습니다.");
-
-        return null;
+        return ResponseEntity.status(201).body(res);
     }
 
     @Override
