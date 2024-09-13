@@ -20,6 +20,7 @@ public class Readme extends BaseEntity {
     @JoinColumn(name = "repo_id")
     private Repo repo;
 
+    @Column(columnDefinition = "LONGTEXT", name = "readme_script")
     private String readme_script;
 
     @Column(columnDefinition = "LONGTEXT", name = "readme_script_gpt")
