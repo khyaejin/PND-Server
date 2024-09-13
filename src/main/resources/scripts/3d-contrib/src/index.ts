@@ -49,7 +49,7 @@ const main = async () => {
                 'length' in settingFile ? settingFile : [settingFile];
             for (const settingInfo of settingInfos) {
                 const fileName =
-                    settingInfo.fileName || `profile-${repoInfo.name}-customize.svg`;
+                    settingInfo.fileName || `${repoInfo.name}-customize.svg`;
                 f.writeFile(
                     fileName,
                     create.createSvg(repoInfo, settingInfo, false)
@@ -60,7 +60,7 @@ const main = async () => {
                 ? template.HalloweenSettings
                 : template.NormalSettings;
             
-            const generatedFileNameGreen = `profile-${repoInfo.name}-green.svg`;
+            const generatedFileNameGreen = `${repoInfo.name}-green.svg`;
             f.writeFile(
                 generatedFileNameGreen,
                 create.createSvg(repoInfo, settings, true)
@@ -73,7 +73,7 @@ const main = async () => {
             // );
 
             // Northern hemisphere
-            const generatedFileNameSeason = `profile-${repoInfo.name}-season-animate.svg`;
+            const generatedFileNameSeason = `${repoInfo.name}-season-animate.svg`;
             f.writeFile(
                 generatedFileNameSeason,
                 create.createSvg(repoInfo, template.NorthSeasonSettings, true)
@@ -85,7 +85,7 @@ const main = async () => {
             // );
 
             // Southern hemisphere
-            const generatedFileNameSouthSeason = `profile-${repoInfo.name}-south-season-animate.svg`;
+            const generatedFileNameSouthSeason = `${repoInfo.name}-south-season-animate.svg`;
             f.writeFile(
                 generatedFileNameSouthSeason,
                 create.createSvg(repoInfo, template.SouthSeasonSettings, true)
@@ -96,7 +96,7 @@ const main = async () => {
             //     create.createSvg(repoInfo, template.SouthSeasonSettings, false)
             // );
 
-            const generatedFileNameNightView = `profile-${repoInfo.name}-night-view.svg`;
+            const generatedFileNameNightView = `${repoInfo.name}-night-view.svg`;
             f.writeFile(
                 generatedFileNameNightView,
                 create.createSvg(repoInfo, template.NightViewSettings, true)
@@ -104,21 +104,21 @@ const main = async () => {
             // 파일 이름 출력
             console.log(generatedFileNameNightView);
 
-            const generatedFileNameNightGreen = `profile-${repoInfo.name}-night-green.svg`;
+            const generatedFileNameNightGreen = `${repoInfo.name}-night-green.svg`;
             f.writeFile(
                 generatedFileNameNightGreen,
                 create.createSvg(repoInfo, template.NightGreenSettings, true)
             );
             console.log(generatedFileNameNightGreen);
 
-            const generatedFileNameNighRainbow = `profile-${repoInfo.name}-night-rainbow.svg`;
+            const generatedFileNameNighRainbow = `${repoInfo.name}-night-rainbow.svg`;
             f.writeFile(
                 generatedFileNameNighRainbow,
                 create.createSvg(repoInfo, template.NightRainbowSettings, true)
             );
             console.log(generatedFileNameNighRainbow);
 
-            const generatedFileNameGitblock = `profile-${repoInfo.name}-gitblock.svg`;
+            const generatedFileNameGitblock = `${repoInfo.name}-gitblock.svg`;
             f.writeFile(
                 generatedFileNameGitblock,
                 create.createSvg(repoInfo, template.GitBlockSettings, true)
