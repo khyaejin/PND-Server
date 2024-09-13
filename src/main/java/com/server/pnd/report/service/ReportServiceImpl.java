@@ -3,7 +3,6 @@ package com.server.pnd.report.service;
 import com.server.pnd.domain.Repo;
 import com.server.pnd.domain.Report;
 import com.server.pnd.domain.User;
-import com.server.pnd.oauth.service.SocialLoginService;
 import com.server.pnd.repo.repository.RepoRepository;
 import com.server.pnd.report.dto.CreateReportResponseDto;
 import com.server.pnd.report.dto.GitHubEvent;
@@ -14,21 +13,22 @@ import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.response.CustomApiResponse;
 import com.server.pnd.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
+import java.util.ArrayList;
 
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.imageio.ImageIO;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -78,17 +78,43 @@ public class ReportServiceImpl implements ReportService{
         processBuilder.environment().put("GITHUB_DATA", response);
         processBuilder.environment().put("USERNAME", username);
 
+        // svg file 이름
+        String svgFileName = null;
+
         // 스크립트 실행 및 결과 확인
         try {
             System.out.println("Starting Node.js script...");
             // 프로세스 시작
             Process process = processBuilder.start();
+
+            // 표준 출력 읽기
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+
+            List<String> generatedFileNames = new ArrayList<>();
+
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line); // 출력된 내용 확인
+                if (line.endsWith(".svg")) { // SVG 파일 이름을 포함하는 줄을 찾음
+                    generatedFileNames.add(line.trim()); // 파일 이름 저장
+                }
+            }
+
             // 프로세스 종료 코드 확인
             int exitCode = process.waitFor();
             System.out.println("Node.js script finished with exit code: " + exitCode);
 
             if (exitCode != 0) {
                 throw new RuntimeException("3D 그래프 생성 중 오류 발생, exit code: " + exitCode);
+            }
+
+            if (!generatedFileNames.isEmpty()) {
+                System.out.println("Generated SVG files: " + String.join(", ", generatedFileNames));
+                // 여기서 파일 이름 리스트를 사용하여 추가 작업을 수행할 수 있습니다.
+                svgFileName = generatedFileNames.toString();
+                System.out.println(svgFileName);
+            } else {
+                throw new RuntimeException("SVG 파일 생성 중 오류 발생, 파일 이름을 찾을 수 없음.");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,14 +126,10 @@ public class ReportServiceImpl implements ReportService{
         // file 가져오기
         File file = new File("../profile-3d-contrib/profile-green-animate.svg");
 
-        // file을 FileInputStream으로 읽어오기
-        FileInputStream input = new FileInputStream(file);
+        // file 이름 설정
+        String fileName = dirName + "/" + file.getName();
 
-        // FileInputStream -> MultipartFile 변환
-        MultipartFile image = new MockMultipartFile(file.getName(), file.getName(), "image/svg+xml", input);
-
-        String fileName = file.getName();
-        String imageUrl = s3Service.upload(image, dirName, fileName);
+        String imageUrl = s3Service.upload(file, dirName, fileName);
 
 
         // 여러장

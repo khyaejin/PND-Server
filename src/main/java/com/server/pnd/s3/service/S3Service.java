@@ -2,12 +2,14 @@ package com.server.pnd.s3.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 
 /* S3Service.java */
@@ -21,14 +23,18 @@ public class S3Service {
     private String userImageBucket;
     private final AmazonS3 amazonS3;
 
-    public String upload(MultipartFile multipartFile, String dirName, String fileName) throws IOException {
+    public String upload(File file, String dirName, String fileName) {
         String name = dirName + "/" + fileName;
 
+        // 메타데이터 설정
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(multipartFile.getSize());
-        metadata.setContentType(multipartFile.getContentType());
+        metadata.setContentLength(file.length()); // 파일 크기 설정
+        metadata.setContentType("image/svg+xml"); // 파일의 MIME 타입 설정 (필요에 따라 수정)
 
-        amazonS3.putObject(githubReportImageBucket, name, multipartFile.getInputStream(), metadata);
+        // S3에 파일 업로드
+        amazonS3.putObject(new PutObjectRequest(githubReportImageBucket, name, file));
+
+        // 업로드된 파일의 URL 반환
         return amazonS3.getUrl(githubReportImageBucket, name).toString();
     }
 
