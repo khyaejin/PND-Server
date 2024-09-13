@@ -5,7 +5,6 @@ import com.server.pnd.domain.Report;
 import com.server.pnd.domain.User;
 import com.server.pnd.repo.repository.RepoRepository;
 import com.server.pnd.report.dto.CreateReportResponseDto;
-import com.server.pnd.report.dto.GitHubEvent;
 import com.server.pnd.report.dto.ReportDetailDto;
 import com.server.pnd.report.repository.ReportRepository;
 import com.server.pnd.s3.config.S3Config;
@@ -13,24 +12,12 @@ import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.response.CustomApiResponse;
 import com.server.pnd.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.ArrayList;
-
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import javax.imageio.ImageIO;
-import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -38,8 +25,6 @@ import java.util.Optional;
 public class ReportServiceImpl implements ReportService{
     private final RepoRepository repoRepository;
     private final ReportRepository reportRepository;
-    private final UserRepository userRepository;
-    private final RestTemplate restTemplate;
     private final GitHubGraphQLService gitHubGraphQLService;
     private final S3Service s3Service;
     private final S3Config s3Config;
@@ -85,7 +70,7 @@ public class ReportServiceImpl implements ReportService{
             System.out.println("Starting Node.js script...");
             Process process = processBuilder.start();
 
-            // 표준 출력 읽기
+            // 표준 출력 읽기(생성된 파일 이름 전달받기)
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
 
@@ -111,24 +96,27 @@ public class ReportServiceImpl implements ReportService{
             if (!generatedFileNames.isEmpty()) {
                 System.out.println("Generated SVG files: " + String.join(", ", generatedFileNames));
 
-                String dirName = username + repositoryName;
-
                 int i = 0;
                 for (String svgFileName : generatedFileNames) {
                     if (i >= imageUrl.length) {
                         break; // 배열 크기를 초과하지 않도록 안전 장치
                     }
 
-                    // 경로확인
+                    // 경로확인(테스트)
                     // System.out.println("Current working directory: " + Paths.get("").toAbsolutePath().toString());
 
                     // file 가져오기
                     File file = new File("./src/main/resources/profile-3d-contrib/" + svgFileName);
 
-                    // file 이름 설정
-
                     // S3에 파일 업로드 & 파일(사진) 링크 저장
                     imageUrl[i] = s3Service.upload(file, username, svgFileName);
+
+                    // 해당 file 지우기
+                    if (file.delete()) {
+                        System.out.println("file 삭제 성공 : " + file.getPath());
+                    } else {
+                        System.out.println("file 삭제 실패 : " + file.getPath());
+                    }
 
                     // 생성된 Report에 대한 정보 출력
                     System.out.println("Report created with image URL: " + imageUrl[i]);
@@ -137,12 +125,12 @@ public class ReportServiceImpl implements ReportService{
                 }
 
                 Optional<Report> foundReport = reportRepository.findByRepo(repo);
+                Report report;
 
-                // 이미 존재하는 report가 있는지 확인
+                // 이미 존재하는 report가 있는 경우 -> 업데이트
                 if (foundReport.isPresent()) {
                     // 기존 report 가져오기
-                    Report report = foundReport.get();
-
+                    report = foundReport.get();
                     // 기존 필드 수정
                     report.setImageGreen(imageUrl[0]);
                     report.setImageSeason(imageUrl[1]);
@@ -151,12 +139,11 @@ public class ReportServiceImpl implements ReportService{
                     report.setImageNightGreen(imageUrl[4]);
                     report.setImageNightRainbow(imageUrl[5]);
                     report.setImageGitblock(imageUrl[6]);
-
                     // DB에 업데이트
                     reportRepository.save(report);
                 } else {
-                    // 존재하지 않는 경우 새 레코드를 삽입
-                    Report report = Report.builder()
+                    // 존재하지 않는 경우 -> 새로 삽입
+                    report = Report.builder()
                             .repo(repo)
                             .imageGreen(imageUrl[0])
                             .imageSeason(imageUrl[1])
@@ -171,6 +158,7 @@ public class ReportServiceImpl implements ReportService{
 
                 // 201 : 레포트 생성 성공
                 CreateReportResponseDto data = CreateReportResponseDto.builder()
+                        .id(report.getId())
                         .repoTitle(repo.getTitle()) // 레포의 제목
                         .imageGreen(imageUrl[0])
                         .imageSeason(imageUrl[1])
@@ -240,47 +228,6 @@ public class ReportServiceImpl implements ReportService{
         // 레포트 상세조회 성공 : 200
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, data, "레포트 상세 조회 성공했습니다.");
         return ResponseEntity.status(200).body(res);
-    }
-
-    // 깃허브 이벤트 불러오기
-    public GitHubEvent[] getEventsFromGithub(String accessToken, String username, String url){
-        // 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "token " + accessToken);
-        headers.set("Content-type", "application/json");
-
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        // 요청 보내기 및 응답 받기
-        ResponseEntity<GitHubEvent[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, GitHubEvent[].class);
-        return response.getBody();  // GitHubEvent 배열 반환
-    }
-
-    // report 생성
-    public void makeReportImg() {
-        // 이미지 생성
-        BufferedImage img = new BufferedImage(1416, 726, BufferedImage.TYPE_INT_RGB);
-        // Graphics2D를 얻어와 그림을 그림
-        Graphics2D graphics = img.createGraphics();
-        try{
-            // 파일의 이름 설정
-            File file = new File("/Users/gimhyejin/Desktop/imgtest.jpg");
-            // write메소드를 이용해 파일을 만듦
-            ImageIO.write(img, "jpg", file);
-        }
-        catch(Exception e){e.printStackTrace();}
-
-    }
-
-    // 이미지 반환
-    private BufferedImage loadGeneratedImage() {
-        try {
-            File file = new File("/Users/gimhyejin/Desktop/imgtest.jpg");
-            return ImageIO.read(file);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
 }
