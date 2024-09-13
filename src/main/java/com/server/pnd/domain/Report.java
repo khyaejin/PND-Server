@@ -21,20 +21,8 @@ public class Report extends BaseEntity {
     @NotEmpty @JoinColumn(name = "repo_id")
     private Repo repo;
 
-    @JoinColumn(name = "image_gitblock")
-    private String imageGitblock; // 이미지 URL
-
     @JoinColumn(name = "image_green")
     private String imageGreen; // 이미지 URL
-
-    @JoinColumn(name = "image_night_green")
-    private String imageNightGreen; // 이미지 URL
-
-    @JoinColumn(name = "image_night_rainbow")
-    private String imageNightRainbow; // 이미지 URL
-
-    @JoinColumn(name = "image_night_view")
-    private String imageNightView; // 이미지 URL
 
     @JoinColumn(name = "image_season")
     private String imageSeason; // 이미지 URL
@@ -42,4 +30,15 @@ public class Report extends BaseEntity {
     @JoinColumn(name = "image_south_season")
     private String imageSouthSeason; // 이미지 URL
 
+    @JoinColumn(name = "image_night_view")
+    private String imageNightView; // 이미지 URL
+
+    @JoinColumn(name = "image_night_green")
+    private String imageNightGreen; // 이미지 URL
+
+    @JoinColumn(name = "image_night_rainbow")
+    private String imageNightRainbow; // 이미지 URL
+
+    @JoinColumn(name = "image_gitblock")
+    private String imageGitblock; // 이미지 URL
 }

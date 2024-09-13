@@ -45,8 +45,6 @@ public class ReportServiceImpl implements ReportService{
     // 레포트 생성
     @Override
     public ResponseEntity<CustomApiResponse<?>> createReport(Long repoId) {
-        Report report;
-
         try {
             // 404 : 해당 레포가 없는 경우
             Optional<Repo> foundRepo = repoRepository.findById(repoId);
@@ -113,31 +111,34 @@ public class ReportServiceImpl implements ReportService{
 
                 String dirName = username + repositoryName;
 
+                int i=0;
                 for (String svgFileName : generatedFileNames) {
+
                     // file 가져오기
                     File file = new File("../profile-3d-contrib/" + svgFileName);
 
                     // file 이름 설정
                     String fileName = dirName + "/" + file.getName();
 
-                    // S3에 파일 업로드
-                    String imageUrl = s3Service.upload(file, dirName, fileName);
+                    // S3에 파일 업로드 & 파일(사진) 링크 저장
+                    imageUrl[i] = s3Service.upload(file, dirName, fileName);
 
                     // 생성된 Report에 대한 정보 출력
                     System.out.println("Report created with image URL: " + imageUrl);
 
+                    i++;
                 }
 
                 // DB 저장
                 Report report = Report.builder()
                         .repo(repo)
-                        .imageGitblock(imageUrl)
-                        .imageGreen(imageGreenUrl)
-                        .imageNightGreen(imageNightGreenUrl)
-                        .imageNightRainbow(imageNightRainbowUrl)
-                        .imageNightView(imageNightViewUrl)
-                        .imageSeason(imageSeasonUrl)
-                        .imageSouthSeason(imageSouthSeasonUrl)
+                        .imageGreen(imageUrl[0])
+                        .imageSeason(imageUrl[1])
+                        .imageSouthSeason(imageUrl[2])
+                        .imageNightView(imageUrl[3])
+                        .imageNightGreen(imageUrl[4])
+                        .imageNightRainbow(imageUrl[5])
+                        .imageGitblock(imageUrl[6])
                         .build();
                 reportRepository.save(report);
 
@@ -154,17 +155,6 @@ public class ReportServiceImpl implements ReportService{
             else {
                 throw new RuntimeException("SVG 파일 생성 중 오류 발생, 파일 이름을 찾을 수 없음.");
             }
-
-            // 201 : 레포트 생성 성공
-            CreateReportResponseDto data = CreateReportResponseDto.builder()
-                    .id(report.getId())
-                    .repoTitle(repo.getTitle()) // 레포의 제목
-                    .image(imageUrl)
-                    .createdAt(report.localDateTimeToString())
-                    .build();
-
-            CustomApiResponse<?> res = CustomApiResponse.createSuccess(201, data, "레포트 생성 성공했습니다.");
-            return ResponseEntity.status(201).body(res);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -203,7 +193,13 @@ public class ReportServiceImpl implements ReportService{
         ReportDetailDto data = ReportDetailDto.builder()
                 .id(report.getId())
                 .repoTitle(repo.getTitle())
-                .image(report.getImage())
+                .imageGreen(report.getImageGreen())
+                .imageSeason(report.getImageSeason())
+                .imageSouthSeason(report.getImageSouthSeason())
+                .imageNightView(report.getImageNightView())
+                .imageNightGreen(report.getImageNightGreen())
+                .imageNightRainbow(report.getImageNightRainbow())
+                .imageGitblock(report.getImageGitblock())
                 .createdAt(report.localDateTimeToString())
                 .build();
 
