@@ -5,27 +5,29 @@ import com.server.pnd.domain.Report;
 import com.server.pnd.domain.User;
 import com.server.pnd.oauth.service.SocialLoginService;
 import com.server.pnd.repo.repository.RepoRepository;
+import com.server.pnd.report.dto.CreateReportResponseDto;
 import com.server.pnd.report.dto.GitHubEvent;
 import com.server.pnd.report.dto.ReportDetailDto;
 import com.server.pnd.report.repository.ReportRepository;
+import com.server.pnd.s3.config.S3Config;
 import com.server.pnd.util.response.CustomApiResponse;
-import com.server.pnd.util.s3.S3Service;
+import com.server.pnd.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
+import java.io.*;
 import javax.imageio.ImageIO;
-import java.io.InputStreamReader;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -37,11 +39,11 @@ public class ReportServiceImpl implements ReportService{
     private final SocialLoginService socialLoginService;
     private final GitHubGraphQLService gitHubGraphQLService;
     private final S3Service s3Service;
-
+    private final S3Config s3Config;
 
     // 레포트 생성
     @Override
-    public ResponseEntity<CustomApiResponse<?>> createReport(Long repoId) {
+    public ResponseEntity<CustomApiResponse<?>> createReport(Long repoId) throws IOException {
         //404 : 해당 레포가 없는 경우
         Optional<Repo> foundRepo = repoRepository.findById(repoId);
         if (foundRepo.isEmpty()) {
@@ -49,6 +51,15 @@ public class ReportServiceImpl implements ReportService{
             return ResponseEntity.status(404).body(res);
         }
         Repo repo = foundRepo.get();
+
+        //404 : 해당 유저가 없는 경우
+        Optional<Repo> foundRepo = repoRepository.findById(repoId);
+        if (foundRepo.isEmpty()) {
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "해당 레포지토리를 찾을 수 없습니다.");
+            return ResponseEntity.status(404).body(res);
+        }
+        Repo repo = foundRepo.get();
+
         User user = repo.getUser();
 
         // 엑세스 토큰, URL 설정
@@ -75,20 +86,6 @@ public class ReportServiceImpl implements ReportService{
             // 프로세스 시작
             Process process = processBuilder.start();
 
-            // 표준 출력을 읽어서 출력
-            BufferedReader stdOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-
-            String line;
-            while ((line = stdOutput.readLine()) != null) {
-                System.out.println(line);
-            }
-
-            // 표준 오류를 읽어서 출력
-            while ((line = stdError.readLine()) != null) {
-                System.err.println("Node.js Error: " + line);
-            }
-
             // 프로세스 종료 코드 확인
             int exitCode = process.waitFor();
             System.out.println("Node.js script finished with exit code: " + exitCode);
@@ -100,14 +97,23 @@ public class ReportServiceImpl implements ReportService{
             e.printStackTrace();
         }
 
-        // 2. Stadium Image 생성
         String dirName = username + repositoryName;
         int index = 1;
 
-        MultipartFile image; //main/profile-3d-contrib/profile-green-animate.svg 가져오기
-        String filename = dirName;
-        String imageUrl = s3Service.upload(image, dirName, filename);
+        // file 가져오기
+        File file = new File("../profile-3d-contrib/profile-green-animate.svg");
 
+        // file을 FileInputStream으로 읽어오기
+        FileInputStream input = new FileInputStream(file);
+
+        // FileInputStream -> MultipartFile 변환
+        MultipartFile image = new MockMultipartFile(file.getName(), file.getName(), "image/svg+xml", input);
+
+        String fileName = file.getName();
+        String imageUrl = s3Service.upload(image, dirName, fileName);
+
+
+        // 여러장
 //        List<MultipartFile> images;
 //        for (MultipartFile image : images) {
 //            String filename = dirName + index;
@@ -119,6 +125,23 @@ public class ReportServiceImpl implements ReportService{
 //            imageRepository.save(stadiumImage);
 //            index++;
 //        }
+        // DB
+        Report report = Report.builder()
+                .repo(repo)
+                .image(imageUrl)
+                .build();
+
+
+
+        // 201 : 성공
+        CreateReportResponseDto data = CreateReportResponseDto.builder()
+                .id()
+                .repoTitle()
+                .image()
+                .createdAt().build();
+
+
+        CustomApiResponse<?> res = CustomApiResponse.createSuccess(201, data, "레포트 생성 성공했습니다.");
 
         return null;
     }
