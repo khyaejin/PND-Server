@@ -9,6 +9,7 @@ import com.server.pnd.report.dto.GitHubEvent;
 import com.server.pnd.report.dto.ReportDetailDto;
 import com.server.pnd.report.repository.ReportRepository;
 import com.server.pnd.util.response.CustomApiResponse;
+import com.server.pnd.util.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,12 +17,15 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.Graphics2D;
 import java.io.BufferedReader;
 import java.io.File;
 import javax.imageio.ImageIO;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,6 +36,8 @@ public class ReportServiceImpl implements ReportService{
     private final RestTemplate restTemplate;
     private final SocialLoginService socialLoginService;
     private final GitHubGraphQLService gitHubGraphQLService;
+    private final S3Service s3Service;
+
 
     // 레포트 생성
     @Override
@@ -55,13 +61,12 @@ public class ReportServiceImpl implements ReportService{
         String response = gitHubGraphQLService.fetchUserData(accessToken, username, repositoryName);
         System.err.println("response: " + response);
 
-        // 레고 블럭 생성 (Node.js 스크립트실행)
+        // 깃허브 레포트 생성 (Node.js 스크립트실행)
         ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/src/index.ts");
 
         // 환경 변수 설정
         processBuilder.environment().put("GITHUB_DATA", response);
         processBuilder.environment().put("USERNAME", username);
-//        processBuilder.environment().put("GITHUB_TOKEN", accessToken);
 
         // 스크립트 실행 및 결과 확인
         try {
@@ -95,11 +100,26 @@ public class ReportServiceImpl implements ReportService{
             e.printStackTrace();
         }
 
-        // 레포트 생성
-        // makeReportImg();
+        // 2. Stadium Image 생성
+        String dirName = username + repositoryName;
+        int index = 1;
 
-        // 레포트 불러오기
-        BufferedImage image = loadGeneratedImage();
+        MultipartFile image; //main/profile-3d-contrib/profile-green-animate.svg 가져오기
+        String filename = dirName;
+        String imageUrl = s3Service.upload(image, dirName, filename);
+
+//        List<MultipartFile> images;
+//        for (MultipartFile image : images) {
+//            String filename = dirName + index;
+//            String imageUrl = s3Service.upload(image, dirName, filename);
+//            Image stadiumImage = Image.builder()
+//                    .stadium(stadium)
+//                    .image(imageUrl)
+//                    .build();
+//            imageRepository.save(stadiumImage);
+//            index++;
+//        }
+
         return null;
     }
 
