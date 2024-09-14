@@ -84,7 +84,6 @@ public class ReportServiceImpl implements ReportService{
                 System.err.println(line);
             }
 
-
             List<String> generatedFileNames = new ArrayList<>();
 
             while ((line = reader.readLine()) != null) {
@@ -117,7 +116,10 @@ public class ReportServiceImpl implements ReportService{
                     // System.out.println("Current working directory: " + Paths.get("").toAbsolutePath().toString());
 
                     // file 가져오기
-                    File file = new File("./src/main/resources/profile-3d-contrib/" + svgFileName);
+                    // local
+//                    File file = new File("./src/main/resources/profile-3d-contrib/" + svgFileName);
+                    // deploy
+                    File file = new File("../../src/main/resources/profile-3d-contrib/" + svgFileName);
 
                     // S3에 파일 업로드 & 파일(사진) 링크 저장
                     imageUrl[i] = s3Service.upload(file, username, svgFileName);
