@@ -36,12 +36,11 @@ const main = async () => {
 
         // JSON 데이터를 파싱
         const parsedData = JSON.parse(githubData);
-
-        // console.log("ParsedData:", JSON.stringify(parsedData, null, 2));
+        console.log("ParsedData:", JSON.stringify(parsedData, null, 2));
 
         // 단일 레포지토리에 대한 정보 집계
         const repoInfo = aggregateRepo.aggregateRepositoryInfo(parsedData);
-        // console.log('Aggregated Repository Info:', repoInfo); // 집계된 레포지토리 정보 출력
+        console.log('Aggregated Repository Info:', repoInfo); // 집계된 레포지토리 정보 출력
 
         if (process.env.SETTING_JSON) {
             const settingFile = r.readSettingJson(process.env.SETTING_JSON);
