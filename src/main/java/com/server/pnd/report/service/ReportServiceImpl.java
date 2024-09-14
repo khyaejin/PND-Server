@@ -70,9 +70,17 @@ public class ReportServiceImpl implements ReportService{
             System.out.println("Starting Node.js script...");
             Process process = processBuilder.start();
 
+
             // 표준 출력 읽기(생성된 파일 이름 전달받기)
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
+
+            // 로그
+            BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            while ((line = errorReader.readLine()) != null) {
+                System.err.println(line);
+            }
+
 
             List<String> generatedFileNames = new ArrayList<>();
 
