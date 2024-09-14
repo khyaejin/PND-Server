@@ -74,15 +74,11 @@ public class ReportServiceImpl implements ReportService{
             Process process = processBuilder.start();
 
 
-            // 표준 출력 읽기(생성된 파일 이름 전달받기)
+            // 표준 출력 및 표준 오류를 같은 스트림으로 합치기
+            processBuilder.redirectErrorStream(true);
+            // 출력 읽기
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
-
-            // 로그
-            BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            while ((line = errorReader.readLine()) != null) {
-                System.err.println(line);
-            }
 
             List<String> generatedFileNames = new ArrayList<>();
 
