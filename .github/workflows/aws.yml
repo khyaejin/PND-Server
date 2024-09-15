@@ -27,13 +27,14 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # application.properties 설정
+    # SSH 에이전트 시작 및 프라이빗 키 추가
+    - name: Start SSH Agent
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+
     - name: Set up application.properties
       run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
-
-    # application-secret.properties 설정
-    - name: Set up application-secret.properties
-      run: echo "${{ secrets.APPLICATION_SECRET }}" > ./src/main/resources/application-secret.properties
 
     - name: Build with Gradle
       run: ./gradlew build
@@ -54,6 +55,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Start SSH Agent
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+
     - name: Deploy to EC2
       uses: appleboy/ssh-action@master
       with:
