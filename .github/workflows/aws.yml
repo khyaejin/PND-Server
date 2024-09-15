@@ -67,12 +67,15 @@ jobs:
         username: ${{ env.EC2_SSH_USER }}
         key: ${{ env.PRIVATE_KEY }}
         script: |
-          CONTAINER_ID=$(sudo docker ps -q --filter "publish=80-8080")
+          # 기존 컨테이너가 있는지 확인하고 삭제
+          CONTAINER_ID=$(sudo docker ps -q --filter "name=${{ env.CONTAINER_NAME }}")
 
           if [ ! -z "$CONTAINER_ID" ]; then
+            echo "Stopping and removing existing container $CONTAINER_ID"
             sudo docker stop $CONTAINER_ID
             sudo docker rm $CONTAINER_ID
           fi
 
+          # 최신 이미지로 Docker 컨테이너 실행
           sudo docker pull ${{ env.DOCKER_IMAGE_NAME }}
           sudo docker run --name ${{ env.CONTAINER_NAME }} -d -p 80:8080 -e TZ=Asia/Seoul ${{ env.DOCKER_IMAGE_NAME }}
