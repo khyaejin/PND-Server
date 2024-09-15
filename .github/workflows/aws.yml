@@ -8,7 +8,7 @@ on:
 env:
   DOCKER_IMAGE_NAME: khyaejin/pnd
   EC2_HOST: 13.124.4.73
-  EC2_SSH_USER: ec2-user
+  EC2_SSH_USER: ubuntu
   PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
   CONTAINER_NAME: pnd-container
 
