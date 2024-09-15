@@ -6,10 +6,11 @@ on:
       - main
 
 env:
-  DOCKER_IMAGE_NAME:
-  EC2_HOST:
+  DOCKER_IMAGE_NAME: khyaejin/pnd
+  EC2_HOST: 13.124.4.73
   EC2_SSH_USER: ec2-user
   PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+  CONTAINER_NAME: pnd-container
 
 jobs:
   build-and-push-docker:
@@ -26,8 +27,13 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    # application.properties 설정
     - name: Set up application.properties
       run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
+
+    # application-secret.properties 설정
+    - name: Set up application-secret.properties
+      run: echo "${{ secrets.APPLICATION_SECRET }}" > ./src/main/resources/application-secret.properties
 
     - name: Build with Gradle
       run: ./gradlew build
@@ -62,5 +68,5 @@ jobs:
             sudo docker rm $CONTAINER_ID
           fi
 
-          sudo docker pull ${{ env.DOCKER_HUB }}
-          sudo docker run --name ${{ env.CONTAINER_NAME }} -d -p 80:8080 -e TZ=Asia/Seoul ${{ env.DOCKER_HUB }}
+          sudo docker pull ${{ env.DOCKER_IMAGE_NAME }}
+          sudo docker run --name ${{ env.CONTAINER_NAME }} -d -p 80:8080 -e TZ=Asia/Seoul ${{ env.DOCKER_IMAGE_NAME }}
