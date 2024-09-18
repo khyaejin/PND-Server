@@ -7,19 +7,19 @@ import * as util from './utils';
 import * as type from './type';
 
 // // 수정한 사이즈
-// const width = 1920;
-// const height = 1080;
+const width = 1920;
+const height = 1080;
 
 // 원래 사이즈
-const width = 1280;
-const height = 850;
+// const width = 1280;
+// const height = 850;
 
 const pieHeight = 200 * 1.3;
 const pieWidth = pieHeight * 2;
 
 const radarWidth = 400 * 1.3;
 const radarHeight = (radarWidth * 3) / 4;
-const radarX = width - radarWidth - 40;
+const radarX = width - radarWidth - 550; // 수정) -40 -> -500
 
 export const createSvg = (
     repoInfo: type.RepositoryInfo,
@@ -119,7 +119,7 @@ export const createSvg = (
 
         const group = svg.append('g');
 
-        const positionXContrib = (width * 3) / 10;
+        const positionXContrib = (width * 3) / 10 -200; //수정) 왼쪽으로 -200
         const positionYContrib = height - 20;
 
         group
@@ -144,7 +144,7 @@ export const createSvg = (
             .text(contribLabel)
             .attr('fill', settings.foregroundColor);
 
-        const positionXStar = (width * 5) / 10;
+        const positionXStar = (width * 5) / 10 -200; //수정) -200
         const positionYStar = positionYContrib;
 
         // icon of star
@@ -174,7 +174,7 @@ export const createSvg = (
             .text(util.toScale(repoInfo.stargazerCount))
             .attr('fill', settings.foregroundColor);
 
-        const positionXFork = (width * 6) / 10;
+        const positionXFork = (width * 6) / 10 -200; //수정) -200
         const positionYFork = positionYContrib;
 
         // icon of fork
