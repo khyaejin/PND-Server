@@ -18,15 +18,16 @@ export const aggregateRepositoryInfo = (
     const repository = repositoryData.data.repository;
 
     const target = repository.defaultBranchRef?.target;
-    //console.log('Target content:', JSON.stringify(target, null, 2));
+    // console.log('Target content:', JSON.stringify(target, null, 2));
 
+    // contributions 정보 생성
     const contributions: type.Contribution[] = target.history.edges.map(
         (edge: any) => ({
             date: new Date(edge.node.committedDate),
             count: edge.node.additions - edge.node.deletions,
             level: calculateContributionLevel(edge.node.changedFiles),
             contributionCount: edge.node.additions - edge.node.deletions,
-            contributionLevel: calculateContributionLevel(edge.node.changedFiles)
+            contributionLevel: calculateContributionLevel(edge.node.changedFiles),
         })
     );
 
@@ -35,13 +36,25 @@ export const aggregateRepositoryInfo = (
         0
     );
 
-    const languages: type.LanguageInfo[] = repository.languages.edges.map(
-        (langEdge: any) => ({
+    // commits 정보 생성
+    const commits: type.Commit[] = target.history.edges.map((edge: any) => ({
+        date: new Date(edge.node.committedDate),
+        additions: edge.node.additions,
+        deletions: edge.node.deletions,
+        changedFiles: edge.node.changedFiles,
+        author: edge.node.author.name,
+    }));
+
+    const languages: type.LanguageInfo[] = repository.languages.edges
+        .map((langEdge: any) => ({
             language: langEdge.node.name,
             color: langEdge.node.color || OTHER_COLOR,
             contributions: langEdge.size, // 해당 언어로 작성된 코드의 양
-        })
-    ).sort((a: type.LanguageInfo, b: type.LanguageInfo) => b.contributions - a.contributions);
+        }))
+        .sort(
+            (a: type.LanguageInfo, b: type.LanguageInfo) =>
+                b.contributions - a.contributions
+        );
 
     const repositoryInfo: type.RepositoryInfo = {
         name: repository.name,
@@ -49,10 +62,11 @@ export const aggregateRepositoryInfo = (
         stargazerCount: repository.stargazerCount,
         primaryLanguage: repository.primaryLanguage,
         contributions: contributions,
+        commits: commits, // 커밋 정보 추가
         languages: languages,
         totalContributions: totalContributions,
-        totalCommitContributions: contributions.length,
-        totalIssueContributions: 0,
+        totalCommitContributions: commits.length, // 커밋 수
+        totalIssueContributions: 0, // 아직 처리되지 않은 데이터는 0으로 설정
         totalPullRequestContributions: 0,
         totalPullRequestReviewContributions: 0,
         totalRepositoryContributions: totalContributions,

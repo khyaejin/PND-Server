@@ -1,0 +1,121 @@
+import * as d3 from 'd3';
+import * as type from './type';
+
+export const createBarChartCommits = (
+    svg: d3.Selection<SVGSVGElement, unknown, null, unknown>,
+    repositoryInfo: type.RepositoryInfo,  // 레포지토리 정보 (커밋, 기여 정보 포함)
+    x: number,                           // 차트의 x 좌표
+    y: number,                           // 차트의 y 좌표
+    width: number,                       // 차트의 너비
+    height: number,                      // 차트의 높이
+    settings: type.RadarContribSettings, // 설정 (축 색상, 바 색상, 애니메이션 옵션 등)
+    isForcedAnimation: boolean           // 애니메이션 강제 적용 여부
+): void => {
+    // 커밋이 없는 경우 차트를 생성하지 않음
+    if (repositoryInfo.commits.length === 0) {
+        return;
+    }
+
+    // 각 시간대별 커밋 수를 저장하는 배열 (24시간을 기준으로)
+    const commitCountsByHour = Array(24).fill(0);
+
+    // 커밋 데이터를 시간대별로 그룹화
+    repositoryInfo.commits.forEach((commit) => {
+        const commitHour = new Date(commit.date).getUTCHours(); // 커밋이 발생한 시간 (0~23)
+        commitCountsByHour[commitHour] += 1;                    // 해당 시간대의 커밋 수 증가
+    });
+
+    // 시간대별 최대 커밋 수를 계산 (Y축의 범위를 설정하기 위함)
+    const maxCommits = Math.max(...commitCountsByHour);
+
+    // 차트의 여백 설정
+    const margin = { top: 40, right: 30, bottom: 60, left: 50 }; // 하단에 여백을 더 추가하여 텍스트 공간 확보
+    const chartWidth = width - margin.left - margin.right;  // 차트 너비에서 여백을 제외한 실제 차트 너비
+    const chartHeight = height - margin.top - margin.bottom; // 차트 높이에서 여백을 제외한 실제 차트 높이
+
+    // 차트가 그려질 그룹 요소를 추가하고, 차트의 x, y 좌표로 이동
+    const group = svg.append('g').attr('transform', `translate(${x}, ${y})`);
+
+    // X축 스케일: 시간대 (0~23시) 범위를 설정
+    const xScale = d3
+        .scaleBand()
+        .domain(commitCountsByHour.map((_, i) => i.toString())) // 0~23 시를 문자열로 변환하여 사용
+        .range([0, chartWidth])                                // 차트의 가로 범위
+        .padding(0.1);                                         // 막대 간 간격 설정
+
+    // Y축 스케일: 커밋 수 (최대값을 실제 커밋 수의 최대값으로 설정)
+    const yScale = d3
+        .scaleLinear()
+        .domain([0, maxCommits])                               // 최소 0, 최대 커밋 수에 따라 스케일 조정
+        .range([chartHeight, 0]);                              // y 값이 클수록 위로 올라가게 스케일링
+
+    // X축 생성 및 축 레이블 색상을 설정 (축이 차트 아래에 위치하도록 설정)
+    group
+        .append('g')
+        .attr('transform', `translate(0, ${chartHeight})`)      // 차트 아래로 이동
+        .call(d3.axisBottom(xScale).tickFormat((d) => d))       // X축의 각 시간대 (0~23시) 레이블 추가
+        .selectAll('path, line, text')                          // X축 선 및 텍스트의 색상 설정
+        .attr('fill', settings.weakColor);
+
+    // Y축 생성 및 축 레이블 색상을 설정
+    group
+        .append('g')
+        .call(d3.axisLeft(yScale).ticks(5))                     // Y축은 5개의 레이블을 생성
+        .selectAll('path, line, text')                          // Y축 선 및 텍스트의 색상 설정
+        .attr('fill', settings.weakColor);
+
+    // 막대 차트 생성
+    const bars = group
+        .selectAll('rect')                                      // 각 시간대별로 막대(rect) 생성
+        .data(commitCountsByHour)                               // 시간대별 커밋 수 데이터를 바인딩
+        .enter()
+        .append('rect')
+        .attr('x', (d, i) => xScale(i.toString())!)             // 각 막대의 x 좌표 설정 (시간대별 위치)
+        .attr('y', (d) => yScale(d))                            // 각 막대의 y 좌표 설정 (커밋 수에 따라)
+        .attr('width', xScale.bandwidth())                      // 막대 너비 설정 (스케일에 따라)
+        .attr('height', (d) => chartHeight - yScale(d))         // 막대의 높이를 커밋 수에 따라 설정
+        .attr('fill', settings.radarColor);                     // 막대 색상은 설정 파일에서 가져옴
+
+    // 애니메이션 적용 (필요할 경우)
+    if (isForcedAnimation || settings.growingAnimation) {
+        bars.attr('height', 0)                                  // 막대의 초기 높이를 0으로 설정
+            .attr('y', chartHeight)                             // 막대가 아래에서 시작하도록 설정
+            .transition()                                       // 애니메이션 시작
+            .duration(3000)                                     // 3초 동안 애니메이션 적용
+            .attr('height', (d) => chartHeight - yScale(d))     // 애니메이션 후 막대 높이 설정
+            .attr('y', (d) => yScale(d));                       // 막대가 최종 y 좌표로 이동
+    }
+
+    bars.attr('x', (d, i) => {
+        const xValue = xScale(i.toString());
+        // console.log('Bar x:', xValue);  // x 좌표 확인
+        return xValue!;
+    })
+    .attr('y', (d) => {
+        const yValue = yScale(d);
+        // console.log('Bar y:', yValue);  // y 좌표 확인
+        return yValue;
+    })
+    .attr('width', (d) => {
+        const widthValue = xScale.bandwidth();
+        // console.log('Bar width:', widthValue);  // 너비 확인
+        return widthValue;
+    })
+    .attr('height', (d) => {
+        const heightValue = chartHeight - yScale(d);
+        // console.log('Bar height:', heightValue);  // 높이 확인
+        return heightValue;
+    });
+
+
+    // Commits by Hour 텍스트 추가
+    group
+        .append('text')
+        .attr('x', chartWidth)                                         // 그래프의 가장 왼쪽에 맞춤
+        .attr('y', chartHeight + margin.bottom - 10)           // 하단에 위치하도록 설정
+        .attr('text-anchor', 'end')                         // 텍스트의 끝 위치에 맞춤
+        .attr('dominant-baseline', 'middle')                   // 텍스트를 세로 기준선에 맞춤
+        .attr('fill', settings.foregroundColor)                // X축과 동일한 색상 사용
+        .style('font-size', '18px')                            // 텍스트 크기 설정
+        .text('Commits by Hour');                              // 텍스트 내용 설정
+};

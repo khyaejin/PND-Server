@@ -362,6 +362,7 @@ export const create3DContrib = (
 
     // 중앙에서 살짝 왼쪽 아래로 이동시키기 위해 X, Y 오프셋 계산 (비율 기반) -> 5개월~1년 모두 괜찮은 위치인지 확인 필요
     const offsetX = (width - graphWidth) / 2 - graphWidth * 1.5 -200; // X 좌표를 그래프 너비의 10%만큼 왼쪽으로 이동
+    // 수정) 전체 리포트 크기 키우면서 3D contrib를 조금 왼쪽으로 옮기기 위해 -200 해줌
     const offsetY = (height - graphHeight) / 2 + graphHeight * 0.1; // Y 좌표를 그래프 높이의 10%만큼 아래로 이동
 
 

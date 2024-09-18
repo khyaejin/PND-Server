@@ -3,8 +3,10 @@ import { JSDOM } from 'jsdom';
 import * as contrib from './create-3d-contrib';
 import * as pie from './create-pie-language';
 import * as radar from './create-radar-contrib';
+import * as graph from './create-graph-commits'; 
 import * as util from './utils';
 import * as type from './type';
+
 
 // // 수정한 사이즈
 const width = 1920;
@@ -20,6 +22,10 @@ const pieWidth = pieHeight * 2;
 const radarWidth = 400 * 1.3;
 const radarHeight = (radarWidth * 3) / 4;
 const radarX = width - radarWidth - 550; // 수정) -40 -> -550
+
+const graphWidth = 400 * 1.3;
+const graphHeight = (graphWidth * 3) / 5;
+const graphX = width - graphWidth; 
 
 export const createSvg = (
     repoInfo: type.RepositoryInfo,
@@ -98,11 +104,23 @@ export const createSvg = (
         radar.createRadarContrib(
             svg,
             repoInfo,
-            radarX + 10,
+            radarX + 15,
             90,
             radarWidth,
             radarHeight,
             settings,
+            isForcedAnimation
+        );
+        
+        // 막대그래프
+        graph.createBarChartCommits(
+            svg,
+            repoInfo,
+            graphX + 15, // x 좌표
+            100, // y 좌표
+            graphWidth, // width
+            graphHeight,  // height
+            settings, // 통일된 settings 객체 전달
             isForcedAnimation
         );
 
@@ -116,6 +134,7 @@ export const createSvg = (
             settings,
             isForcedAnimation
         );
+
 
         const group = svg.append('g');
 
@@ -219,7 +238,7 @@ export const createSvg = (
             .append('text')
             .style('font-size', '16px')
             .attr('x', width - 20)
-            .attr('y', height - 20) // 하단으로 이동 (height를 기준으로)
+            .attr('y', height - 30) // 하단으로 이동 (height를 기준으로)
             .attr('dominant-baseline', 'hanging')
             .attr('text-anchor', 'end')
             .text(period)
@@ -235,7 +254,7 @@ export const createSvg = (
         }
 
         // 최대 글자 바이트 수
-        const maxByteLength = 80; // 최대 바이트 수를 설정 
+        const maxByteLength = 30; // 최대 바이트 수를 설정 
         let Text = repoInfo.name;
 
         // 텍스트가 최대 바이트 수를 넘으면 자르고 "..." 추가
