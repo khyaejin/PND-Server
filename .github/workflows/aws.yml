@@ -12,7 +12,6 @@ env:
   PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
   CONTAINER_NAME: pnd-container
 
-
 jobs:
   build-and-push-docker:
 
@@ -49,7 +48,6 @@ jobs:
     - name: Push the Docker image
       run: docker push ${{ env.DOCKER_IMAGE_NAME }}:latest
 
-
   deploy-to-ec2:
 
     needs: build-and-push-docker
@@ -69,12 +67,12 @@ jobs:
         key: ${{ env.PRIVATE_KEY }}
         script: |
           # 기존 컨테이너가 있는지 확인하고 삭제
-          CONTAINER_ID=$(sudo docker ps -q --filter "name=${{ env.CONTAINER_NAME }}")
+          CONTAINER_ID=$(sudo docker ps -a -q --filter "name=${{ env.CONTAINER_NAME }}")
 
           if [ ! -z "$CONTAINER_ID" ]; then
             echo "Stopping and removing existing container $CONTAINER_ID"
-            sudo docker stop $CONTAINER_ID
-            sudo docker rm $CONTAINER_ID
+            sudo docker stop $CONTAINER_ID || true
+            sudo docker rm $CONTAINER_ID || true
           fi
 
           # 최신 이미지로 Docker 컨테이너 실행
