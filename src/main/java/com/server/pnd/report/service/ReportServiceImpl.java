@@ -60,8 +60,8 @@ public class ReportServiceImpl implements ReportService{
             System.err.println("response: " + response);
 
             // 깃허브 레포트 생성 (Node.js 스크립트실행)
-            // lacal
-            // ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/src/index.ts");
+            // local
+//             ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/src/index.ts");
             // deploy
             ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "../../src/main/resources/scripts/3d-contrib/src/index.ts");
 
@@ -97,91 +97,91 @@ public class ReportServiceImpl implements ReportService{
                 throw new RuntimeException("3D 그래프 생성 중 오류 발생, exit code: " + exitCode);
             }
 
-//            String[] imageUrl = new String[7]; // 배포 이미지 url
-//
-//            if (!generatedFileNames.isEmpty()) {
-//                System.out.println("Generated SVG files: " + String.join(", ", generatedFileNames));
-//
-//                int i = 0;
-//                for (String svgFileName : generatedFileNames) {
-//                    if (i >= imageUrl.length) {
-//                        break; // 배열 크기를 초과하지 않도록 안전 장치
-//                    }
-//
-//                    // 경로확인(테스트)
-//                    // System.out.println("Current working directory: " + Paths.get("").toAbsolutePath().toString());
-//
-//                    // file 가져오기
-//                    // local
-////                    File file = new File("./src/main/resources/profile-3d-contrib/" + svgFileName);
-//                    // deploy
-//                    File file = new File("../../src/main/resources/profile-3d-contrib/" + svgFileName);
-//
-//                    // S3에 파일 업로드 & 파일(사진) 링크 저장
-//                    imageUrl[i] = s3Service.upload(file, username, svgFileName);
-//
-//                    // 해당 file 지우기
-//                    if (file.delete()) {
-//                        System.out.println("file 삭제 성공 : " + file.getPath());
-//                    } else {
-//                        System.out.println("file 삭제 실패 : " + file.getPath());
-//                    }
-//
-//                    // 생성된 Report에 대한 정보 출력
-//                    System.out.println("Report created with image URL: " + imageUrl[i]);
-//
-//                    i++;
-//                }
-//
-//                Optional<Report> foundReport = reportRepository.findByRepo(repo);
-//                Report report;
-//
-//                // 이미 존재하는 report가 있는 경우 -> 업데이트
-//                if (foundReport.isPresent()) {
-//                    // 기존 report 가져오기
-//                    report = foundReport.get();
-//                    // 기존 필드 수정
-//                    report.setImageGreen(imageUrl[0]);
-//                    report.setImageSeason(imageUrl[1]);
-//                    report.setImageSouthSeason(imageUrl[2]);
-//                    report.setImageNightView(imageUrl[3]);
-//                    report.setImageNightGreen(imageUrl[4]);
-//                    report.setImageNightRainbow(imageUrl[5]);
-//                    report.setImageGitblock(imageUrl[6]);
-//                    // DB에 업데이트
-//                    reportRepository.save(report);
-//                } else {
-//                    // 존재하지 않는 경우 -> 새로 삽입
-//                    report = Report.builder()
-//                            .repo(repo)
-//                            .imageGreen(imageUrl[0])
-//                            .imageSeason(imageUrl[1])
-//                            .imageSouthSeason(imageUrl[2])
-//                            .imageNightView(imageUrl[3])
-//                            .imageNightGreen(imageUrl[4])
-//                            .imageNightRainbow(imageUrl[5])
-//                            .imageGitblock(imageUrl[6])
-//                            .build();
-//                    reportRepository.save(report);
-//                }
-//
-//                // 201 : 레포트 생성 성공
-//                CreateReportResponseDto data = CreateReportResponseDto.builder()
-//                        .id(report.getId())
-//                        .repoTitle(repo.getTitle()) // 레포의 제목
-//                        .imageGreen(imageUrl[0])
-//                        .imageSeason(imageUrl[1])
-//                        .imageSouthSeason(imageUrl[2])
-//                        .imageNightView(imageUrl[3])
-//                        .imageNightGreen(imageUrl[4])
-//                        .imageNightRainbow(imageUrl[5])
-//                        .imageGitblock(imageUrl[6])
-//                        .createdAt(reportRepository.findByRepo(repo).get().localDateTimeToString()) // 마지막으로 저장된 Report의 시간 가져오기
-//                        .build();
-//
-//                CustomApiResponse<?> res = CustomApiResponse.createSuccess(201, data, "레포트 생성 성공했습니다.");
-//                return ResponseEntity.status(201).body(res);
-//            }
+            String[] imageUrl = new String[7]; // 배포 이미지 url
+
+            if (!generatedFileNames.isEmpty()) {
+                System.out.println("Generated SVG files: " + String.join(", ", generatedFileNames));
+
+                int i = 0;
+                for (String svgFileName : generatedFileNames) {
+                    if (i >= imageUrl.length) {
+                        break; // 배열 크기를 초과하지 않도록 안전 장치
+                    }
+
+                    // 경로확인(테스트)
+                    // System.out.println("Current working directory: " + Paths.get("").toAbsolutePath().toString());
+
+                    // file 가져오기
+                    // local
+//                    File file = new File("./src/main/resources/profile-3d-contrib/" + svgFileName);
+                    // deploy
+                    File file = new File("../../src/main/resources/profile-3d-contrib/" + svgFileName);
+
+                    // S3에 파일 업로드 & 파일(사진) 링크 저장
+                    imageUrl[i] = s3Service.upload(file, username, svgFileName);
+
+                    // 해당 file 지우기
+                    if (file.delete()) {
+                        System.out.println("file 삭제 성공 : " + file.getPath());
+                    } else {
+                        System.out.println("file 삭제 실패 : " + file.getPath());
+                    }
+
+                    // 생성된 Report에 대한 정보 출력
+                    System.out.println("Report created with image URL: " + imageUrl[i]);
+
+                    i++;
+                }
+
+                Optional<Report> foundReport = reportRepository.findByRepo(repo);
+                Report report;
+
+                // 이미 존재하는 report가 있는 경우 -> 업데이트
+                if (foundReport.isPresent()) {
+                    // 기존 report 가져오기
+                    report = foundReport.get();
+                    // 기존 필드 수정
+                    report.setImageGreen(imageUrl[0]);
+                    report.setImageSeason(imageUrl[1]);
+                    report.setImageSouthSeason(imageUrl[2]);
+                    report.setImageNightView(imageUrl[3]);
+                    report.setImageNightGreen(imageUrl[4]);
+                    report.setImageNightRainbow(imageUrl[5]);
+                    report.setImageGitblock(imageUrl[6]);
+                    // DB에 업데이트
+                    reportRepository.save(report);
+                } else {
+                    // 존재하지 않는 경우 -> 새로 삽입
+                    report = Report.builder()
+                            .repo(repo)
+                            .imageGreen(imageUrl[0])
+                            .imageSeason(imageUrl[1])
+                            .imageSouthSeason(imageUrl[2])
+                            .imageNightView(imageUrl[3])
+                            .imageNightGreen(imageUrl[4])
+                            .imageNightRainbow(imageUrl[5])
+                            .imageGitblock(imageUrl[6])
+                            .build();
+                    reportRepository.save(report);
+                }
+
+                // 201 : 레포트 생성 성공
+                CreateReportResponseDto data = CreateReportResponseDto.builder()
+                        .id(report.getId())
+                        .repoTitle(repo.getTitle()) // 레포의 제목
+                        .imageGreen(imageUrl[0])
+                        .imageSeason(imageUrl[1])
+                        .imageSouthSeason(imageUrl[2])
+                        .imageNightView(imageUrl[3])
+                        .imageNightGreen(imageUrl[4])
+                        .imageNightRainbow(imageUrl[5])
+                        .imageGitblock(imageUrl[6])
+                        .createdAt(reportRepository.findByRepo(repo).get().localDateTimeToString()) // 마지막으로 저장된 Report의 시간 가져오기
+                        .build();
+
+                CustomApiResponse<?> res = CustomApiResponse.createSuccess(201, data, "레포트 생성 성공했습니다.");
+                return ResponseEntity.status(201).body(res);
+            }
 
             else {
                 throw new RuntimeException("SVG 파일 생성 중 오류 발생, 파일 이름을 찾을 수 없음.");

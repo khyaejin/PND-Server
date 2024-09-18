@@ -49,20 +49,36 @@ export const createBarChartCommits = (
         .domain([0, maxCommits])                               // 최소 0, 최대 커밋 수에 따라 스케일 조정
         .range([chartHeight, 0]);                              // y 값이 클수록 위로 올라가게 스케일링
 
-    // X축 생성 및 축 레이블 색상을 설정 (축이 차트 아래에 위치하도록 설정)
-    group
-        .append('g')
-        .attr('transform', `translate(0, ${chartHeight})`)      // 차트 아래로 이동
-        .call(d3.axisBottom(xScale).tickFormat((d) => d))       // X축의 각 시간대 (0~23시) 레이블 추가
-        .selectAll('path, line, text')                          // X축 선 및 텍스트의 색상 설정
-        .attr('fill', settings.weakColor);
+   // X축 생성 및 축 레이블 색상과 크기를 설정 (축이 차트 아래에 위치하도록 설정)
+group
+    .append('g')
+    .attr('transform', `translate(0, ${chartHeight})`)    // 차트 아래로 이동
+    .call(d3.axisBottom(xScale)
+        .tickFormat((d) => d)                             // X축의 각 시간대 (0~23시) 레이블 추가
+        .tickSize(2)                                      // 간격 표시를 위한 작은 선 생성
+        .tickSizeOuter(0)                                 // 축의 가장자리 선을 없앰
+        .tickPadding(5)                                   // 레이블과 축 간격 설정
+    )
+    .selectAll('text')                                    // 텍스트 스타일 설정
+    .attr('fill', settings.foregroundColor)
+    .style('font-size', '10px');                          // 텍스트 크기 설정
 
-    // Y축 생성 및 축 레이블 색상을 설정
-    group
-        .append('g')
-        .call(d3.axisLeft(yScale).ticks(5))                     // Y축은 5개의 레이블을 생성
-        .selectAll('path, line, text')                          // Y축 선 및 텍스트의 색상 설정
-        .attr('fill', settings.weakColor);
+// Y축 생성 및 축 레이블 색상과 크기를 설정
+group
+    .append('g')
+    .call(d3.axisLeft(yScale)
+        .ticks(5)                                         // Y축은 5개의 레이블을 생성
+        .tickSizeInner(-3)                                // Y축의 작은 선을 왼쪽으로 이동
+        .tickSizeOuter(0)                                 // 축의 가장자리 선을 없앰
+        .tickPadding(5)                                   // 레이블과 축 간격 설정
+    )
+    .selectAll('text')                                    // 텍스트 스타일 설정
+    .attr('fill', settings.foregroundColor)
+    .style('font-size', '10px');                          // 텍스트 크기 설정
+
+// X축과 Y축 선 스타일 설정 (축 선은 그대로 유지)
+group.selectAll('.domain')
+    .attr('stroke', settings.foregroundColor);            // X, Y축 선을 그려줌
 
     // 막대 차트 생성
     const bars = group
