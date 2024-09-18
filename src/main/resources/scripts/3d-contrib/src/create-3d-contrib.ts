@@ -3,7 +3,7 @@ import * as util from './utils';
 import * as type from './type';
 
 const ANGLE = 30; // 3D 효과를 위한 각도 설정 (30도)
-const DARKER_RIGHT = 1; // 오른쪽 패널의 색상을 어둡게 만들 비율
+const DARKER_RIGHT = 1.2; // 오른쪽 패널의 색상을 어둡게 만들 비율
 const DARKER_LEFT = 0.5; // 왼쪽 패널의 색상을 어둡게 만들 비율
 const DARKER_TOP = 0; // 상단 패널의 색상은 어둡게 만들지 않음
 
@@ -361,7 +361,8 @@ export const create3DContrib = (
 
 
     // 중앙에서 살짝 왼쪽 아래로 이동시키기 위해 X, Y 오프셋 계산 (비율 기반) -> 5개월~1년 모두 괜찮은 위치인지 확인 필요
-    const offsetX = (width - graphWidth) / 2 - graphWidth * 1.5; // X 좌표를 그래프 너비의 10%만큼 왼쪽으로 이동
+    const offsetX = (width - graphWidth) / 2 - graphWidth * 1.5 -200; // X 좌표를 그래프 너비의 10%만큼 왼쪽으로 이동
+    // 수정) 전체 리포트 크기 키우면서 3D contrib를 조금 왼쪽으로 옮기기 위해 -200 해줌
     const offsetY = (height - graphHeight) / 2 + graphHeight * 0.1; // Y 좌표를 그래프 높이의 10%만큼 아래로 이동
 
 
@@ -378,8 +379,8 @@ export const create3DContrib = (
         const baseY = offsetY + (week + dayOfWeek) * dy; // 기여의 Y 좌표 계산
 
         // 로그 추가: 각 블록의 위치와 관련된 값들을 출력
-        //console.log(`Date: ${cal.date}, DayOfWeek: ${dayOfWeek}, Week: ${week}`);
-        //console.log(`BaseX: ${baseX}, BaseY: ${baseY}`);
+        // console.log(`Date: ${cal.date}, DayOfWeek: ${dayOfWeek}, Week: ${week}`);
+        // console.log(`BaseX: ${baseX}, BaseY: ${baseY}`);
 
 
         const calHeight = Math.log10(cal.contributionCount / 20 + 1) * 144 + 3; // 기여 수에 따른 칸 높이 계산

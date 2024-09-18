@@ -60,8 +60,8 @@ public class ReportServiceImpl implements ReportService{
             System.err.println("response: " + response);
 
             // 깃허브 레포트 생성 (Node.js 스크립트실행)
-            // lacal
-            // ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/src/index.ts");
+            // local
+//             ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/src/index.ts");
             // deploy
             ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "../../src/main/resources/scripts/3d-contrib/src/index.ts");
 

@@ -3,23 +3,29 @@ import { JSDOM } from 'jsdom';
 import * as contrib from './create-3d-contrib';
 import * as pie from './create-pie-language';
 import * as radar from './create-radar-contrib';
+import * as graph from './create-graph-commits'; 
 import * as util from './utils';
 import * as type from './type';
 
+
 // // 수정한 사이즈
-// const width = 1920;
-// const height = 1080;
+const width = 1920;
+const height = 1080;
 
 // 원래 사이즈
-const width = 1280;
-const height = 850;
+// const width = 1280;
+// const height = 850;
 
 const pieHeight = 200 * 1.3;
 const pieWidth = pieHeight * 2;
 
 const radarWidth = 400 * 1.3;
 const radarHeight = (radarWidth * 3) / 4;
-const radarX = width - radarWidth - 40;
+const radarX = width - radarWidth - 550; // 수정) -40 -> -550
+
+const graphWidth = 400 * 1.3;
+const graphHeight = (graphWidth * 3) / 5;
+const graphX = width - graphWidth; 
 
 export const createSvg = (
     repoInfo: type.RepositoryInfo,
@@ -98,11 +104,23 @@ export const createSvg = (
         radar.createRadarContrib(
             svg,
             repoInfo,
-            radarX,
-            70,
+            radarX + 15,
+            90,
             radarWidth,
             radarHeight,
             settings,
+            isForcedAnimation
+        );
+        
+        // 막대그래프
+        graph.createBarChartCommits(
+            svg,
+            repoInfo,
+            graphX + 15, // x 좌표
+            100, // y 좌표
+            graphWidth, // width
+            graphHeight,  // height
+            settings, // 통일된 settings 객체 전달
             isForcedAnimation
         );
 
@@ -117,9 +135,10 @@ export const createSvg = (
             isForcedAnimation
         );
 
+
         const group = svg.append('g');
 
-        const positionXContrib = (width * 3) / 10;
+        const positionXContrib = (width * 3) / 10 -200; //수정) 왼쪽으로 -200
         const positionYContrib = height - 20;
 
         group
@@ -144,7 +163,7 @@ export const createSvg = (
             .text(contribLabel)
             .attr('fill', settings.foregroundColor);
 
-        const positionXStar = (width * 5) / 10;
+        const positionXStar = (width * 5) / 10 -200; //수정) -200
         const positionYStar = positionYContrib;
 
         // icon of star
@@ -174,7 +193,7 @@ export const createSvg = (
             .text(util.toScale(repoInfo.stargazerCount))
             .attr('fill', settings.foregroundColor);
 
-        const positionXFork = (width * 6) / 10;
+        const positionXFork = (width * 6) / 10 -200; //수정) -200
         const positionYFork = positionYContrib;
 
         // icon of fork
@@ -214,15 +233,51 @@ export const createSvg = (
             endDate
         )}`;
 
+        // 기간 ------------------------------------------------------------------------------
         group
             .append('text')
             .style('font-size', '16px')
             .attr('x', width - 20)
-            .attr('y', 20)
+            .attr('y', height - 30) // 하단으로 이동 (height를 기준으로)
             .attr('dominant-baseline', 'hanging')
             .attr('text-anchor', 'end')
             .text(period)
             .attr('fill', settings.weakColor);
+
+
+        // 제목 ----------------------------------------------------------------------------
+        // 한글은 2바이트, 영어는 1바이트로 계산하는 함수
+        function getByteLength(text: string): number {
+            return [...text].reduce((acc, char) => {
+                return acc + (char.charCodeAt(0) > 0x7f ? 2.1 : 0.8); // 한글은 2바이트, 영어는 1바이트
+            }, 0);
+        }
+
+        // 최대 글자 바이트 수
+        const maxByteLength = 30; // 최대 바이트 수를 설정 
+        let Text = repoInfo.name;
+
+        // 텍스트가 최대 바이트 수를 넘으면 자르고 "..." 추가
+        if (getByteLength(Text) > maxByteLength) {
+            let truncatedText = Text;
+            while (getByteLength(truncatedText + "...") > maxByteLength) {
+                truncatedText = truncatedText.slice(0, -1); // 한 글자씩 잘라냄
+            }
+            Text = truncatedText + "..."; // 잘린 텍스트에 "..." 추가
+        }
+        let displayText = Text + " Github Report"; // Github Report 추가
+
+        // 텍스트를 화면에 출력
+        group
+            .append('text')
+            .style('font-size', '40px')
+            .attr('x', 20) // 왼쪽으로 이동
+            .attr('y', 40) // 상단으로 이동
+            .attr('dominant-baseline', 'hanging') // 상단 정렬
+            .attr('text-anchor', 'start') // 텍스트를 시작점 기준으로 정렬
+            .attr('fill', settings.weakColor)
+            .text(displayText); // 수정된 제목 출력
+        
     }
     return container.html();
 };

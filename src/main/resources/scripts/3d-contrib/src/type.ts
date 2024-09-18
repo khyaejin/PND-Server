@@ -19,6 +19,12 @@ export interface Contribution {
     contributionLevel: number;  // 추가
 }
 
+export interface Commit{
+    date : Date;
+    changedFiles : number;
+    author : string;
+}
+
 
 // 언어 정보를 담는 인터페이스 정의
 export interface LanguageInfo {
@@ -37,6 +43,7 @@ export interface RepositoryInfo {
     color: string;
   } | null; // 주요 언어 정보
   contributions: Contribution[]; // 기여 내역
+  commits: Commit[]; // 커밋 내역
   languages: LanguageInfo[]; // 사용된 언어 정보
   totalContributions: number; // 레포지토리 내 총 기여 수
   totalCommitContributions: number; // 커밋 기여 수
@@ -82,6 +89,22 @@ export interface PieLangSettings {
 
     fileName?: string;
 }
+
+export interface BarChartSettings {
+    backgroundColor: string;  // 배경색
+    foregroundColor: string;  // 텍스트 및 라벨 색상
+    barColor: string;         // 막대 색상
+    axisColor: string;        // 축 색상
+
+    growingAnimation?: boolean;  // 애니메이션 여부
+
+    fileName?: string;  // 파일명
+
+    l10n?: {  // 로컬라이제이션 설정
+        commit: string;  // 커밋 텍스트
+    };
+}
+
 
 export interface BaseSettings extends RadarContribSettings, PieLangSettings {
     backgroundColor: string;
