@@ -12,6 +12,7 @@ env:
   PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
   CONTAINER_NAME: pnd-container
 
+
 jobs:
   build-and-push-docker:
 
