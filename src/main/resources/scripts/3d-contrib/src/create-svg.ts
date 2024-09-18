@@ -19,7 +19,7 @@ const pieWidth = pieHeight * 2;
 
 const radarWidth = 400 * 1.3;
 const radarHeight = (radarWidth * 3) / 4;
-const radarX = width - radarWidth - 550; // 수정) -40 -> -500
+const radarX = width - radarWidth - 550; // 수정) -40 -> -550
 
 export const createSvg = (
     repoInfo: type.RepositoryInfo,
@@ -98,8 +98,8 @@ export const createSvg = (
         radar.createRadarContrib(
             svg,
             repoInfo,
-            radarX,
-            70,
+            radarX + 10,
+            90,
             radarWidth,
             radarHeight,
             settings,
@@ -214,15 +214,51 @@ export const createSvg = (
             endDate
         )}`;
 
+        // 기간 ------------------------------------------------------------------------------
         group
             .append('text')
             .style('font-size', '16px')
             .attr('x', width - 20)
-            .attr('y', 20)
+            .attr('y', height - 20) // 하단으로 이동 (height를 기준으로)
             .attr('dominant-baseline', 'hanging')
             .attr('text-anchor', 'end')
             .text(period)
             .attr('fill', settings.weakColor);
+
+
+        // 제목 ----------------------------------------------------------------------------
+        // 한글은 2바이트, 영어는 1바이트로 계산하는 함수
+        function getByteLength(text: string): number {
+            return [...text].reduce((acc, char) => {
+                return acc + (char.charCodeAt(0) > 0x7f ? 2.1 : 0.8); // 한글은 2바이트, 영어는 1바이트
+            }, 0);
+        }
+
+        // 최대 글자 바이트 수
+        const maxByteLength = 80; // 최대 바이트 수를 설정 
+        let Text = repoInfo.name;
+
+        // 텍스트가 최대 바이트 수를 넘으면 자르고 "..." 추가
+        if (getByteLength(Text) > maxByteLength) {
+            let truncatedText = Text;
+            while (getByteLength(truncatedText + "...") > maxByteLength) {
+                truncatedText = truncatedText.slice(0, -1); // 한 글자씩 잘라냄
+            }
+            Text = truncatedText + "..."; // 잘린 텍스트에 "..." 추가
+        }
+        let displayText = Text + " Github Report"; // Github Report 추가
+
+        // 텍스트를 화면에 출력
+        group
+            .append('text')
+            .style('font-size', '40px')
+            .attr('x', 20) // 왼쪽으로 이동
+            .attr('y', 40) // 상단으로 이동
+            .attr('dominant-baseline', 'hanging') // 상단 정렬
+            .attr('text-anchor', 'start') // 텍스트를 시작점 기준으로 정렬
+            .attr('fill', settings.weakColor)
+            .text(displayText); // 수정된 제목 출력
+        
     }
     return container.html();
 };
