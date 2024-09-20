@@ -14,3 +14,5 @@ RUN ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
 # ts-node 설치
 RUN npm install -g ts-node
+
+EXPOSE 8080
