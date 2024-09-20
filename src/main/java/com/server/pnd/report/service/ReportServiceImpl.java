@@ -61,9 +61,9 @@ public class ReportServiceImpl implements ReportService{
 
             // 깃허브 레포트 생성 (Node.js 스크립트실행)
             // local
-//             ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/src/index.ts");
+             ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/src/index.ts");
             // deploy
-            ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "../../src/main/resources/scripts/3d-contrib/src/index.ts");
+//            ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "../../src/main/resources/scripts/3d-contrib/src/index.ts");
 
             // 환경 변수 설정
             processBuilder.environment().put("GITHUB_DATA", response);
@@ -113,9 +113,9 @@ public class ReportServiceImpl implements ReportService{
 
                     // file 가져오기
                     // local
-//                    File file = new File("./src/main/resources/profile-3d-contrib/" + svgFileName);
+                    File file = new File("./src/main/resources/profile-3d-contrib/" + svgFileName);
                     // deploy
-                    File file = new File("../../src/main/resources/profile-3d-contrib/" + svgFileName);
+//                    File file = new File("../../src/main/resources/profile-3d-contrib/" + svgFileName);
 
                     // S3에 파일 업로드 & 파일(사진) 링크 저장
                     imageUrl[i] = s3Service.upload(file, username, svgFileName);

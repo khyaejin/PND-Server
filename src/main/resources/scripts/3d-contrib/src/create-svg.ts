@@ -95,8 +95,8 @@ export const createSvg = (
             repoInfo,
             0,
             0,
-            width,
-            height,
+            width-300, //수정) -300
+            height+150, //수정)  +150
             settings,
             isForcedAnimation
         );

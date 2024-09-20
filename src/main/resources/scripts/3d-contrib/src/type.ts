@@ -90,21 +90,6 @@ export interface PieLangSettings {
     fileName?: string;
 }
 
-export interface BarChartSettings {
-    backgroundColor: string;  // 배경색
-    foregroundColor: string;  // 텍스트 및 라벨 색상
-    barColor: string;         // 막대 색상
-    axisColor: string;        // 축 색상
-
-    growingAnimation?: boolean;  // 애니메이션 여부
-
-    fileName?: string;  // 파일명
-
-    l10n?: {  // 로컬라이제이션 설정
-        commit: string;  // 커밋 텍스트
-    };
-}
-
 
 export interface BaseSettings extends RadarContribSettings, PieLangSettings {
     backgroundColor: string;
