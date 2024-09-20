@@ -8,13 +8,11 @@ import com.server.pnd.report.dto.CreateReportResponseDto;
 import com.server.pnd.report.dto.ReportDetailDto;
 import com.server.pnd.report.repository.ReportRepository;
 import com.server.pnd.s3.config.S3Config;
-import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.response.CustomApiResponse;
 import com.server.pnd.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.*;
@@ -113,9 +111,9 @@ public class ReportServiceImpl implements ReportService{
 
                     // file 가져오기
                     // local
-//                    File file = new File("./src/main/resources/profile-3d-contrib/" + svgFileName);
+                    File file = new File("./src/main/resources/profile-3d-contrib/" + svgFileName);
                     // deploy
-                    File file = new File("../../src/main/resources/profile-3d-contrib/" + svgFileName);
+//                    File file = new File("../../src/main/resources/profile-3d-contrib/" + svgFileName);
 
                     // S3에 파일 업로드 & 파일(사진) 링크 저장
                     imageUrl[i] = s3Service.upload(file, username, svgFileName);
