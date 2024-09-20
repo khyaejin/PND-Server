@@ -78,7 +78,7 @@ public class ReportServiceImpl implements ReportService{
             // ProcessBuilder 실행 전 작업 디렉토리 로그 추가
             System.out.println("실행_전_작업_디렉토리: " + new File(".").getAbsolutePath());
 
-            ProcessBuilder processBuilder = new ProcessBuilder("/usr//bin/ts-node", scriptPath);
+            ProcessBuilder processBuilder = new ProcessBuilder("/usr/bin/ts-node", scriptPath);
 
             // ProcessBuilder 실행 후 로그 추가
             System.out.println("ProcessBuilder_실행_후_작업_디렉토리: " + processBuilder.directory());
