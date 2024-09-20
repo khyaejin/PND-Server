@@ -11,7 +11,8 @@ env:
   EC2_SSH_USER: ubuntu
   PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
   CONTAINER_NAME: pnd-container
-
+  
+# 임의로 application.properties에서 민감한 정보 관리
 #  # DB 설정
 #  DB_URL: ${{ secrets.DB_URL }}
 #  DB_USERNAME: ${{ secrets.DB_USERNAME }}
