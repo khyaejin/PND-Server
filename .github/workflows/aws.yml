@@ -36,7 +36,7 @@ jobs:
     - name: Set up application.properties
       run: |
         echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
-        echo "${{ secrets.APPLICATION_SECRET }}" >> ./src/main/resources/application.properties
+        echo "${{ secrets.APPLICATION_SECRET }}" >> ./src/main/resources/application-secret.properties
 
     - name: Build with Gradle
       run: ./gradlew build
