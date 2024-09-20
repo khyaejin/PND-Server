@@ -34,7 +34,9 @@ jobs:
         ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
 
     - name: Set up application.properties
-      run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
+      run: |
+        echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
+        echo "${{ secrets.APPLICATION_SECRET }}" >> ./src/main/resources/application.properties
 
     - name: Build with Gradle
       run: ./gradlew build
@@ -66,7 +68,7 @@ jobs:
         username: ${{ env.EC2_SSH_USER }}
         key: ${{ env.PRIVATE_KEY }}
         script: |
-          # 기존 컨테이너가 있는지 확인하고  삭제
+          # 기존 컨테이너가 있는지 확인하고 삭제
           CONTAINER_ID=$(sudo docker ps -a -q --filter "name=${{ env.CONTAINER_NAME }}")
 
           if [ ! -z "$CONTAINER_ID" ]; then
