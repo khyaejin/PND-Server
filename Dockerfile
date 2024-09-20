@@ -11,3 +11,6 @@ COPY build/libs/pnd-0.0.1-SNAPSHOT.jar PND-Server.jar
 
 ENTRYPOINT ["java", "-jar", "/PND-Server/build/libs/PND-Server.jar"]
 RUN ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+
+# ts-node 설치
+RUN npm install -g ts-node
