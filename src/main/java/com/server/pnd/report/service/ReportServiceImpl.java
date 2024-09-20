@@ -69,6 +69,9 @@ public class ReportServiceImpl implements ReportService{
             processBuilder.environment().put("GITHUB_DATA", response);
             processBuilder.environment().put("USERNAME", username);
 
+            // 경로확인(테스트)
+            System.out.println("Current working directory: " + Paths.get("").toAbsolutePath().toString());
+
             // 스크립트 실행 및 결과 확인
             System.out.println("Starting Node.js script...");
             Process process = processBuilder.start();
@@ -107,9 +110,6 @@ public class ReportServiceImpl implements ReportService{
                     if (i >= imageUrl.length) {
                         break; // 배열 크기를 초과하지 않도록 안전 장치
                     }
-
-                    // 경로확인(테스트)
-                     System.out.println("Current working directory: " + Paths.get("").toAbsolutePath().toString());
 
                     // file 가져오기
                     // local
