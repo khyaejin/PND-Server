@@ -13,6 +13,8 @@ import com.server.pnd.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.*;
@@ -59,9 +61,9 @@ public class ReportServiceImpl implements ReportService{
 
             // 깃허브 레포트 생성 (Node.js 스크립트실행)
             // local
-//             ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/src/index.ts");
+             ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/src/index.ts");
             // deploy
-            ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "../../src/main/resources/scripts/3d-contrib/src/index.ts");
+//            ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "../../src/main/resources/scripts/3d-contrib/src/index.ts");
 
             // 환경 변수 설정
             processBuilder.environment().put("GITHUB_DATA", response);
@@ -92,7 +94,7 @@ public class ReportServiceImpl implements ReportService{
             System.out.println("Node.js script finished with exit code: " + exitCode);
 
             if (exitCode != 0) {
-                throw new RuntimeException("3D 그래프 생성 중 오류 발생, exit code: " + exitCode);
+                throw new RuntimeException("레포트 생성 중 오류 발생, exit code: " + exitCode);
             }
 
             String[] imageUrl = new String[7]; // 배포 이미지 url
@@ -107,7 +109,7 @@ public class ReportServiceImpl implements ReportService{
                     }
 
                     // 경로확인(테스트)
-                    // System.out.println("Current working directory: " + Paths.get("").toAbsolutePath().toString());
+                     System.out.println("Current working directory: " + Paths.get("").toAbsolutePath().toString());
 
                     // file 가져오기
                     // local
@@ -120,7 +122,7 @@ public class ReportServiceImpl implements ReportService{
 
                     // 해당 file 지우기
                     if (file.delete()) {
-                        System.out.println("file 삭제 성공 : " + file.getPath());
+                        System.out.println("file 삭제 성공 : " +  file.getPath());
                     } else {
                         System.out.println("file 삭제 실패 : " + file.getPath());
                     }
