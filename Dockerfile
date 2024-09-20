@@ -7,13 +7,17 @@ RUN yum install -y gcc-c++ make \
     && yum clean all
 
 # 작업 디렉토리 설정
-WORKDIR /PND-Server/build/libs
+WORKDIR /PND-Server
 
 # Gradle에서 빌드된 JAR 파일 복사
 COPY build/libs/pnd-0.0.1-SNAPSHOT.jar PND-Server.jar
 
 # resources 디렉토리 전체 복사
 COPY src/main/resources /PND-Server/src/main/resources
+
+# Node.js 의존성 설치
+WORKDIR /PND-Server/src/main/resources/scripts/3d-contrib
+RUN npm install
 
 # ts-node 설치
 RUN npm install -g ts-node
@@ -22,6 +26,6 @@ RUN npm install -g ts-node
 RUN ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
 # 컨테이너 시작 시 JAR 파일 실행
-ENTRYPOINT ["java", "-jar", "/PND-Server/build/libs/PND-Server.jar"]
+ENTRYPOINT ["java", "-jar", "/PND-Server/PND-Server.jar"]
 
 EXPOSE 8080
