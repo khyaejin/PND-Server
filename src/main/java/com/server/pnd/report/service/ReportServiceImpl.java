@@ -32,6 +32,7 @@ public class ReportServiceImpl implements ReportService{
     // 레포트 생성
     @Override
     public ResponseEntity<CustomApiResponse<?>> createReport(Long repoId) {
+        Process process = null;
         try {
             // 404 : 해당 레포가 없는 경우
             Optional<Repo> foundRepo = repoRepository.findById(repoId);
@@ -89,21 +90,26 @@ public class ReportServiceImpl implements ReportService{
 
             // 스크립트 실행 및 결과 확인
             System.out.println("Starting Node.js script...");
-            Process process = processBuilder.start();
+            process = processBuilder.start();
 
-            // 표준 출력 및 표준 오류를 같은 스트림으로 합치기
-            processBuilder.redirectErrorStream(true);
-            // 출력 읽기
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
+            // 표준 출력 및 표준 오류 스트림을 별도로 처리
+            BufferedReader stdOut = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdErr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
             List<String> generatedFileNames = new ArrayList<>();
+            String line;
 
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line); // 출력된 내용 확인
+            // 표준 출력 읽기
+            while ((line = stdOut.readLine()) != null) {
+                System.out.println("stdout: " + line); // 출력된 내용 확인
                 if (line.endsWith(".svg")) { // SVG 파일 이름을 포함하는 줄을 찾음
                     generatedFileNames.add(line.trim()); // 파일 이름 저장
                 }
+            }
+
+            // 표준 오류 읽기
+            while ((line = stdErr.readLine()) != null) {
+                System.err.println("stderr: " + line); // 표준 오류 출력
             }
 
             // 프로세스 종료 코드 확인
@@ -111,6 +117,7 @@ public class ReportServiceImpl implements ReportService{
             System.out.println("Node.js script finished with exit code: " + exitCode);
 
             if (exitCode != 0) {
+                // 오류 출력
                 throw new RuntimeException("레포트 생성 중 오류 발생, exit code: " + exitCode);
             }
 
@@ -145,7 +152,7 @@ public class ReportServiceImpl implements ReportService{
 
                     // 해당 file 지우기
                     if (file.delete()) {
-                        System.out.println("file 삭제 성공 : " +  file.getPath());
+                        System.out.println("file 삭제 성공 : " + file.getPath());
                     } else {
                         System.out.println("file 삭제 실패 : " + file.getPath());
                     }
@@ -207,9 +214,7 @@ public class ReportServiceImpl implements ReportService{
 
                 CustomApiResponse<?> res = CustomApiResponse.createSuccess(201, data, "레포트 생성 성공했습니다.");
                 return ResponseEntity.status(201).body(res);
-            }
-
-            else {
+            } else {
                 throw new RuntimeException("SVG 파일 생성 중 오류 발생, 파일 이름을 찾을 수 없음.");
             }
 
@@ -223,6 +228,21 @@ public class ReportServiceImpl implements ReportService{
             return ResponseEntity.status(500).body(res);
         } catch (Exception e) {
             e.printStackTrace();
+
+
+            // 표준 오류를 다시 읽어와서 catch 블록에서도 처리
+            try (BufferedReader stdErr = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+                String errorLine;
+                StringBuilder stderrOutput = new StringBuilder();
+
+                while ((errorLine = stdErr.readLine()) != null) {
+                    stderrOutput.append(errorLine).append("\n");
+                }
+
+                System.err.println("stderr in catch block: " + stderrOutput.toString());
+            } catch (IOException ioException) {
+                System.err.println("stderr 읽기 중 오류 발생: " + ioException.getMessage());
+            }
 
             CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(500, "알 수 없는 오류가 발생했습니다.");
             return ResponseEntity.status(500).body(res);
