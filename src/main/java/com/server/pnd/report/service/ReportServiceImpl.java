@@ -71,10 +71,9 @@ public class ReportServiceImpl implements ReportService{
                 scriptPath = "/Users/gimhyejin/Library/CloudStorage/OneDrive-한성대학교/문서/Projects/PND-Server/src/main/resources/scripts/3d-contrib/src/index.ts";
             } else {
                 // Deploy path for EC2 (Linux)
-                System.out.println("Current working directory: " + Paths.get("").toAbsolutePath().toString());
-                scriptPath = "../../src/main/resources/scripts/3d-contrib/src/index.ts";
+                scriptPath = "/home/ubuntu/PND-Server/src/main/resources/scripts/3d-contrib/src/index.ts";
             }
-
+            System.out.println("os: " + os);
             ProcessBuilder processBuilder = new ProcessBuilder("ts-node", scriptPath);
 
 
@@ -83,7 +82,7 @@ public class ReportServiceImpl implements ReportService{
             processBuilder.environment().put("USERNAME", username);
 
             // 경로확인(테스트)
-            System.out.println("Current working directory: " + Paths.get("").toAbsolutePath().toString());
+            System.out.println("Current_Working_Directory: " + Paths.get("").toAbsolutePath().toString());
 
             // 환경변수 확인(테스트)
             System.out.println("GITHUB_DATA: " + processBuilder.environment().get("GITHUB_DATA"));
