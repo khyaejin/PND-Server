@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.server'
-version = ''
+version = '0.0.1-SNAPSHOT'
 
 java {
 	toolchain {
@@ -64,10 +64,4 @@ tasks.named('test') {
 
 compileJava {
 	options.compilerArgs += ['-parameters']
-}
-
-jar {
-	archiveBaseName = 'PND-Server' //jar 파일 생성 이름 수정
-	archiveVersion = ''
-	archiveClassifier = ''
 }
