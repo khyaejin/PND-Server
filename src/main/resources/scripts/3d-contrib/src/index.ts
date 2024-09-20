@@ -52,7 +52,7 @@ const main = async () => {
         let parsedData;
         try {
             parsedData = JSON.parse(githubData);
-            console.log("ParsedData:", JSON.stringify(parsedData, null, 2));
+            // console.log("ParsedData:", JSON.stringify(parsedData, null, 2));
         } catch (parseError) {
             console.error("Error parsing GITHUB_DATA JSON:", parseError);
             throw new Error("GITHUB_DATA JSON 파싱 중 오류 발생");
@@ -62,7 +62,7 @@ const main = async () => {
         let repoInfo;
         try {
             repoInfo = aggregateRepo.aggregateRepositoryInfo(parsedData);
-            console.log('Aggregated Repository Info:', repoInfo); // 집계된 레포지토리 정보 출력
+            // console.log('Aggregated Repository Info:', repoInfo); // 집계된 레포지토리 정보 출력
         } catch (repoError) {
             console.error('Error aggregating repository info:', repoError);
             throw new Error("레포지토리 정보 집계 중 오류 발생");
