@@ -166,11 +166,12 @@ public class ReportServiceImpl implements ReportService{
                     // 기존 필드 수정
                     report.setImageGreen(imageUrl[0]);
                     report.setImageSeason(imageUrl[1]);
-                    report.setImageSouthSeason(imageUrl[2]);
-                    report.setImageNightView(imageUrl[3]);
-                    report.setImageNightGreen(imageUrl[4]);
-                    report.setImageNightRainbow(imageUrl[5]);
-                    report.setImageGitblock(imageUrl[6]);
+                    report.setImageNorthSeason(imageUrl[2]);
+                    report.setImageSouthSeason(imageUrl[3]);
+                    report.setImageNightView(imageUrl[4]);
+                    report.setImageNightGreen(imageUrl[5]);
+                    report.setImageNightRainbow(imageUrl[6]);
+                    report.setImageGitblock(imageUrl[7]);
                     // DB에 업데이트
                     reportRepository.save(report);
                 } else {
@@ -179,11 +180,12 @@ public class ReportServiceImpl implements ReportService{
                             .repo(repo)
                             .imageGreen(imageUrl[0])
                             .imageSeason(imageUrl[1])
-                            .imageSouthSeason(imageUrl[2])
-                            .imageNightView(imageUrl[3])
-                            .imageNightGreen(imageUrl[4])
-                            .imageNightRainbow(imageUrl[5])
-                            .imageGitblock(imageUrl[6])
+                            .imageNorthSeason(imageUrl[2])
+                            .imageSouthSeason(imageUrl[3])
+                            .imageNightView(imageUrl[4])
+                            .imageNightGreen(imageUrl[5])
+                            .imageNightRainbow(imageUrl[6])
+                            .imageGitblock(imageUrl[7])
                             .build();
                     reportRepository.save(report);
                 }
@@ -194,11 +196,12 @@ public class ReportServiceImpl implements ReportService{
                         .repoTitle(repo.getTitle()) // 레포의 제목
                         .imageGreen(imageUrl[0])
                         .imageSeason(imageUrl[1])
-                        .imageSouthSeason(imageUrl[2])
-                        .imageNightView(imageUrl[3])
-                        .imageNightGreen(imageUrl[4])
-                        .imageNightRainbow(imageUrl[5])
-                        .imageGitblock(imageUrl[6])
+                        .imageNorthSeason(imageUrl[2])
+                        .imageSouthSeason(imageUrl[3])
+                        .imageNightView(imageUrl[4])
+                        .imageNightGreen(imageUrl[5])
+                        .imageNightRainbow(imageUrl[6])
+                        .imageGitblock(imageUrl[7])
                         .createdAt(reportRepository.findByRepo(repo).get().localDateTimeToString()) // 마지막으로 저장된 Report의 시간 가져오기
                         .build();
 

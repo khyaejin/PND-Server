@@ -28,6 +28,9 @@ public class Report extends BaseEntity {
     @JoinColumn(name = "image_season")
     private String imageSeason; // 이미지 URL
 
+    @JoinColumn(name = "image_notth_season")
+    private String imageNorthSeason; // 이미지 URL
+
     @JoinColumn(name = "image_south_season")
     private String imageSouthSeason; // 이미지 URL
 
@@ -42,4 +45,5 @@ public class Report extends BaseEntity {
 
     @JoinColumn(name = "image_gitblock")
     private String imageGitblock; // 이미지 URL
+
 }

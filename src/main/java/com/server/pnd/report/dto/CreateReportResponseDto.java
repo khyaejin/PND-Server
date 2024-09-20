@@ -11,6 +11,7 @@ public class CreateReportResponseDto {
     private String repoTitle; //레포트 제목은 없음. 레포의 제목
     private String imageGreen; // 이미지 URL
     private String imageSeason; // 이미지 URL
+    private String imageNorthSeason; // 이미지 URL
     private String imageSouthSeason; // 이미지 URL
     private String imageNightView; // 이미지 URL
     private String imageNightGreen; // 이미지 URL
