@@ -72,10 +72,13 @@ public class ReportServiceImpl implements ReportService{
             // 경로확인(테스트)
             System.out.println("Current working directory: " + Paths.get("").toAbsolutePath().toString());
 
+            // 환경변수 확인(테스트)
+            System.out.println("GITHUB_DATA: " + processBuilder.environment().get("GITHUB_DATA"));
+            System.out.println("USERNAME: " + processBuilder.environment().get("USERNAME"));
+
             // 스크립트 실행 및 결과 확인
             System.out.println("Starting Node.js script...");
             Process process = processBuilder.start();
-
 
             // 표준 출력 및 표준 오류를 같은 스트림으로 합치기
             processBuilder.redirectErrorStream(true);
@@ -197,6 +200,7 @@ public class ReportServiceImpl implements ReportService{
             return ResponseEntity.status(500).body(res);
         } catch (Exception e) {
             e.printStackTrace();
+
             CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(500, "알 수 없는 오류가 발생했습니다.");
             return ResponseEntity.status(500).body(res);
         }
