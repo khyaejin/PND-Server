@@ -71,7 +71,7 @@ public class ReportServiceImpl implements ReportService{
                 scriptPath = "/Users/gimhyejin/Library/CloudStorage/OneDrive-한성대학교/문서/Projects/PND-Server/src/main/resources/scripts/3d-contrib/src/index.ts";
             } else {
                 // Deploy path for EC2 (Linux)
-                scriptPath = "/home/ubuntu/PND-Server/src/main/resources/scripts/3d-contrib/src/index.ts";
+                scriptPath = "/PND-Server/src/main/resources/scripts/3d-contrib/src/index.ts";
             }
             System.out.println("os: " + os);
             ProcessBuilder processBuilder = new ProcessBuilder("ts-node", scriptPath);
@@ -142,7 +142,7 @@ public class ReportServiceImpl implements ReportService{
                         outputPath = "/Users/gimhyejin/Library/CloudStorage/OneDrive-한성대학교/문서/Projects/PND-Server/src/main/resources/profile-3d-contrib/" + svgFileName;
                     } else {
                         // Deploy path for EC2 (Linux)
-                        outputPath = "../../src/main/resources/profile-3d-contrib/" + svgFileName;
+                        outputPath = "/PND-Server/src/main/resources/profile-3d-contrib/" + svgFileName;
 
                     }
 

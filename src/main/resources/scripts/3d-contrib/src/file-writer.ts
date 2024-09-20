@@ -11,7 +11,7 @@ if (os.platform() === 'win32') {
     OUTPUT_FOLDER = '/Users/gimhyejin/Library/CloudStorage/OneDrive-한성대학교/문서/Projects/PND-Server/src/main/resources/profile-3d-contrib';
 } else {
     // Deploy path for EC2 (Linux)
-    OUTPUT_FOLDER = '../../src/main/resources/profile-3d-contrib';
+    OUTPUT_FOLDER = '/PND-Server/src/main/resources/profile-3d-contrib';
 }
 
 export { OUTPUT_FOLDER };
