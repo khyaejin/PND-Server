@@ -62,7 +62,10 @@ public class ReportServiceImpl implements ReportService{
 
             // ProcessBuilder 절대 경로 설정
             String os = System.getProperty("os.name").toLowerCase();
-            String scriptPath;
+
+            //ts-node 경로 변경
+            String scriptPath,tsnodePath = "ts-node";
+
             if (os.contains("win")) {
                 // Windows path
                 scriptPath = "./src/main/resources/scripts/3d-contrib/src/index.ts";
@@ -72,13 +75,14 @@ public class ReportServiceImpl implements ReportService{
             } else {
                 // Deploy path for EC2 (Linux)
                 scriptPath = "/PND-Server/src/main/resources/scripts/3d-contrib/src/index.ts";
+                tsnodePath = "/usr/bin/ts-node";
             }
             System.out.println("os: " + os);
 
             // ProcessBuilder 실행 전 작업 디렉토리 로그 추가
             System.out.println("실행_전_작업_디렉토리: " + new File(".").getAbsolutePath());
 
-            ProcessBuilder processBuilder = new ProcessBuilder("/usr/bin/ts-node", scriptPath);
+            ProcessBuilder processBuilder = new ProcessBuilder(tsnodePath, scriptPath);
 
             // ProcessBuilder 실행 후 로그 추가
             System.out.println("ProcessBuilder_실행_후_작업_디렉토리: " + processBuilder.directory());
