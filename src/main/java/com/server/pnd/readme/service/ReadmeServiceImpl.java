@@ -132,86 +132,81 @@ public class ReadmeServiceImpl implements ReadmeService{
         }
 
         // 리드미 자동 생성 요청 GPT 프롬프트
-        String prompt =
-                "내가 제공하는 링크로 접속하여 깃 레파지토리내의 모든 디렉토리 및 코드를 확인해줘. 프로젝트를 전체적으로 설명할 수 있도록 리드미 코드 형태로 생성해줘. 혹시 레포지토리 타이틀이 길어 잘리게 된다면, 폰트 크기는 알아서 조절해줘. 템플릿은 예시 그대로 적용하고 내용만 바꿔주면 돼. 별다른 설명할 필요없이 예시로 제공하는 것처럼 코드블록만 제공해줘\n" +
-                        "<예시>\n" +
+        String prompt = "내가 제공하는 링크로 접속하여 깃 레파지토리내의 모든 디렉토리 및 코드를 확인해줘. 프로젝트를 전체적으로 설명할 수 있도록 리드미 코드 형태로 생성해줘. 혹시 레포지토리 타이틀이 길어 잘리게 된다면, 폰트 크기는 알아서 조절해줘. 템플릿은 예시 그대로 적용하고 내용만 바꿔주면 돼. 별다른 설명할 필요 없이 예시로 제공하는 것처럼 **마크다운 문법**을 사용하여 코드블록만 제공해줘. \n" +
+                        "\n" +
+                        "<예시 1> \n" +
                         "[질문]\n" +
                         "https://github.com/Hjwoon/Ch-Eating-BE\n" +
-                        "[답변]\n" +
-                        "```\n" +
-                        "<div align=\"center\">\n" +
-                        "  <img src=\"https://capsule-render.vercel.app/api?type=venom&color=auto&height=300&section=header&text=Ch-Eating-BE&fontSize=90&animation=fadeIn&desc=Backend%20Service%20for%20Ch-Eating&descAlignY=65&descAlign=62\"&textBackground=true alt=\"header\"/>\n" +
-                        "<h3>\uD83D\uDC4B Welcome to Ch-Eating Backend \uD83D\uDC4B</h3>\n" +
                         "\n" +
+                        "[답변]\n" +
+                        "# \uD83D\uDC4B Welcome to Ch-Eating Backend \uD83D\uDC4B\n" +
                         "\n" +
                         "![GitHub stars](https://img.shields.io/github/stars/Hjwoon/Ch-Eating-BE?style=social)\n" +
                         "![GitHub license](https://img.shields.io/github/license/Hjwoon/Ch-Eating-BE)\n" +
                         "\n" +
                         "Efficient backend services for Ch-Eating, handling user authentication, data management, and more.\n" +
-                        "<br><br>\n" +
                         "\n" +
-                        "<div align=\"center\">\n" +
-                        "  <h3>\uD83D\uDCDA Tech Stack \uD83D\uDCDA</h3>\n" +
-                        "  <div>\n" +
-                        "    <img src=\"https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white\" alt=\"Java\" />\n" +
-                        "    <img src=\"https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=Spring&logoColor=white\" alt=\"Spring Boot\" />\n" +
-                        "    <img src=\"https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white\" alt=\"MySQL\" />\n" +
-                        "  </div>\n" +
-                        "  <div>\n" +
-                        "    <img src=\"https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=Amazon%20AWS&logoColor=white\" alt=\"AWS\" />\n" +
-                        "    <img src=\"https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white\" alt=\"Docker\" />\n" +
-                        "  </div>\n" +
-                        "  <br>\n" +
-                        "</div>\n" +
+                        "## \uD83D\uDCDA Tech Stack \uD83D\uDCDA\n" +
                         "\n" +
-                        "<div align=\"center\">\n" +
-                        "  <h3>\uD83C\uDF08 Follow Me \uD83C\uDF08</h3>\n" +
-                        "<span>\n" +
-                        "    <a href=\"https://hyejinworkspace.notion.site/HyeJin-Portfolio-fec8d9843fae4152a7996d8f3301e6e4?pvs=4\">\n" +
-                        "    <img src=\"https://img.shields.io/badge/portfolio-faf082?style=for-the-badge&logo=youtubegaming&logoColor=white\"/>\n" +
-                        "  </a>\n" +
-                        "</span>\n" +
-                        "<span>\n" +
-                        "    <a href=\"https://hyejinworkspace.notion.site/HyeJin-fb9e294c759548829fef74e3bc8c43b4?pvs=4\">\n" +
-                        "    <img src=\"https://img.shields.io/badge/Study-d2e1ff?style=for-the-badge&logo=codeigniter&logoColor=white\"/>\n" +
-                        "  </a>\n" +
-                        "</span>\n" +
-                        "<span>\n" +
-                        "  <a href=\"mailto:olivia019182@gmail.com\">\n" +
-                        "    <img src=\"https://img.shields.io/badge/Email-black?style=for-the-badge&logo=Gmail&logoColor=white\"/>\n" +
-                        "  </a>\n" +
-                        "</span>\n" +
-                        "<span>\n" +
-                        "  <a href=\"https://www.instagram.com/khyaejin/\">\n" +
-                        "    <img src=\"https://img.shields.io/badge/Instagram-C13584?style=for-the-badge&logo=Instagram&logoColor=white\"/>\n" +
-                        "  </a>\n" +
-                        "</span>\n" +
-                        "</div><br>\n" +
+                        "![Java](https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white)\n" +
+                        "![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=Spring&logoColor=white)\n" +
+                        "![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white)\n" +
+                        "![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=Amazon%20AWS&logoColor=white)\n" +
                         "\n" +
-                        "<div align=\"center\">\n" +
-                        "<h3>\uD83D\uDC69\u200D\uD83D\uDCBB My GitHub Status \uD83D\uDC69\u200D\uD83D\uDCBB</h3>\n" +
-                        "  \n" +
-                        "<div align = \"center\">\n" +
-                        "  \n" +
-                        "<!-- used Languages-->\n" +
-                        "<img src=\"https://github-readme-stats.vercel.app/api/top-langs/?username=Hjwoon&layout=compact&hide_border=true&bg_color=30,91eae4,86A8E7&title_color=fff&text_color=fff\" alt=\"Top Langs\" width=40%/>\n" +
+                        "## \uD83C\uDF08 Follow Me \uD83C\uDF08\n" +
                         "\n" +
-                        "<!-- trophy-->\n" +
-                        "<img src=\"https://github-profile-trophy.vercel.app/?username=Hjwoon&margin-w=15&row=2&column=4&no-frame=true\" alt=\"GitHub Trophy\" widtd=58%/>\n" +
+                        "[![Portfolio](https://img.shields.io/badge/portfolio-faf082?style=for-the-badge&logo=youtubegaming&logoColor=white)](https://hyejinworkspace.notion.site/HyeJin-Portfolio-fec8d9843fae4152a7996d8f3301e6e4?pvs=4)\n" +
+                        "[![Study](https://img.shields.io/badge/Study-d2e1ff?style=for-the-badge&logo=codeigniter&logoColor=white)](https://dandy-august-e2c.notion.site/Gradveloper-79ef93df52eb48a7bfd5c8b4bc664b2c?pvs=4)\n" +
+                        "[![Email](https://img.shields.io/badge/Email-black?style=for-the-badge&logo=Gmail&logoColor=white)](mailto:intothexx@gmail.com)\n" +
+                        "[![Instagram](https://img.shields.io/badge/Instagram-C13584?style=for-the-badge&logo=Instagram&logoColor=white)](https://www.instagram.com/7h.05m/)\n" +
                         "\n" +
-                        "<!-- git review -->\n" +
-                        "  ![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=Hjwoon&show_icons=true&hide=stars)\n" +
-                        "</div>\n" +
+                        "## \uD83D\uDC69\u200D\uD83D\uDCBB My GitHub Status \uD83D\uDC69\u200D\uD83D\uDCBB\n" +
                         "\n" +
-                        "<div align=\"center\">\n" +
-                        "  <br>\n" +
-                        "  <a href=\"https://hits.seeyoufarm.com\">\n" +
-                        "    <img src=\"https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FHjwoon%2FCh-Eating-BE&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false\" alt=\"Hits\" />\n" +
-                        "  </a>\n" +
-                        "</div>\n" +
-                        "```\n" +
+                        "![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=Hjwoon&repo=Ch-Eating-BE&layout=compact&hide_border=true&bg_color=30,91eae4,86A8E7&title_color=fff&text_color=fff)\n" +
                         "\n" +
-                        "https://github.com/Hjwoon/CareerDoctor-Backend";
+                        "![GitHub Trophy](https://github-profile-trophy.vercel.app/?username=Hjwoon&repo=Ch-Eating-BE&margin-w=15&row=2&column=4&no-frame=true)\n" +
+                        "\n" +
+                        "![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=Hjwoon&repo=Ch-Eating-BE&show_icons=true&hide=stars)\n" +
+                        "\n" +
+                        "[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FHjwoon%2FCh-Eating-BE&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)\n" +
+                        "\n" +
+                        "<예시 2> \n" +
+                        "[질문]\n" +
+                        "https://github.com/Hjwoon/CareerDoctor-Backend\n" +
+                        "\n" +
+                        "[답변]\n" +
+                        "# \uD83D\uDC4B Welcome to CareerDoctor Backend \uD83D\uDC4B\n" +
+                        "\n" +
+                        "![GitHub stars](https://img.shields.io/github/stars/Hjwoon/CareerDoctor-Backend?style=social)\n" +
+                        "![GitHub license](https://img.shields.io/github/license/Hjwoon/CareerDoctor-Backend)\n" +
+                        "\n" +
+                        "Backend services for CareerDoctor, focusing on managing user data, medical history, and recommendations for personalized career advice based on health insights.\n" +
+                        "\n" +
+                        "## \uD83D\uDCDA Tech Stack \uD83D\uDCDA\n" +
+                        "\n" +
+                        "![Java](https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white)\n" +
+                        "![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=Spring&logoColor=white)\n" +
+                        "![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white)\n" +
+                        "![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=Amazon%20AWS&logoColor=white)\n" +
+                        "\n" +
+                        "## \uD83C\uDF08 Follow Me \uD83C\uDF08\n" +
+                        "\n" +
+                        "[![Portfolio](https://img.shields.io/badge/portfolio-faf082?style=for-the-badge&logo=youtubegaming&logoColor=white)](https://hyejinworkspace.notion.site/HyeJin-Portfolio-fec8d9843fae4152a7996d8f3301e6e4?pvs=4)\n" +
+                        "[![Study](https://img.shields.io/badge/Study-d2e1ff?style=for-the-badge&logo=codeigniter&logoColor=white)](https://dandy-august-e2c.notion.site/Gradveloper-79ef93df52eb48a7bfd5c8b4bc664b2c?pvs=4)\n" +
+                        "[![Email](https://img.shields.io/badge/Email-black?style=for-the-badge&logo=Gmail&logoColor=white)](mailto:intothexx@gmail.com) \n" +
+                        "[![Instagram](https://img.shields.io/badge/Instagram-C13584?style=for-the-badge&logo=Instagram&logoColor=white)](https://www.instagram.com/7h.05m/) \n" +
+                        "\n" +
+                        "## \uD83D\uDC69\u200D\uD83D\uDCBB My GitHub Status \uD83D\uDC69\u200D\uD83D\uDCBB\n" +
+                        "\n" +
+                        "![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=Hjwoon&repo=CareerDoctor-Backend&layout=compact&hide_border=true&bg_color=30,91eae4,86A8E7&title_color=fff&text_color=fff)\n" +
+                        "\n" +
+                        "![GitHub Trophy](https://github-profile-trophy.vercel.app/?username=Hjwoon&repo=CareerDoctor-Backend&margin-w=15&row=2&column=4&no-frame=true)\n" +
+                        "\n" +
+                        "![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=Hjwoon&repo=CareerDoctor-Backend&show_icons=true&hide=stars)\n" +
+                        "\n" +
+                        "[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FHjwoon%2FCareerDoctor-Backend&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)\n\n" +
+                        repoId;
+
 
         // 시스템 메시지 생성
         List<ChatRequestMsgDto> messages = List.of(
