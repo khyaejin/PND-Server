@@ -12,6 +12,35 @@ env:
   PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
   CONTAINER_NAME: pnd-container
 
+  # DB 설정
+  DB_URL: ${{ secrets.DB_URL }}
+  DB_USERNAME: ${{ secrets.DB_USERNAME }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+  # S3 설정
+  ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  GITHUB_REPORT_IMAGE_BUKET_NAME: ${{ secrets.GITHUB_REPORT_IMAGE_BUKET_NAME }}
+  USER_IMAGE_BUKET_NAME: ${{ secrets.USER_IMAGE_BUKET_NAME }}
+  REGION: ${{ secrets.REGION }}
+
+  # JWT 설정
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  JWT_REDIRECT_URI: ${{ secrets.JWT_REDIRECT_URI }}
+  ACCESS_TOKEN_EXPIRATION_TIME: ${{ secrets.ACCESS_TOKEN_EXPIRATION_TIME }}
+  REFRESH_TOKEN_EXPIRATION_TIME: ${{ secrets.REFRESH_TOKEN_EXPIRATION_TIME }}
+
+  # GitHub OAuth2 설정
+  GITHUB_CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID }}
+  GITHUB_CLIENT_SECRET: ${{ secrets.GITHUB_CLIENT_SECRET }}
+  GITHUB_SCOPE: ${{ secrets.GITHUB_SCOPE }}
+  GITHUB_REDIRECT_URI: ${{ secrets.GITHUB_REDIRECT_URI }}
+  GITHUB_AUTHORIZATION_GRANT_TYPE: ${{ secrets.GITHUB_AUTHORIZATION_GRANT_TYPE }}
+  GITHUB_TOKEN_URI: ${{ secrets.GITHUB_TOKEN_URI }}
+
+  # OpenAI API 설정
+  OPEN_AI_KEY: ${{ secrets.OPEN_AI_KEY }}
+
 jobs:
   build-and-push-docker:
 
@@ -36,7 +65,6 @@ jobs:
     - name: Set up application.properties
       run: |
         echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
-        echo "${{ secrets.APPLICATION_SECRET }}" >> ./src/main/resources/application-secret.properties
 
     - name: Build with Gradle
       run: ./gradlew build
