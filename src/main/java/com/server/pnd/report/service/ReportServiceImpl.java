@@ -59,11 +59,22 @@ public class ReportServiceImpl implements ReportService{
             String response = gitHubGraphQLService.fetchUserData(accessToken, username, repositoryName);
             System.err.println("response: " + response);
 
-            // 깃허브 레포트 생성 (Node.js 스크립트실행)
-            // local
-//             ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "src/main/resources/scripts/3d-contrib/src/index.ts");
-            // deploy
-            ProcessBuilder processBuilder = new ProcessBuilder("ts-node", "../../src/main/resources/scripts/3d-contrib/src/index.ts");
+            // ProcessBuilder 절대 경로 설정
+            String os = System.getProperty("os.name").toLowerCase();
+            String scriptPath;
+            if (os.contains("win")) {
+                // Windows path
+                scriptPath = "./src/main/resources/scripts/3d-contrib/src/index.ts";
+            } else if (os.contains("mac")) {
+                // macOS path
+                scriptPath = "/Users/gimhyejin/Library/CloudStorage/OneDrive-한성대학교/문서/Projects/PND-Server/src/main/resources/scripts/3d-contrib/src/index.ts";
+            } else {
+                // Deploy path for EC2 (Linux)
+                scriptPath = "/home/ubuntu/PND-Server/src/main/resources/scripts/3d-contrib/src/index.ts";
+            }
+
+            ProcessBuilder processBuilder = new ProcessBuilder("ts-node", scriptPath);
+
 
             // 환경 변수 설정
             processBuilder.environment().put("GITHUB_DATA", response);
@@ -103,7 +114,7 @@ public class ReportServiceImpl implements ReportService{
                 throw new RuntimeException("레포트 생성 중 오류 발생, exit code: " + exitCode);
             }
 
-            String[] imageUrl = new String[7]; // 배포 이미지 url
+            String[] imageUrl = new String[8]; // 배포 이미지 url
 
             if (!generatedFileNames.isEmpty()) {
                 System.out.println("Generated SVG files: " + String.join(", ", generatedFileNames));
@@ -114,11 +125,20 @@ public class ReportServiceImpl implements ReportService{
                         break; // 배열 크기를 초과하지 않도록 안전 장치
                     }
 
-                    // file 가져오기
-                    // local
-//                    File file = new File("./src/main/resources/profile-3d-contrib/" + svgFileName);
-                    // deploy
-                    File file = new File("../../src/main/resources/profile-3d-contrib/" + svgFileName);
+                    // 파일 경로 설정
+                    String outputPath;
+                    if (os.contains("win")) {
+                        // Windows path
+                        outputPath = "./src/main/resources/scripts/3d-contrib/src/index.ts";
+                    } else if (os.contains("mac")) {
+                        // macOS path
+                        outputPath = "/Users/gimhyejin/Library/CloudStorage/OneDrive-한성대학교/문서/Projects/PND-Server/src/main/resources/profile-3d-contrib/" + svgFileName;
+                    } else {
+                        // Deploy path for EC2 (Linux)
+                        outputPath = "/home/ubuntu/PND-Server/src/main/resources/profile-3d-contrib/" + svgFileName;
+                    }
+
+                    File file = new File(outputPath);
 
                     // S3에 파일 업로드 & 파일(사진) 링크 저장
                     imageUrl[i] = s3Service.upload(file, username, svgFileName);
