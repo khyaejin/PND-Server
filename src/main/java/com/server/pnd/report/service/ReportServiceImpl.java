@@ -74,8 +74,14 @@ public class ReportServiceImpl implements ReportService{
                 scriptPath = "/PND-Server/src/main/resources/scripts/3d-contrib/src/index.ts";
             }
             System.out.println("os: " + os);
-            ProcessBuilder processBuilder = new ProcessBuilder("ts-node", scriptPath);
 
+            // ProcessBuilder 실행 전 작업 디렉토리 로그 추가
+            System.out.println("실행_전_작업_디렉토리: " + new File(".").getAbsolutePath());
+
+            ProcessBuilder processBuilder = new ProcessBuilder("/usr//bin/ts-node", scriptPath);
+
+            // ProcessBuilder 실행 후 로그 추가
+            System.out.println("ProcessBuilder_실행_후_작업_디렉토리: " + processBuilder.directory());
 
             // 환경 변수 설정
             processBuilder.environment().put("GITHUB_DATA", response);
