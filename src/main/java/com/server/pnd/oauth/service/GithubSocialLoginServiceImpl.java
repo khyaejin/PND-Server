@@ -41,13 +41,13 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
     private static final Logger logger = LoggerFactory.getLogger(GithubSocialLoginServiceImpl.class);
     private final RepoRepository repoRepository;
 
-    @Value("${OAUTH_GITHUB_CLIENT_ID}")
+    @Value("${spring.security.oauth2.client.registration.github.client-id}")
     private String githubClientId;
-    @Value("${OAUTH_GITHUB_REDIRECT_URI}")
+    @Value("${spring.security.oauth2.client.registration.github.redirect-uri}")
     private String githubRedirectUrl;
-    @Value("${OAUTH_GITHUB_TOKEN_URI}")
+    @Value("${spring.security.oauth2.client.provider.github.token-uri}")
     private String githubReqUrl;
-    @Value("${OAUTH_GITHUB_CLIENT_SECRET}")
+    @Value("${spring.security.oauth2.client.registration.github.client-secret}")
     private String githubClientSecret;
 
     @Override

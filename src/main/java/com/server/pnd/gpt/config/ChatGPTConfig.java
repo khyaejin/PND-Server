@@ -9,9 +9,9 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Configuration
 public class ChatGPTConfig {
-    @Value("${OPEN_AI_KEY}")
+    @Value("${chatgpt.api.key}")
     private String apiKey;
 
-    @Value("${OPEN_AI_URL}")
+    @Value("${chatgpt.api.url}")
     private String apiUrl; // gpt api 엔드포인트에 해당
 }
