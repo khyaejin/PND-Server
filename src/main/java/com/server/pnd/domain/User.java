@@ -26,6 +26,9 @@ public class User {
 
     private String name;
 
+    @Column(name = "nick_name")
+    private String nickName;
+
     private String image; //프로필 이미지
 
     private String email;
@@ -37,4 +40,15 @@ public class User {
     @NotEmpty
     @Column(name = "refresh_token")
     private String refreshToken;
+
+    // 프로필 편집 - 이미지
+    public void editUserImage(String imageUrl) {
+        this.image = imageUrl;
+    }
+
+    // 프로필 편집 - 이미지 제외
+    public void editUserWithoutImage(String nickName, String email) {
+        this.nickName = nickName;
+        this.email = email;
+    }
 }

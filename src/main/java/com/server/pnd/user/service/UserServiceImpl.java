@@ -3,16 +3,22 @@ package com.server.pnd.user.service;
 import com.server.pnd.diagram.repository.DiagramRepository;
 import com.server.pnd.domain.*;
 import com.server.pnd.readme.repository.ReadmeRepository;
+import com.server.pnd.repo.dto.RepoSettingResponseDto;
 import com.server.pnd.repo.repository.RepoRepository;
 import com.server.pnd.report.repository.ReportRepository;
+import com.server.pnd.s3.service.S3Service;
+import com.server.pnd.user.dto.EditProfileRequestDto;
 import com.server.pnd.user.dto.SearchProfileResponseDto;
+import com.server.pnd.user.dto.UserEditProfileResponseDto;
 import com.server.pnd.user.repository.UserRepository;
 import com.server.pnd.util.jwt.JwtUtil;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +31,7 @@ public class UserServiceImpl implements UserService{
     private final DiagramRepository diagramRepository;
     private final ReportRepository reportRepository;
     private final JwtUtil jwtUtil;
+    private final S3Service s3Service;
 
     // 프로필 조회
     @Override
@@ -55,7 +62,7 @@ public class UserServiceImpl implements UserService{
 
         // 프로필 조회 성공 (200)
         SearchProfileResponseDto data = SearchProfileResponseDto.builder()
-                .name(user.getName())
+                .name(user.getNickName())
                 .image(user.getImage())
                 .email(user.getEmail())
                 .totalDocs(totalDocs)
@@ -104,4 +111,50 @@ public class UserServiceImpl implements UserService{
         CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, null, "회원 탈퇴 완료되었습니다.");
         return ResponseEntity.status(200).body(res);
     }
+
+    // 프로필 편집
+    @Override
+    public ResponseEntity<CustomApiResponse<?>> editProfile(String authorizationHeader, EditProfileRequestDto editProfileRequestDto, MultipartFile images) {
+        Optional<User> foundUser = jwtUtil.findUserByJwtToken(authorizationHeader);
+
+        // 토큰에 해당하는 유저가 없는 경우 : 404
+        if (foundUser.isEmpty()) {
+            CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(404, "유효하지 않은 토큰이거나, 해당 ID에 해당하는 사용자가 존재하지 않습니다.");
+            return ResponseEntity.status(404).body(res);
+        }
+        User user = foundUser.get();
+
+        String nickName = editProfileRequestDto.getNickName();
+        String email = editProfileRequestDto.getEmail();
+        user.editUserWithoutImage(nickName, email);
+
+        // 프로필 이미지 수정 있을 시
+        if (images != null) {
+            String imageName = user.getId() + "_" + user.getName(); // 프로필 사진의 이름은 user의 pk를 이용(한 User당 하나의 썸네일 사진)
+            String imageUrl = null;
+            try {
+                imageUrl = s3Service.modifyUserImage(images, imageName);
+            } catch (IOException e) {
+                System.out.println("프로필 이미지 편집 실패");
+                throw new RuntimeException(e);
+            }
+            user.editUserImage(imageUrl);
+        }
+
+        // 저장
+        userRepository.save(user);
+
+        // data (save 한 user 정보 가져오기)
+        UserEditProfileResponseDto data = UserEditProfileResponseDto.builder()
+                .userId(user.getId())
+                .name(user.getNickName())
+                .email(user.getEmail())
+                .image(user.getImage())
+                .build();
+
+        // 프로필 편집 완료 : 200
+        CustomApiResponse<?> res = CustomApiResponse.createSuccess(200, data, "프로필 편집에 성공하셨습니다.");
+        return ResponseEntity.status(200).body(res);
+    }
+
 }

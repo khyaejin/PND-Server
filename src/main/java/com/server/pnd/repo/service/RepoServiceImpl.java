@@ -6,6 +6,7 @@ import com.server.pnd.readme.repository.ReadmeRepository;
 import com.server.pnd.repo.dto.*;
 import com.server.pnd.repo.repository.RepoRepository;
 import com.server.pnd.report.repository.ReportRepository;
+import com.server.pnd.s3.service.S3Service;
 import com.server.pnd.util.jwt.JwtUtil;
 import com.server.pnd.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,7 @@ public class RepoServiceImpl implements RepoService {
     private final DiagramRepository diagramRepository;
     private final ReadmeRepository readmeRepository;
     private final ReportRepository reportRepository;
+    private final S3Service s3Service;
 
     // 레포 전체 조회
     @Override
@@ -102,9 +105,13 @@ public class RepoServiceImpl implements RepoService {
             // repoId를 가진 report가 있는지 검색
             boolean isExistReport = reportRepository.existsByRepoId(repo.getId());
 
+            // title이 있으면 title, 없으면 organizationName(있으면) + repoName
+            String title = repo.getTitle() != null ? repo.getTitle() :
+                    (repo.getOrganizationName() != null ? repo.getOrganizationName() + "/" + repo.getRepoName() : repo.getRepoName());
+
             ExistRepoResponseDto existRepoResponseDto = ExistRepoResponseDto.builder()
                     .id(repo.getId())
-                    .title(repo.getTitle())
+                    .title(title)
                     .period(repo.getPeriod())
                     .image(repo.getImage())
                     .isExistReadme(isExistReadme)
@@ -124,7 +131,7 @@ public class RepoServiceImpl implements RepoService {
 
     // 레포 기본 정보 세팅
     @Override
-    public ResponseEntity<CustomApiResponse<?>> settingRepo(Long repoId, RepoSettingRequestDto projectCreatedRequestDto, MultipartFile image) {
+    public ResponseEntity<CustomApiResponse<?>> settingRepo(Long repoId, RepoSettingRequestDto projectCreatedRequestDto, MultipartFile images) {
         Optional<Repo> foundRepository = repoRepository.findById(repoId);
         // 해당 Id에 해당하는 레포가 없는 경우 : 404
         if (foundRepository.isEmpty()) {
@@ -138,11 +145,16 @@ public class RepoServiceImpl implements RepoService {
         String period = projectCreatedRequestDto.getPeriod();
         repo.editRepoWithoutImage(title, period);
 
-        // 프로필 이미지 수정 있을 시
-        if (image != null && !image.isEmpty()) {
-            String imageName = String.valueOf(repo.getId()); // 레포 사진의 이름은 repo의 pk를 이용(한 Repo당 하나의 썸네일 사진)
-            String imageUrl = // s3Service.createRepoImage(image, imageName); 추후 S3 설계 후 설정
-            "https~~";
+        // 레포 썸네일 수정 있을 시
+        if (images != null) {
+            String imageName = repo.getId() + "_" + repo.getTitle(); // 프로필 사진의 이름은 user의 pk를 이용(한 User당 하나의 썸네일 사진)
+            String imageUrl = null;
+            try {
+                imageUrl = s3Service.modifyRepoImage(images, imageName);
+            } catch (IOException e) {
+                System.out.println("레포 썸네일 편집 실패");
+                throw new RuntimeException(e);
+            }
             repo.editRepoImage(imageUrl);
         }
 
