@@ -47,4 +47,5 @@ public class S3Service {
         amazonS3.putObject(userImageBucket, name, multipartFile.getInputStream(), metadata);
         return amazonS3.getUrl(userImageBucket, name).toString();
     }
+
 }
