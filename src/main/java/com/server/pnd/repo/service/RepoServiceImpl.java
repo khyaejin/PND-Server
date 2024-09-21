@@ -139,7 +139,7 @@ public class RepoServiceImpl implements RepoService {
         repo.editRepoWithoutImage(title, period);
 
         // 프로필 이미지 수정 있을 시
-        if (image != null && !image.isEmpty()) {
+        if (image != null) {
             String imageName = String.valueOf(repo.getId()); // 레포 사진의 이름은 repo의 pk를 이용(한 Repo당 하나의 썸네일 사진)
             String imageUrl = // s3Service.createRepoImage(image, imageName); 추후 S3 설계 후 설정
             "https~~";

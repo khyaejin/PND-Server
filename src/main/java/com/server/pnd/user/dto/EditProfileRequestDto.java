@@ -7,6 +7,6 @@ import lombok.*;
 @AllArgsConstructor @NoArgsConstructor
 @Builder
 public class EditProfileRequestDto {
-    private String name;
+    private String nickName;
     private String email;
 }

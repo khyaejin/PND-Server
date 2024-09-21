@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService{
 
         // 프로필 조회 성공 (200)
         SearchProfileResponseDto data = SearchProfileResponseDto.builder()
-                .name(user.getName())
+                .name(user.getNickName())
                 .image(user.getImage())
                 .email(user.getEmail())
                 .totalDocs(totalDocs)
@@ -124,17 +124,18 @@ public class UserServiceImpl implements UserService{
         }
         User user = foundUser.get();
 
-        String name = editProfileRequestDto.getName();
+        String nickName = editProfileRequestDto.getNickName();
         String email = editProfileRequestDto.getEmail();
-        user.editUserWithoutImage(name, email);
+        user.editUserWithoutImage(nickName, email);
 
         // 프로필 이미지 수정 있을 시
-        if (images != null && !images.isEmpty()) {
-            String imageName = String.valueOf(user.getId()); // 프로필 사진의 이름은 user의 pk를 이용(한 User당 하나의 썸네일 사진)
+        if (images != null) {
+            String imageName = user.getId() + "_" + user.getName(); // 프로필 사진의 이름은 user의 pk를 이용(한 User당 하나의 썸네일 사진)
             String imageUrl = null;
             try {
                 imageUrl = s3Service.modifyUserImage(images, imageName);
             } catch (IOException e) {
+                System.out.println("프로필 이미지 편집 실패");
                 throw new RuntimeException(e);
             }
             user.editUserImage(imageUrl);
@@ -146,7 +147,7 @@ public class UserServiceImpl implements UserService{
         // data (save 한 user 정보 가져오기)
         UserEditProfileResponseDto data = UserEditProfileResponseDto.builder()
                 .userId(user.getId())
-                .name(user.getName())
+                .name(user.getNickName())
                 .email(user.getEmail())
                 .image(user.getImage())
                 .build();

@@ -136,7 +136,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
     @Override
     public ResponseEntity<CustomApiResponse<?>> getUserInfo(TokenDto tokenDto) {
         String githubId = null;
-        String nickname = null;
+        String name = null;
         String email = null;
         String profileImageUrl = null;
         String accessToken = tokenDto.getAccessToken();
@@ -171,7 +171,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                 JSONObject jsonObject = new JSONObject(result);
 
                 githubId = jsonObject.optString("id", null);
-                nickname = jsonObject.optString("login", null);
+                name = jsonObject.optString("login", null);
                 email = jsonObject.optString("email", null);
                 profileImageUrl = jsonObject.optString("avatar_url", null);
 
@@ -184,7 +184,8 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
 
         UserInfo userInfo = UserInfo.builder()
                 .githubId(githubId)
-                .name(nickname)
+                .name(name)
+                .nickName(name)
                 .email(email)
                 .image(profileImageUrl)
                 .accessToken(accessToken)
