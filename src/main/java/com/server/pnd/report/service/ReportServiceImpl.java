@@ -64,7 +64,7 @@ public class ReportServiceImpl implements ReportService{
             String os = System.getProperty("os.name").toLowerCase();
 
             //ts-node 경로 변경
-            String scriptPath,tsnodePath = "ts-node";
+            String scriptPath;
 
             if (os.contains("win")) {
                 // Windows path
@@ -74,15 +74,14 @@ public class ReportServiceImpl implements ReportService{
                 scriptPath = "/Users/gimhyejin/Library/CloudStorage/OneDrive-한성대학교/문서/Projects/PND-Server/src/main/resources/scripts/3d-contrib/src/index.ts";
             } else {
                 // Deploy path for EC2 (Linux)
-                scriptPath = "/PND-Server/src/main/resources/scripts/3d-contrib/src/index.ts";
-                tsnodePath = "/usr/bin/ts-node";
+                scriptPath = "../../src/main/resources/scripts/3d-contrib/src/index.ts";
             }
             System.out.println("os: " + os);
 
             // ProcessBuilder 실행 전 작업 디렉토리 로그 추가
             System.out.println("실행_전_작업_디렉토리: " + new File(".").getAbsolutePath());
 
-            ProcessBuilder processBuilder = new ProcessBuilder(tsnodePath, scriptPath);
+            ProcessBuilder processBuilder = new ProcessBuilder("ts-node", scriptPath);
 
             // ProcessBuilder 실행 후 로그 추가
             System.out.println("ProcessBuilder_실행_후_작업_디렉토리: " + processBuilder.directory());
@@ -152,7 +151,7 @@ public class ReportServiceImpl implements ReportService{
                         outputPath = "/Users/gimhyejin/Library/CloudStorage/OneDrive-한성대학교/문서/Projects/PND-Server/src/main/resources/profile-3d-contrib/" + svgFileName;
                     } else {
                         // Deploy path for EC2 (Linux)
-                        outputPath = "/PND-Server/src/main/resources/profile-3d-contrib/" + svgFileName;
+                        outputPath = "../../src/main/resources/profile-3d-contrib/" + svgFileName;
 
                     }
 
