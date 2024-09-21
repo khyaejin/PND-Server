@@ -21,6 +21,8 @@ public class S3Service {
     private String githubReportImageBucket;
     @Value("${cloud.aws.s3.userImageBucketName}")
     private String userImageBucket;
+    @Value("${cloud.aws.s3.repoImageBucketName}")
+    private String repoImageBucket;
     private final AmazonS3 amazonS3;
 
     public String upload(File file, String userName, String fileName) {
@@ -38,7 +40,7 @@ public class S3Service {
         return amazonS3.getUrl(githubReportImageBucket, name).toString();
     }
 
-    // name: User PK
+    // name: User PK + name
     public String modifyUserImage(MultipartFile multipartFile, String name) throws IOException {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
@@ -46,6 +48,16 @@ public class S3Service {
 
         amazonS3.putObject(userImageBucket, name, multipartFile.getInputStream(), metadata);
         return amazonS3.getUrl(userImageBucket, name).toString();
+    }
+
+    // name: Repo PK + title
+    public String modifyRepoImage(MultipartFile multipartFile, String name) throws IOException {
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(multipartFile.getSize());
+        metadata.setContentType(multipartFile.getContentType());
+
+        amazonS3.putObject(repoImageBucket, name, multipartFile.getInputStream(), metadata);
+        return amazonS3.getUrl(repoImageBucket, name).toString();
     }
 
 }
