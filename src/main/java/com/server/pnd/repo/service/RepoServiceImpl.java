@@ -105,9 +105,13 @@ public class RepoServiceImpl implements RepoService {
             // repoId를 가진 report가 있는지 검색
             boolean isExistReport = reportRepository.existsByRepoId(repo.getId());
 
+            // title이 있으면 title, 없으면 organizationName(있으면) + repoName
+            String title = repo.getTitle() != null ? repo.getTitle() :
+                    (repo.getOrganizationName() != null ? repo.getOrganizationName() + "-" + repo.getRepoName() : repo.getRepoName());
+
             ExistRepoResponseDto existRepoResponseDto = ExistRepoResponseDto.builder()
                     .id(repo.getId())
-                    .title(repo.getTitle())
+                    .title(title)
                     .period(repo.getPeriod())
                     .image(repo.getImage())
                     .isExistReadme(isExistReadme)
