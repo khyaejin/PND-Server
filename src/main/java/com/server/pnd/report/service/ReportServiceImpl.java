@@ -55,9 +55,10 @@ public class ReportServiceImpl implements ReportService{
             String accessToken = user.getAccessToken();
             String username = user.getName();
             String repositoryName = repo.getRepoName();
+            String organizationName = repo.getOrganizationName();
 
             // GitHub GraphQL API 사용하여 데이터 가져오기
-            String response = gitHubGraphQLService.fetchUserData(accessToken, username, repositoryName);
+            String response = gitHubGraphQLService.fetchUserData(accessToken, username, organizationName, repositoryName);
             System.err.println("response: " + response);
 
             // ProcessBuilder 절대 경로 설정
@@ -238,21 +239,6 @@ public class ReportServiceImpl implements ReportService{
             return ResponseEntity.status(500).body(res);
         } catch (Exception e) {
             e.printStackTrace();
-
-
-            // 표준 오류를 다시 읽어와서 catch 블록에서도 처리
-            try (BufferedReader stdErr = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
-                String errorLine;
-                StringBuilder stderrOutput = new StringBuilder();
-
-                while ((errorLine = stdErr.readLine()) != null) {
-                    stderrOutput.append(errorLine).append("\n");
-                }
-
-                System.err.println("stderr in catch block: " + stderrOutput.toString());
-            } catch (IOException ioException) {
-                System.err.println("stderr 읽기 중 오류 발생: " + ioException.getMessage());
-            }
 
             CustomApiResponse<?> res = CustomApiResponse.createFailWithoutData(500, "알 수 없는 오류가 발생했습니다.");
             return ResponseEntity.status(500).body(res);

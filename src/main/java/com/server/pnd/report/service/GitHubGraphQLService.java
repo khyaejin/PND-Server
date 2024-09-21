@@ -14,11 +14,14 @@ public class GitHubGraphQLService {
 
     private final RestTemplate restTemplate;
 
-    public String fetchUserData(String accessToken, String username, String repositoryName) {
+    public String fetchUserData(String accessToken, String username, String organizationName,  String repositoryName) {
         String url = "https://api.github.com/graphql";
 
+        // 조직 레포지토리일 경우 organizationName을 사용, 아니면 username 사용
+        String ownerName = !organizationName.isEmpty() ? organizationName : username;
+
         // GraphQL 쿼리 정의
-        String query = "{ \"query\": \"query { repository(owner: \\\"" + username + "\\\", name: \\\"" + repositoryName + "\\\") { "
+        String query = "{ \"query\": \"query { repository(owner: \\\"" + ownerName + "\\\", name: \\\"" + repositoryName + "\\\") { "
                 + "name "
                 + "forkCount "
                 + "stargazerCount "

@@ -223,6 +223,16 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         // 레포지토리 정보 받아오기
                         JSONObject repo = jsonArray.getJSONObject(i);
+                        String organizationName = "";
+
+                        // 레포지토리 owner 타입이 "User"일 경우만 처리
+                        JSONObject owner = repo.getJSONObject("owner");
+                        if (!"User".equals(owner.getString("type"))) {
+                            // 조직 레포지토리일 경우 조직 이름 저장
+                            organizationName = owner.getString("login"); // 조직 이름을 login 필드에서 가져옴
+                        }
+
+                        // 개인 레포지토리 정보 받아오기
                         String name = repo.getString("name");
                         String htmlUrl = repo.getString("html_url");
                         int stars = repo.getInt("stargazers_count");
@@ -233,13 +243,12 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                         String language = repo.optString("language", "None");
                         boolean isPrivate = repo.getBoolean("private"); // private 필드를 확인하여 public/private 여부를 설정
                         String disclosure = isPrivate ? "private" : "public"; // public 또는 private으로 설정
-
                         String createdAt = repo.getString("created_at");
                         String updatedAt = repo.getString("updated_at");
 
                         // 레포지토리 정보 잘 받아왔나 로그로 확인
                         logger.info(
-                                "Repo Name: {}, HTML URL: {}, Stars: {}, Description: {}, Forks: {}, Open Issues: {}, Watchers: {}, Language: {}, Disclosure: {}, Created At: {}, Updated At: {}",
+                                "Repo Name: {}, HTML URL: {}, Stars: {}, Description: {}, Forks: {}, Open Issues: {}, Watchers: {}, Language: {}, Disclosure: {}, Created At: {}, Updated At: {}, organizationName: {}",
                                 name,
                                 htmlUrl,
                                 stars,
@@ -250,7 +259,8 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                                 language,
                                 disclosure,  // visibility 추가
                                 createdAt,
-                                updatedAt
+                                updatedAt,
+                                organizationName
                         );
 
                         Optional<User> foundUser = userRepository.findByGithubId(userInfo.getGithubId());
@@ -273,6 +283,7 @@ public class GithubSocialLoginServiceImpl implements SocialLoginService {
                                 .repoLanguage(language)
                                 .repoWatcher(watchers)
                                 .repoDisclosure(disclosure)
+                                .organizationName(organizationName)
                                 .createdAt(createdAt)
                                 .updatedAt(updatedAt).build();
                         repositories.add(repository);

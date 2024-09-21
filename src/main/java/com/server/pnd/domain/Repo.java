@@ -54,6 +54,9 @@ public class Repo{
     @Column(name = "repo_disclosure")
     private String repoDisclosure; // 공개여부
 
+    @Column(name = "organization_name")
+    private String organizationName; // 조직 이름
+
     private String title; // 제목
 
     private String image; // 썸네일
