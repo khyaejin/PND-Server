@@ -53,8 +53,6 @@ export interface RepositoryInfo {
   totalRepositoryContributions: number; // 레포지토리 기여 수
 }
 
-
-
 export type ContributionLevel =
     | 'NONE'
     | 'FIRST_QUARTILE'

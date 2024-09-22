@@ -4,6 +4,7 @@ import * as contrib from './create-3d-contrib';
 import * as pie from './create-pie-language';
 import * as radar from './create-radar-contrib';
 import * as graph from './create-graph-commits'; 
+import * as box from './create-retrospect-guide'; 
 import * as util from './utils';
 import * as type from './type';
 
@@ -27,8 +28,13 @@ const graphWidth = 400 * 1.3;
 const graphHeight = (graphWidth * 3) / 5;
 const graphX = width - graphWidth; 
 
+const retroBoxWidth = 400 * 1.9;
+const retroBoxHeight = (retroBoxWidth * 3) / 5;
+const retroX = width - retroBoxWidth -100;
+
 export const createSvg = (
     repoInfo: type.RepositoryInfo,
+    retrospect: string,
     settings: type.Settings,
     isForcedAnimation: boolean
 ): string => {
@@ -112,7 +118,7 @@ export const createSvg = (
             isForcedAnimation
         );
         
-        // 막대그래프
+        // 막대그래프 ------------------------------------------------------
         graph.createBarChartCommits(
             svg,
             repoInfo,
@@ -124,6 +130,19 @@ export const createSvg = (
             isForcedAnimation
         );
 
+        // 회고 가이드 --------------------------------------------------------
+        box.createRetrospectGuide(
+            svg,
+            retrospect,
+            retroX + 15, // x 좌표
+            530, // y 좌표
+            retroBoxWidth, // width
+            retroBoxHeight,  // height
+            settings, // 통일된 settings 객체 전달
+            isForcedAnimation
+        );
+
+        // 파이 차트 --------------------------------------------------------
         pie.createPieLanguage(
             svg,
             repoInfo,
@@ -134,7 +153,6 @@ export const createSvg = (
             settings,
             isForcedAnimation
         );
-
 
         const group = svg.append('g');
 
