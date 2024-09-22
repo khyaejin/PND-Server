@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import * as type from './type';
+import * as util from './utils';
 
 export const createBarChartCommits = (
     svg: d3.Selection<SVGSVGElement, unknown, null, unknown>,
@@ -49,89 +50,83 @@ export const createBarChartCommits = (
         .domain([0, maxCommits])                               // 최소 0, 최대 커밋 수에 따라 스케일 조정
         .range([chartHeight, 0]);                              // y 값이 클수록 위로 올라가게 스케일링
 
-   // X축 생성 및 축 레이블 색상과 크기를 설정 (축이 차트 아래에 위치하도록 설정)
-group
-    .append('g')
-    .attr('transform', `translate(0, ${chartHeight})`)    // 차트 아래로 이동
-    .call(d3.axisBottom(xScale)
-        .tickFormat((d) => d)                             // X축의 각 시간대 (0~23시) 레이블 추가
-        .tickSize(2)                                      // 간격 표시를 위한 작은 선 생성
-        .tickSizeOuter(0)                                 // 축의 가장자리 선을 없앰
-        .tickPadding(5)                                   // 레이블과 축 간격 설정
-    )
-    .selectAll('text')                                    // 텍스트 스타일 설정
-    .attr('fill', settings.foregroundColor)
-    .style('font-size', '10px');                          // 텍스트 크기 설정
+    // X축 생성 및 축 레이블 색상과 크기를 설정 (축이 차트 아래에 위치하도록 설정)
+    group
+        .append('g')
+        .attr('transform', `translate(0, ${chartHeight})`)    // 차트 아래로 이동
+        .call(d3.axisBottom(xScale)
+            .tickFormat((d) => d)                             // X축의 각 시간대 (0~23시) 레이블 추가
+            .tickSize(2)                                      // 간격 표시를 위한 작은 선 생성
+            .tickSizeOuter(0)                                 // 축의 가장자리 선을 없앰
+            .tickPadding(5)                                   // 레이블과 축 간격 설정
+        )
+        .selectAll('text')                                    // 텍스트 스타일 설정
+        .attr('fill', settings.foregroundColor)
+        .style('font-size', '10px');                          // 텍스트 크기 설정
 
-// Y축 생성 및 축 레이블 색상과 크기를 설정
-group
-    .append('g')
-    .call(d3.axisLeft(yScale)
-        .ticks(5)                                         // Y축은 5개의 레이블을 생성
-        .tickSizeInner(-3)                                // Y축의 작은 선을 왼쪽으로 이동
-        .tickSizeOuter(0)                                 // 축의 가장자리 선을 없앰
-        .tickPadding(5)                                   // 레이블과 축 간격 설정
-    )
-    .selectAll('text')                                    // 텍스트 스타일 설정
-    .attr('fill', settings.foregroundColor)
-    .style('font-size', '10px');                          // 텍스트 크기 설정
+    // Y축 생성 및 축 레이블 색상과 크기를 설정
+    group
+        .append('g')
+        .call(d3.axisLeft(yScale)
+            .ticks(5)                                         // Y축은 5개의 레이블을 생성
+            .tickSizeInner(-3)                                // Y축의 작은 선을 왼쪽으로 이동
+            .tickSizeOuter(0)                                 // 축의 가장자리 선을 없앰
+            .tickPadding(5)                                   // 레이블과 축 간격 설정
+        )
+        .selectAll('text')                                    // 텍스트 스타일 설정
+        .attr('fill', settings.foregroundColor)
+        .style('font-size', '10px');                          // 텍스트 크기 설정
 
-// X축과 Y축 선 스타일 설정 (축 선은 그대로 유지)
-group.selectAll('.domain')
-    .attr('stroke', settings.foregroundColor);            // X, Y축 선을 그려줌
+    // X축과 Y축 선 스타일 설정 (축 선은 그대로 유지)
+    group.selectAll('.domain')
+        .attr('stroke', settings.foregroundColor);            // X, Y축 선을 그려줌
 
-    // 막대 차트 생성
+    // 막대 차트 생성 및 애니메이션 적용
     const bars = group
         .selectAll('rect')                                      // 각 시간대별로 막대(rect) 생성
         .data(commitCountsByHour)                               // 시간대별 커밋 수 데이터를 바인딩
         .enter()
         .append('rect')
         .attr('x', (d, i) => xScale(i.toString())!)             // 각 막대의 x 좌표 설정 (시간대별 위치)
-        .attr('y', (d) => yScale(d))                            // 각 막대의 y 좌표 설정 (커밋 수에 따라)
-        .attr('width', xScale.bandwidth())                      // 막대 너비 설정 (스케일에 따라)
-        .attr('height', (d) => chartHeight - yScale(d))         // 막대의 높이를 커밋 수에 따라 설정
-        .attr('fill', settings.radarColor);                     // 막대 색상은 설정 파일에서 가져옴
+        .attr('y', chartHeight)                                 // 각 막대가 아래에서 시작하도록 설정
+        .attr('width', xScale.bandwidth()-3)                    // 막대 너비 설정 (스케일에 따라), 수정)선을 그리기 위해 조금 줄이기
+        .attr('height', 0)                                      // 초기 높이를 0으로 설정
+        .attr('fill', settings.radarColor)                      // 막대 색상은 설정 파일에서 가져옴
+        .attr('fill-opacity', 0.5)                                   // 불투명도를 50%로 설정
+        .attr('stroke', settings.radarColor)                                // 막대의 외곽선 색상 설정 (검정색)
+        .attr('stroke-width', 3);                               // 외곽선 두께 설정 (1px)
+   
+        // 애니메이션 적용
+    bars.each(function (d, i) {
+        const bar = d3.select(this);
+        const heightValue = chartHeight - yScale(d);  // 최종 높이 계산
 
-    // 애니메이션 적용 (필요할 경우)
-    if (isForcedAnimation || settings.growingAnimation) {
-        bars.attr('height', 0)                                  // 막대의 초기 높이를 0으로 설정
-            .attr('y', chartHeight)                             // 막대가 아래에서 시작하도록 설정
-            .transition()                                       // 애니메이션 시작
-            .duration(3000)                                     // 3초 동안 애니메이션 적용
-            .attr('height', (d) => chartHeight - yScale(d))     // 애니메이션 후 막대 높이 설정
-            .attr('y', (d) => yScale(d));                       // 막대가 최종 y 좌표로 이동
-    }
-
-    bars.attr('x', (d, i) => {
-        const xValue = xScale(i.toString());
-        // console.log('Bar x:', xValue);  // x 좌표 확인
-        return xValue!;
-    })
-    .attr('y', (d) => {
-        const yValue = yScale(d);
-        // console.log('Bar y:', yValue);  // y 좌표 확인
-        return yValue;
-    })
-    .attr('width', (d) => {
-        const widthValue = xScale.bandwidth();
-        // console.log('Bar width:', widthValue);  // 너비 확인
-        return widthValue;
-    })
-    .attr('height', (d) => {
-        const heightValue = chartHeight - yScale(d);
-        // console.log('Bar height:', heightValue);  // 높이 확인
-        return heightValue;
+        // 애니메이션을 추가
+        if (isForcedAnimation && d !== 0) {
+            bar.append('animate')
+                .attr('attributeName', 'height')
+                .attr('values', `0;${util.toFixed(heightValue)}`)
+                .attr('dur', '3s')
+                .attr('fill', 'freeze') // 애니메이션이 끝난 후 마지막 상태에서 멈춤
+                .attr('repeatCount', '1');
+            
+            bar.append('animate')
+                .attr('attributeName', 'y')
+                .attr('values', `${chartHeight};${yScale(d)}`)
+                .attr('dur', '3s')
+                .attr('fill', 'freeze') // 애니메이션이 끝난 후 마지막 상태에서 멈춤
+                .attr('repeatCount', '1');
+        }
     });
-
 
     // Commits by Hour 텍스트 추가
     group
         .append('text')
         .attr('x', chartWidth)                                         // 그래프의 가장 왼쪽에 맞춤
-        .attr('y', chartHeight + margin.bottom - 10)           // 하단에 위치하도록 설정
-        .attr('text-anchor', 'end')                         // 텍스트의 끝 위치에 맞춤
-        .attr('dominant-baseline', 'middle')                   // 텍스트를 세로 기준선에 맞춤
-        .attr('fill', settings.foregroundColor)                // X축과 동일한 색상 사용
-        .style('font-size', '18px')                            // 텍스트 크기 설정
-        .text('Commits by Hour');                              // 텍스트 내용 설정
+        .attr('y', chartHeight + margin.bottom - 10)                    // 하단에 위치하도록 설정
+        .attr('text-anchor', 'end')                                     // 텍스트의 끝 위치에 맞춤
+        .attr('dominant-baseline', 'middle')                            // 텍스트를 세로 기준선에 맞춤
+        .attr('fill', settings.foregroundColor)                         // X축과 동일한 색상 사용
+        .style('font-size', '18px')                                     // 텍스트 크기 설정
+        .text('Commits by Hour');                                       // 텍스트 내용 설정
 };
