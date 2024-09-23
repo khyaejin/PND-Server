@@ -70,7 +70,7 @@ public class ReportServiceImpl implements ReportService{
 
             // GPT API 사용하여 회고 정보 가져오기
             String prompt =
-                    "내가 제공하는 링크로 접속하여 깃 레파지토리 내의 모든 디렉토리 및 코드를 확인해줘. 프로젝트를 전체적으로 리뷰 및 회고를 할 수 있도록 회고 가이드를 생성해줘. 혹시 레포지토리 타이틀이 길어 잘리게 된다면, 폰트 크기는 알아서 조절해줘. 템플릿은 예시 그대로 적용하고 내용만 바꿔주면 돼. 별다른 설명할 필요 없이 예시로 제공하는 것처럼 **HTML 문법**을 사용하여 코드블록만 제공해줘.  \n" +
+                    "내가 제공하는 링크로 접속하여 깃 레파지토리 내의 모든 디렉토리 및 코드를 확인해줘. 프로젝트를 전체적으로 리뷰 및 회고를 할 수 있도록 회고 가이드를 생성해줘. 혹시 레포지토리 타이틀이 길어 잘리게 된다면, 폰트 크기는 알아서 조절해줘. 템플릿은 예시 그대로 적용하고 내용만 바꿔주면 돼. 다른 설명할 필요 없이 예시로 제공하는 것처럼 **HTML 문법**을 사용하여 백틱 하나로 감싸진 순수한 문자열만 제공해줘.  \n" +
                             "회고 방법 추천은 KPT(Keep, Problem, Try), CSS(Continue, Stop, Start), Mad-Sad-Glad, 4Ls 중에서 레포지토리에 가장 어울리는 걸로 골라주고 그 이유도 아래 예시와 같이 써줘. 회고 방법 설명에는 해당 회고 방법의 진행 방법을 간단하게 써주면 돼. \n" +
                             "최대한 사용자가 레포지토리별로 맞춤 회고 가이드를 받는다고 느끼도록 섬세하고 차별화된 가이드를 제공해줘. \n" +
                             "다 작성한 후, 내가 요구한대로 잘 생성을 했는지 다시 확인한 후 보내줘.\n" +
@@ -78,7 +78,11 @@ public class ReportServiceImpl implements ReportService{
                             "---\n" +
                             "\n" +
                             "<!-- 예시 1 -->\n" +
-                            "<h1>\uD83D\uDD04 All Together 프론트엔드 프로젝트 회고가이드 \uD83D\uDD04</h1>\n" +
+                            "[질문]\n" +
+                            "https://github.com/benniejung/all-together-front\n" +
+                            "\n" +
+                            "[답변]\n" +
+                            "'<h1>\uD83D\uDD04 All Together 프론트엔드 프로젝트 회고가이드 \uD83D\uDD04</h1>\n" +
                             "\n" +
                             "<h2>\uD83C\uDFAF 회고 방법 추천: <strong>KPT (Keep, Problem, Try)</strong></h2>\n" +
                             "<p>All Together 프로젝트는 프론트엔드에서 유지보수성과 확장성에 중점을 두었기 때문에 <strong>KPT</strong> 방식을 추천드립니다. KPT는 현재 잘되고 있는 부분(Keep), 문제점(Problem), 시도해볼 점(Try)을 구분하여, 각 기능에 대한 피드백을 명확히 할 수 있습니다. 이 방식은 프론트엔드의 디테일한 피드백을 제공하는 데 효과적입니다.</p>\n" +
@@ -119,10 +123,13 @@ public class ReportServiceImpl implements ReportService{
                             "  <li>UI/UX 피드백 반영</li>\n" +
                             "  <li>기술 부채 관리</li>\n" +
                             "  <li>CI/CD 파이프라인 구축 경험</li>\n" +
-                            "</ul>\n" +
+                            "</ul>'\n" +
                             "\n" +
                             "<!-- 예시 2 -->\n" +
-                            "<h1>\uD83D\uDD04 YourSide-Server 백엔드 프로젝트 회고가이드 \uD83D\uDD04</h1>\n" +
+                            "[질문]\n" +
+                            "https://github.com/khyaejin/YourSide-Server\n" +
+                            "[답변]\n" +
+                            "'<h1>\uD83D\uDD04 YourSide-Server 백엔드 프로젝트 회고가이드 \uD83D\uDD04</h1>\n" +
                             "\n" +
                             "<h2>\uD83C\uDFAF 회고 방법 추천: <strong>4Ls (Liked, Learned, Lacked, Longed for)</strong></h2>\n" +
                             "<p>YourSide-Server 프로젝트는 백엔드의 데이터 관리 및 추천 시스템 개발이 중점이었기 때문에 <strong>4Ls</strong> 방식을 추천드립니다. 4Ls는 팀원들이 프로젝트에서 좋았던 점(Liked), 배운 점(Learned), 부족했던 점(Lacked), 더 원했던 점(Longed for)을 공유하며, 개선 사항을 도출하기에 효과적입니다.</p>\n" +
@@ -163,10 +170,13 @@ public class ReportServiceImpl implements ReportService{
                             "  <li>데이터 구조 최적화</li>\n" +
                             "  <li>API 성능 향상 방법</li>\n" +
                             "  <li>테스트 자동화 도입</li>\n" +
-                            "</ul>\n" +
+                            "</ul>'\n" +
                             "\n" +
                             "<!-- 예시 3 -->\n" +
-                            "<h1>\uD83D\uDD04 Scapture-Server 백엔드 프로젝트 회고가이드 \uD83D\uDD04</h1>\n" +
+                            "[질문]\n" +
+                            "https://github.com/khyaejin/Scapture-Server\n" +
+                            "[답변]\n" +
+                            "'<h1>\uD83D\uDD04 Scapture-Server 백엔드 프로젝트 회고가이드 \uD83D\uDD04</h1>\n" +
                             "\n" +
                             "<h2>\uD83C\uDFAF 회고 방법 추천: <strong>CSS (Continue, Stop, Start)</strong></h2>\n" +
                             "<p>Scapture-Server 프로젝트는 복잡한 데이터 처리 로직과 빠른 응답이 중요한 백엔드 시스템이었기 때문에 <strong>CSS</strong> 방식을 추천드립니다. CSS 방식은 현재 유지할 것(Continue), 중단할 것(Stop), 새로 시작할 것(Start)을 명확히 구분하여, 성과를 유지하면서 개선할 사항을 도출하는 데 유리합니다.</p>\n" +
@@ -207,7 +217,7 @@ public class ReportServiceImpl implements ReportService{
                             "  <li>확장 가능한 구조 설계</li>\n" +
                             "  <li>로그 관리 자동화</li>\n" +
                             "  <li>API 버전 관리</li>\n" +
-                            "</ul>\n";
+                            "</ul>'\n";
             // 시스템 메시지 생성
             List<ChatRequestMsgDto> messages = List.of(
                     ChatRequestMsgDto.builder().role("system").content(prompt).build(),
@@ -223,6 +233,7 @@ public class ReportServiceImpl implements ReportService{
             // GPT API 호출 및 결과 저장
             String retroResponse = questionService.callGptApi(chatCompletionDto);
             System.out.println("retroResponse: "+ retroResponse);
+
             // 데이터 세팅 끝 ------------------------------------------------------------------------------------------
 
             // ProcessBuilder 절대 경로 설정
