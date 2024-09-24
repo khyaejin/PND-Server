@@ -141,7 +141,7 @@ public class ReadmeServiceImpl implements ReadmeService{
                 "https://github.com/Hjwoon/Ch-Eating-BE\n" +
                 "\n" +
                 "[답변]\n" +
-                "![Ch-Eating Backend](https://capsule-render.vercel.app/api?type=rect&color=gradient&text=Ch-Eating%20Backend&fontSize=30&fontAlign=70)\n" +
+                "![Ch-Eating Backend](https://capsule-render.vercel.app/api?type=rect&color=gradient&text=Ch-Eating%20Backend&fontSize=30&fontAlign=50)\n" +
                 "\n" +
                 "# \uD83D\uDC4B Welcome to Ch-Eating Backend \uD83D\uDC4B\n" +
                 "\n" +
@@ -198,7 +198,7 @@ public class ReadmeServiceImpl implements ReadmeService{
                 "https://github.com/Hjwoon/CareerDoctor-Backend\n" +
                 "\n" +
                 "[답변]\n" +
-                "![CareerDoctor Backend](https://capsule-render.vercel.app/api?type=rect&color=gradient&text=CareerDoctor%20Backend&fontSize=30&fontAlign=70)\n" +
+                "![CareerDoctor Backend](https://capsule-render.vercel.app/api?type=rect&color=gradient&text=CareerDoctor%20Backend&fontSize=30&fontAlign=50)\n" +
                 "\n" +
                 "# \uD83D\uDC4B Welcome to CareerDoctor Backend \uD83D\uDC4B\n" +
                 "\n" +
@@ -254,7 +254,9 @@ public class ReadmeServiceImpl implements ReadmeService{
                 "https://github.com/Hjwoon/Mini_OverWatch\n" +
                 "\n" +
                 "[답변]\n" +
-                "![Mini OverWatch](https://capsule-render.vercel.app/api?type=rect&color=gradient&text=Mini%20OverWatch%20Backend&fontSize=30&fontAlign=70)\n" +
+                "![Mini OverWatch](https://capsule-render.vercel.app/api?type=rect&color=gradient&text=Mini%20OverWatch%20Backend&fontSize=30&fontAlign=50)\n" +
+
+
                 "\n" +
                 "# \uD83D\uDC4B Welcome to Mini OverWatch \uD83D\uDC4B \n" +
                 "\n" +
