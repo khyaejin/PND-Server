@@ -241,17 +241,22 @@ export const createSvg = (
             .text(util.toScale(repoInfo.forkCount))
             .attr('fill', settings.foregroundColor);
 
-        // ISO 8601 format
-        const startDate = repoInfo.contributions[0].date;
-        const endDate =
-            repoInfo.contributions[
-                repoInfo.contributions.length - 1
-            ].date;
-        const period = `${util.toIsoDate(startDate)} / ${util.toIsoDate(
-            endDate
-        )}`;
 
         // 기간 ------------------------------------------------------------------------------
+
+        // 기여 데이터 배열을 날짜 순으로 정렬
+        repoInfo.contributions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+        // 첫 번째 기여 날짜 (시작 날짜)와 마지막 기여 날짜 (종료 날짜)를 추출
+        const startDate = repoInfo.contributions[0].date;
+        const endDate = repoInfo.contributions[repoInfo.contributions.length - 1].date;
+
+        // ISO 8601 형식으로 변환
+        const period = `${util.toIsoDate(new Date(startDate))} / ${util.toIsoDate(new Date(endDate))}`;
+        // console.log("startDate: ", startDate);
+        // console.log("endDate: ", endDate);
+
+        // SVG 텍스트로 기간 표시
         group
             .append('text')
             .style('font-size', '16px')

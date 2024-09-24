@@ -54,46 +54,53 @@ const main = async () => {
 
 //         let retrospect =
 //         `<h1>🔄 All Together 프론트엔드 프로젝트 회고가이드 🔄</h1>
+// 	<div style="display: flex;">
+//   <div style="flex: 1;">
+//     <h2>💭 <strong>회고</strong></h2>
+//     <h3>🎯 회고 방법 추천: <strong>KPT (Keep, Problem, Try)</strong></h3>
+//     <p>All Together 프로젝트는 프론트엔드에서 유지보수성과 확장성에 중점을 두었기 때문에 <strong>KPT</strong> 방식을 추천드립니다. </p>
 //
-//          <h2>🌈 회고 방법 추천: <strong>KPT (Keep, Problem, Try)</strong></h2>
-//          <p>All Together 프로젝트는 프론트엔드에서 유지보수성과 확장성에 중점을 두었기 때문에 <strong>KPT</strong> 방식을 추천드립니다. KPT는 현재 잘되고 있는 부분(Keep), 문제점(Problem), 시도해볼 점(Try)을 구분하여, 각 기능에 대한 피드백을 명확히 할 수 있습니다. 이 방식은 프론트엔드의 디테일한 피드백을 제공하는 데 효과적입니다.</p>
+//     <h3>📢 회고 방법 설명</h3>
+//     <p>KPT는 현재 잘되고 있는 부분(Keep), 문제점(Problem), 시도해볼 점(Try)을 구분하여, 각 기능에 대한 피드백을 명확히 할 수 있습니다. 이 방식은 프론트엔드의 디테일한 피드백을 제공하는 데 효과적입니다.</p>
 //
-//          <h3>📢 회고 방법 설명</h3>
-//          <p>KPT는 유지할 점, 문제점, 시도할 점을 나눠서 피드백을 작성합니다. 팀원들과 회의를 통해 개선 방안을 도출하고 구체적인 시도할 항목을 정의합니다.</p>
+//     <h3>🌈 회고를 위한 기본 요소</h3>
+//     <ul style="display: flex; list-style-type: none; padding: 0;">
+//       <li style="margin-right: 30px;">🔅 개방성과 솔직함</li>
+//       <li style="margin-right: 30px;">🔅 비판적 사고</li>
+//       <li>🔅 학습 중심</li>
+//     </ul>
+//   </div>
 //
-//          <h3>💡 프로젝트 개요</h3>
-//          <p>All Together 프로젝트는 사용자 친화적인 웹 애플리케이션을 목표로 개발되었습니다.</p>
+//   <div style="flex: 1;">
+//     <h2>🔮 AI 리뷰</h2>
 //
-//          <h3>✅ AI 한줄 평가</h3>
-//          <h4>👏 잘된 점</h4>
-//          <ul>
-//              <li>**모듈화된 컴포넌트 구조**: 유지보수와 확장성이 뛰어났습니다.</li>
-//              <li>**협업 도구 사용**: GitHub의 Pull Request와 코드 리뷰로 효율성을 높였습니다.</li>
-//          </ul>
 //
-//          <h4>🔧 개선할 점</h4>
-//          <ul>
-//              <li>**로딩 속도 최적화**: 성능 개선이 필요합니다.</li>
-//              <li>**테스트 부족**: 더 많은 테스트 케이스가 필요합니다.</li>
-//          </ul>
+//     <h4>🚀 잘된 점</h4>
+//     <ul>
+//       <li>모듈화된 컴포넌트 구조: 유지보수와 확장성이 뛰어났습니다.</li>
+//       <li>협업 도구 사용: GitHub의 Pull Request와 코드 리뷰로 효율성을 높였습니다.</li>
+//     </ul>
 //
-//          <h4>🚀 주요 교훈</h4>
-//          <ul>
-//              <li>**모듈화 중요성**: 재사용 가능하고 유지보수가 용이한 코드 구조를 유지하는 것이 핵심임을 배웠습니다.</li>
-//          </ul>
+//     <h4>🔧 개선할 점</h4>
+//     <ul>
+//       <li>로딩 속도 최적화: 성능 개선이 필요합니다.</li>
+//       <li>테스트 부족: 더 많은 테스트 케이스가 필요합니다.</li>
+//     </ul>
 //
-//          <h3>💡 회고하면 좋을 것들</h3>
-//          <ul>
-//              <li>UI/UX 피드백 반영</li>
-//              <li>기술 부채 관리</li>
-//              <li>CI/CD 파이프라인 구축 경험</li>
-//          </ul>`;
+//     <h4>💡 회고하면 좋을 것들</h4>
+//     <ul>
+//       <li>UI/UX 피드백 반영</li>
+//       <li>기술 부채 관리</li>
+//       <li>CI/CD 파이프라인 구축 경험</li>
+//     </ul>
+//   </div>
+// </div>`;
 
         // JSON 데이터를 파싱
         let parsedData;
         try {
             parsedData = JSON.parse(githubData);
-            // console.log("ParsedData:", JSON.stringify(parsedData, null, 2));
+//             console.log("ParsedData:", JSON.stringify(parsedData, null, 2));
         } catch (parseError) {
             console.error("Error parsing GITHUB_DATA JSON:", parseError);
             throw new Error("GITHUB_DATA JSON 파싱 중 오류 발생");

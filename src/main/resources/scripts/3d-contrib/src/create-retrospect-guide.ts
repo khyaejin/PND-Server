@@ -26,7 +26,7 @@ export const createRetrospectGuide = async (
     // foreignObject를 이용하여 HTML을 SVG 내에 삽입
     svg.append('foreignObject')
         .attr('x', x + 10)
-        .attr('y', y + 10)
+        .attr('y', y )
         .attr('width', width - 20)
         .attr('height', height - 20)
         .html(`<div xmlns="http://www.w3.org/1999/xhtml" style="font-size: 14px; font-family: Arial; color: ${settings.foregroundColor};">${retrospect}</div>`);

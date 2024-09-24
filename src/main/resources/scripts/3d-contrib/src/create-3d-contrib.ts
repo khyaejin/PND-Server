@@ -320,8 +320,8 @@ export const create3DContrib = (
     // 모든 날짜에 대해 기본 블럭 설정
     const fullYearData = allDates.map(date => ({
         date: date,
-        contributionCount: 0,
-        contributionLevel: 0,
+        contributionCount: 1,
+        contributionLevel: 1,
     }));
 
     // 실제 기여 데이터를 병합
@@ -368,6 +368,26 @@ export const create3DContrib = (
 
     const group = svg.append('g'); // 새로운 그룹 요소 추가
 
+    // 모든 기여 데이터에서 가장 높은 기여 수를 찾음
+    let maxContributionCount = 0;
+
+    repositoryInfo.contributions.forEach(contribution => {
+        if (contribution.contributionCount > maxContributionCount) {
+            maxContributionCount = contribution.contributionCount;
+        }
+    });
+    console.log("maxContributionCount: ", maxContributionCount); // 5000 이상이면 범위 넘어감 -> 주로 블럭들은 앞쪽에 배치되기 때문에 50000까지는 괜찮음 (공경진 시현 기준)
+
+    const targetMax = 50000; // 최대 기여 수
+    const targetMin = 30000; // 최소 기여 수
+
+    let scale = 1; // 범위 내에 있으면 그대로 유지
+    if (maxContributionCount > targetMax) {
+        scale = targetMax / maxContributionCount; // 최대값을 넘어가면 비율 조정
+    } else if (maxContributionCount < targetMin) {
+        scale = targetMin / maxContributionCount; // 최소값보다 작으면 비율 조정
+    }
+
     contributionsArray.forEach((cal) => {
         const dayOfWeek = cal.date.getUTCDay(); // 기여 날짜의 요일 가져오기 (일요일 = 0)
         const week = Math.floor(diffDate(startTime, cal.date.getTime()) / 7); // 해당 기여가 속한 주 계산
@@ -377,13 +397,39 @@ export const create3DContrib = (
         
         const baseX = offsetX + (week - dayOfWeek) * dx; // 기여의 X 좌표 계산
         const baseY = offsetY + (week + dayOfWeek) * dy; // 기여의 Y 좌표 계산
+        
 
         // 로그 추가: 각 블록의 위치와 관련된 값들을 출력
         // console.log(`Date: ${cal.date}, DayOfWeek: ${dayOfWeek}, Week: ${week}`);
         // console.log(`BaseX: ${baseX}, BaseY: ${baseY}`);
 
+        
+        // 기존 : const calHeight = Math.log10(cal.contributionCount / 20 + 1) * 144 + 3; // 기여 수에 따른 칸 높이 계산
 
-        const calHeight = Math.log10(cal.contributionCount / 20 + 1) * 144 + 3; // 기여 수에 따른 칸 높이 계산
+        // // 기여 수에 따른 칸 높이 계산 (스케일 조정 적용)
+        // let scaledContributionCount = cal.contributionCount;
+
+        // if(scaledContributionCount>0){
+        //     scaledContributionCount = cal.contributionCount * scale;
+        // }
+
+        // const calHeight = Math.log10(scaledContributionCount / 20 + 1) * 144 + 3;
+
+
+        // 기여 수에 따른 칸 높이 계산 (스케일 조정 적용)
+        let scaledContributionCount = cal.contributionCount;
+        // console.log("scaledContributionCount:", scaledContributionCount);
+        // 기여 수가 있을때만 스케일을 적용
+        if (scaledContributionCount > 2) {
+            scaledContributionCount = cal.contributionCount * scale;
+        }
+
+        // scaledContributionCount가 없을 경우에도 계산이 가능하도록 처리
+        const calHeight = scaledContributionCount > 2 
+            ? Math.log10(scaledContributionCount / 20 + 1) * 144 + 3
+            : scaledContributionCount + 3; // 기여 수가 0일 경우 최소 높이 설정
+
+
         const contribLevel = cal.contributionLevel; // 기여 레벨 가져오기
 
         const isAnimate = settings.growingAnimation || isForcedAnimation; // 애니메이션 여부 결정
