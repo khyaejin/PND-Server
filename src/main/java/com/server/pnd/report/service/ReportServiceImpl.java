@@ -82,7 +82,7 @@ public class ReportServiceImpl implements ReportService{
                             "https://github.com/benniejung/all-together-front\n" +
                             "\n" +
                             "[답변]\n" +
-                            "`<h1 style=\"margin-bottom: -10px;\">\uD83D\uDD04 All Together 프론트엔드 프로젝트 회고가이드 \uD83D\uDD04</h1>\n" +
+                            "<h1 style=\"margin-bottom: -10px;\">\uD83D\uDD04 All Together 프론트엔드 프로젝트 회고가이드 \uD83D\uDD04</h1>\n" +
                             "\t<div style=\"display: flex;\">\n" +
                             "  <div style=\"flex: 1;\">\n" +
                             "    <h2>\uD83D\uDCAD <strong>회고</strong></h2>\n" +
@@ -123,14 +123,14 @@ public class ReportServiceImpl implements ReportService{
                             "      <li>CI/CD 파이프라인 구축 경험</li>\n" +
                             "    </ul>\n" +
                             "  </div>\n" +
-                            "</div>`\n" +
+                            "</div>\n" +
                             "\n" +
                             "<!-- 예시 2 -->\n" +
                             "[질문]\n" +
                             "https://github.com/khyaejin/YourSide-Server\n" +
                             "\n" +
                             "[답변]\n" +
-                            "`<h1 style=\"margin-bottom: -10px;\">\uD83D\uDD04 YourSide-Server 백엔드 프로젝트 회고가이드 \uD83D\uDD04</h1>\n" +
+                            "<h1 style=\"margin-bottom: -10px;\">\uD83D\uDD04 YourSide-Server 백엔드 프로젝트 회고가이드 \uD83D\uDD04</h1>\n" +
                             "\t<div style=\"display: flex;\">\n" +
                             "  <div style=\"flex: 1;\">\n" +
                             "\n" +
@@ -172,14 +172,14 @@ public class ReportServiceImpl implements ReportService{
                             "      <li>테스트 자동화 도입</li>\n" +
                             "    </ul>\n" +
                             "  </div>\n" +
-                            "</div>`\n" +
+                            "</div>\n" +
                             "\n" +
                             "<!-- 예시 3 -->\n" +
                             "[질문]\n" +
                             "https://github.com/khyaejin/Scapture-Server\n" +
                             "\n" +
                             "[답변]\n" +
-                            "`<h1 style=\"margin-bottom: -10px;\">\uD83D\uDD04 Scapture-Server 백엔드 프로젝트 회고가이드 \uD83D\uDD04</h1>\n" +
+                            "<h1 style=\"margin-bottom: -10px;\">\uD83D\uDD04 Scapture-Server 백엔드 프로젝트 회고가이드 \uD83D\uDD04</h1>\n" +
                             "\t<div style=\"display: flex;\">\n" +
                             "  <div style=\"flex: 1;\">\n" +
                             "\n" +
@@ -221,7 +221,7 @@ public class ReportServiceImpl implements ReportService{
                             "      <li>API 버전 관리</li>\n" +
                             "    </ul>\n" +
                             "  </div>\n" +
-                            "</div>`\n" +
+                            "</div>\n" +
                             "\n";
             // 시스템 메시지 생성
             List<ChatRequestMsgDto> messages = List.of(
