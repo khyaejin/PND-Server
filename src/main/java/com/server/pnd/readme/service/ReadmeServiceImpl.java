@@ -132,66 +132,90 @@ public class ReadmeServiceImpl implements ReadmeService{
         }
 
         // 리드미 자동 생성 요청 GPT 프롬프트
-        String prompt = "내가 제공하는 링크로 접속하여 깃 레파지토리내의 모든 디렉토리 및 코드를 확인해줘. 프로젝트를 전체적으로 설명할 수 있도록 리드미 코드 형태로 생성해줘. 혹시 레포지토리 타이틀이 길어 잘리게 된다면, 폰트 크기는 알아서 조절해줘. 템플릿은 예시 그대로 적용하고 내용만 바꿔주면 돼. 별다른 설명할 필요 없이 예시로 제공하는 것처럼 **마크다운 문법**을 사용하여 코드블록만 제공해줘. tech stack은 해당 링크의 레포지토리에서 사용한 언어와 개발 환경에 맞게 변경해야 해. 마크다운 문법으로 된 코드도 해당 레포지토리에서 사용된 언어만 존재하도록 바꿔야 해. 코드는 다음 블로그를 참조하여 선택해줘.(https://velog.io/@cha-suyeon/github-%EA%B9%83%ED%97%88%EB%B8%8C-%EB%A6%AC%EB%93%9C%EB%AF%B8%EC%97%90%EC%84%9C-%EB%B1%83%EC%A7%80-%EB%A7%8C%EB%93%A4%EA%B8%B0) 설명 또한 마찬가지야. 프로젝트 구조 또한 제공되는 링크에 맞게 유동적으로 변경해야 해. \n" +
-                "작성하는 리드미의 모든 내용은 **직접** 링크를 타고 들어가서 내용 확인하고 레포지토리에 맞게 **마크다운 문법**으로 작성해줘.\n" +
+        String prompt = "내가 제공하는 링크로 접속하여 깃 레파지토리내의 모든 디렉토리 및 코드를 확인해줘. 프로젝트를 전체적으로 설명할 수 있도록 리드미 코드 형태로 생성해줘. 혹시 레포지토리 타이틀이 길어 잘리게 된다면, 폰트 크기는 알아서 조절해줘. 템플릿은 예시 그대로 적용하고 내용만 바꿔주면 돼. 별다른 설명할 필요 없이 예시로 제공하는 것처럼 **마크다운 문법**을 사용하여 제공해줘. tech stack은 해당 링크의 레포지토리에서 사용한 언어와 개발 환경에 맞게 변경해야 해. 마크다운 문법으로 된 코드도 해당 레포지토리에서 사용된 언어만 존재하도록 바꿔야 해. 코드는 다음 블로그를 참조하여 선택해줘.(https://velog.io/@cha-suyeon/github-%EA%B9%83%ED%97%88%EB%B8%8C-%EB%A6%AC%EB%93%9C%EB%AF%B8%EC%97%90%EC%84%9C-%EB%B1%83%EC%A7%80-%EB%A7%8C%EB%93%A4%EA%B8%B0) 설명 또한 마찬가지야. 프로젝트 구조 또한 제공되는 링크에 맞게 유동적으로 변경해야 해. \n" +
+                "작성하는 리드미의 모든 내용은 **직접** 링크를 타고 들어가서 내용 확인하고 레포지토리에 맞게 **마크다운 문법**으로 작성해줘. Project Structure에서 구조는 하위항목이 없는 경우 하나로 묶어서 main/java/com 이런식으로 표기해 줘. " +
                 "\n" +
                 "\n" +
                 "<예시 1>\n" +
                 "[질문]\n" +
-                "https://github.com/Hjwoon/Ch-Eating-BE\n" +
+                "https://github.com/TeamKioki/FE\n" +
                 "\n" +
                 "[답변]\n" +
-                "![Ch-Eating Backend](https://capsule-render.vercel.app/api?type=rect&color=gradient&text=Ch-Eating%20Backend&fontSize=30&fontAlign=50)\n" +
+                "![Kioki Frontend](https://capsule-render.vercel.app/api?type=rect&color=gradient&text=Kioki%20Frontend&fontSize=30&fontAlign=50)\n" +
                 "\n" +
-                "# \uD83D\uDC4B Welcome to Ch-Eating Backend \uD83D\uDC4B\n" +
+                "## \uD83D\uDC4B Welcome to Kioki Frontend \uD83D\uDC4B\n" +
+                " The **Kioki Frontend** is responsible for rendering the user interface, handling interactions, and managing state using Redux. It interfaces with the backend to fetch and display data, ensuring a seamless user experience on the Kioki platform.\n" +
                 "\n" +
-                "![GitHub stars](https://img.shields.io/github/stars/Hjwoon/Ch-Eating-BE?style=social)\n" +
-                "![GitHub license](https://img.shields.io/github/license/Hjwoon/Ch-Eating-BE)\n" +
+                "<p align=\"center\" style=\"display: flex; justify-content: center; gap: 10px;\">\n" +
+                "    <img src=\"https://img.shields.io/github/stars/benniejung/Kioki-FE?style=social\" alt=\"GitHub stars\">\n" +
+                "    <img src=\"https://img.shields.io/github/license/benniejung/Kioki-FE\" alt=\"GitHub license\">\n" +
+                "</p>\n" +
                 "\n" +
-                "The Ch-Eating Backend is responsible for handling user authentication, data management, and API services that power the Ch-Eating platform.\n" +
+                "\n" +
                 "\n" +
                 "## \uD83D\uDCDA Tech Stack \uD83D\uDCDA\n" +
                 "\n" +
-                "![Java](https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white)\n" +
-                "![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=Spring&logoColor=white)\n" +
-                "![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white)\n" +
-                "![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=Amazon%20AWS&logoColor=white)\n" +
+                "<p align=\"center\" style=\"display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;\">\n" +
+                "    <img src=\"https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white\">\n" +
+                "    <img src=\"https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white\">\n" +
+                "    <img src=\"https://img.shields.io/badge/Redux-764ABC?style=for-the-badge&logo=Redux&logoColor=white\">\n" +
+                "    <img src=\"https://img.shields.io/badge/Styled--Components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white\">\n" +
+                "</p>\n" +
                 "\n" +
-                "- **Java** and **Spring Boot**: For building the backend services and RESTful APIs.\n" +
-                "- **MySQL**: Database management to store and retrieve user data.\n" +
-                "- **AWS**: Cloud platform used for deployment and hosting.\n" +
                 "\n" +
+                "- \uD83D\uDCBB **JavaScript** and **React**: Core technologies used for creating a dynamic and interactive user interface.\n" +
+                "- \uD83D\uDEE0\uFE0F **Redux**: State management for the application.\n" +
+                "- ⚙\uFE0F **Styled-Components**: For styling React components in a modular and maintainable way.\n" +
                 "## \uD83D\uDCC2 Project Structure \uD83D\uDCC2\n" +
                 "\n" +
-                "- src/main: Contains the main application code.\n" +
-                "  - controller: API endpoints for various backend services.\n" +
-                "  - service: Business logic for the application.\n" +
-                "  - repository: Database interaction layer.\n" +
-                "- src/test: Test cases for ensuring code quality.\n" +
+                "- **\uD83D\uDDC2\uFE0F src**: Main source directory containing all application code.\n" +
+                "  - **\uD83D\uDCE6 components**: Reusable UI components.\n" +
+                "  - **\uD83D\uDCE6 containers**: Components connected to Redux and contain application logic.\n" +
+                "  - **\uD83D\uDD27 redux**: Redux setup and state management.\n" +
+                "    - **\uD83D\uDD28 actions**: Action creators for Redux.\n" +
+                "    - **⚙\uFE0F reducers**: Reducers to handle state changes.\n" +
+                "    - **\uD83D\uDEE0\uFE0F store.js**: Configuration and initialization of Redux store.\n" +
+                "  - **\uD83D\uDDBC\uFE0F assets**: Static assets like images and stylesheets.\n" +
+                "  - **\uD83E\uDDF0 utils**: Utility functions and helpers.\n" +
+                "  - **\uD83D\uDE80 App.js**: Main application component.\n" +
+                "  - **\uD83D\uDD11 index.js**: Entry point of the application.\n" +
                 "\n" +
                 "## \uD83D\uDE80 Getting Started \uD83D\uDE80\n" +
                 "\n" +
-                "1. Clone the repository:\n" +
+                "1\uFE0F⃣ **Clone the repository:**\n" +
+                "```\n" +
+                "git clone https://github.com/benniejung/Kioki-FE.git\n" +
+                "```\n" +
                 "\n" +
-                "   \n" +
-                "bash\n" +
-                "   git clone https://github.com/Hjwoon/Ch-Eating-BE.git\n" +
+                "2\uFE0F⃣ Navigate to the project directory:\n" +
+                "```\n" +
+                "cd Kioki-FE\n" +
+                "```\n" +
                 "\n" +
-                "2. Install dependencies and set up the database (MySQL).\n" +
+                "3\uFE0F⃣ Install dependencies:\n" +
+                "```\n" +
+                "npm install\n" +
+                "```\n" +
                 "\n" +
-                "3. Run the application:\n" +
-                "\n" +
-                "   ./gradlew bootRun\n" +
-                "\n" +
-                "<!-- \"https://www.notion.so\" 부분을 원하는 노션 페이지 URL로 변경하세요. -->\n" +
-                "[![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white)](https://www.notion.so) \n" +
-                "\n" +
-                "   \uD83D\uDCC4 License \uD83D\uDCC4\n" +
-                "This project is licensed under the MIT License. See the LICENSE file for more details.\n" +
+                "4\uFE0F⃣ Start the application:\n" +
+                "```\n" +
+                "npm start\n" +
+                "```\n" +
                 "\n" +
                 "\n" +
-                "@\n" +
-                "This README provides a concise summary of the project and key information regarding the tech stack, structure, and setup instructions.\n" +
+                "\uD83D\uDCC4 **License** \uD83D\uDCC4  \n" +
+                "This project is licensed under the MIT License. For more details, please refer to the [LICENSE](./LICENSE) file.\n" +
+                "\n" +
+                "\n" +
+                "\uD83C\uDF1F **About this README** \uD83C\uDF1F  \n" +
+                "This README provides a clear and concise overview of the project's key information, including the tech stack, project structure, and setup instructions.\n" +
+                "\n" +
+                "\n" +
+                "✨ **Special Thanks** ✨  \n" +
+                "A special shout-out to the **P-ND** team, brought to you by **Gamjakkang**! \uD83C\uDF89  \n" +
+                "This README was crafted with their amazing assistance. \n" +
+                "\n" +
+                "Check out more about **P-ND** at the [P-ND GitHub repository](https://github.com/PND-Gamjakkang). \uD83D\uDE80\n" +
                 "\n" +
                 "<예시 2>\n" +
                 "[질문]\n" +
@@ -200,121 +224,130 @@ public class ReadmeServiceImpl implements ReadmeService{
                 "[답변]\n" +
                 "![CareerDoctor Backend](https://capsule-render.vercel.app/api?type=rect&color=gradient&text=CareerDoctor%20Backend&fontSize=30&fontAlign=50)\n" +
                 "\n" +
-                "# \uD83D\uDC4B Welcome to CareerDoctor Backend \uD83D\uDC4B\n" +
+                "## \uD83D\uDC4B Welcome to CareerDoctor Backend \uD83D\uDC4B\n" +
+                "The **CareerDoctor Backend** is responsible for managing user data, authentication, and handling API services that support the CareerDoctor platform. It provides a robust backend solution to ensure the platform operates efficiently.\n" +
                 "\n" +
-                "![GitHub stars](https://img.shields.io/github/stars/Hjwoon/CareerDoctor-Backend?style=social)\n" +
-                "![GitHub license](https://img.shields.io/github/license/Hjwoon/CareerDoctor-Backend)\n" +
-                "\n" +
-                "The CareerDoctor Backend provides powerful API services, authentication management, and data processing features to support the CareerDoctor platform.\n" +
+                "<p align=\"center\" style=\"display: flex; justify-content: center; gap: 10px;\">\n" +
+                "    <img src=\"https://img.shields.io/github/stars/HSU-Likelion-CareerDoctor/CareerDoctor-Backend?style=social\" alt=\"GitHub stars\">\n" +
+                "    <img src=\"https://img.shields.io/github/license/HSU-Likelion-CareerDoctor/CareerDoctor-Backend\" alt=\"GitHub license\">\n" +
+                "</p>\n" +
                 "\n" +
                 "## \uD83D\uDCDA Tech Stack \uD83D\uDCDA\n" +
                 "\n" +
-                "![Java](https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white)\n" +
-                "![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=Spring&logoColor=white)\n" +
-                "![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white)\n" +
-                "![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=Amazon%20AWS&logoColor=white)\n" +
+                "<p align=\"center\" style=\"display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;\">\n" +
+                "    <img src=\"https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white\">\n" +
+                "    <img src=\"https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=Spring&logoColor=white\">\n" +
+                "    <img src=\"https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white\">\n" +
+                "</p>\n" +
                 "\n" +
-                "- **Java** and **Spring Boot**: Core framework for building RESTful backend services.\n" +
-                "- **MySQL**: Relational database for handling data storage.\n" +
-                "- **AWS**: Used for deploying the application to the cloud.\n" +
+                "- \uD83D\uDCBB **Java** and **Spring Boot**: Used for building backend services and APIs.\n" +
+                "- \uD83D\uDEE0\uFE0F **MySQL**: Database for handling and storing user data.\n" +
                 "\n" +
                 "## \uD83D\uDCC2 Project Structure \uD83D\uDCC2\n" +
                 "\n" +
-                "- src/main: Main application codebase.\n" +
-                "  - controller: Defines API endpoints.\n" +
-                "  - service: Contains business logic and service layer.\n" +
-                "  - repository: Manages database interactions.\n" +
-                "- src/test: Unit and integration tests for the application.\n" +
+                "- **\uD83D\uDDC2\uFE0F src**: Main source directory containing application code.\n" +
+                "  - **\uD83D\uDCE6 controllers**: Manages HTTP requests.\n" +
+                "  - **\uD83D\uDCE6 services**: Contains business logic.\n" +
+                "  - **\uD83D\uDCE6 repositories**: Handles database operations.\n" +
+                "  - **\uD83D\uDDBC\uFE0F resources**: Configuration and static resources.\n" +
                 "\n" +
                 "## \uD83D\uDE80 Getting Started \uD83D\uDE80\n" +
                 "\n" +
-                "1. Clone the repository:\n" +
+                "1\uFE0F⃣ **Clone the repository:**\n" +
+                "```\n" +
+                "git clone https://github.com/HSU-Likelion-CareerDoctor/CareerDoctor-Backend.git\n" +
+                "```\n" +
                 "\n" +
-                "   \n" +
-                "bash\n" +
-                "   git clone https://github.com/Hjwoon/CareerDoctor-Backend.git\n" +
+                "2\uFE0F⃣ Navigate to the project directory:\n" +
+                "```\n" +
+                "cd CareerDoctor-Backend\n" +
+                "```\n" +
                 "\n" +
-                "2. Install dependencies and set up the database (MySQL).\n" +
+                "3\uFE0F⃣ Install dependencies:\n" +
+                "```\n" +
+                "./gradlew build\n" +
+                "```\n" +
                 "\n" +
-                "3. Run the application:\n" +
-                "\n" +
-                "   ./gradlew bootRun \n" +
-                "\n" +
-                "<!-- \"https://www.notion.so\" 부분을 원하는 노션 페이지 URL로 변경하세요. -->\n" +
-                "[![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white)](https://www.notion.so) \n" +
+                "4\uFE0F⃣ Run the application:\n" +
+                "```\n" +
+                "./gradlew bootRun\n" +
+                "```\n" +
                 "\n" +
                 "\uD83D\uDCC4 License \uD83D\uDCC4\n" +
-                "This project is licensed under the MIT License. See the LICENSE file for more details.\n" +
+                "This project is licensed under the MIT License. For more details, see the LICENSE file.\n" +
                 "\n" +
-                "@\n" +
-                "This README provides a concise summary of the project and key information regarding the tech stack, structure, and setup instructions.\n" +
+                "\uD83C\uDF1F About this README \uD83C\uDF1F\n" +
+                "This README provides an overview of the backend's key features, tech stack, and project structure.\n" +
                 "\n" +
+                "✨ Special Thanks ✨\n" +
+                "Special thanks to the P-ND team, powered by Gamjakkang! \uD83D\uDE80\n" +
+                "For more info, check out the P-ND GitHub repository.\n" +
                 "<예시 3>\n" +
                 "[질문]\n" +
                 "https://github.com/Hjwoon/Mini_OverWatch\n" +
                 "\n" +
                 "[답변]\n" +
-                "![Mini OverWatch](https://capsule-render.vercel.app/api?type=rect&color=gradient&text=Mini%20OverWatch%20Backend&fontSize=30&fontAlign=50)\n" +
-
-
+                "![Mini OverWatch](https://capsule-render.vercel.app/api?type=rect&color=gradient&text=Mini_OverWatch&fontSize=30&fontAlign=50)\n" +
                 "\n" +
-                "# \uD83D\uDC4B Welcome to Mini OverWatch \uD83D\uDC4B \n" +
+                "## \uD83D\uDC4B Welcome to Mini_OverWatch \uD83D\uDC4B\n" +
+                "The **Mini OverWatch** project is a bullet-style game built using Java. It includes both a game authoring tool for creating custom games and a player mode to enjoy those creations. The tool allows users to design levels, place obstacles, enemies, and set custom backgrounds.\n" +
                 "\n" +
-                "![GitHub stars](https://img.shields.io/github/stars/Hjwoon/Mini_OverWatch?style=social)\n" +
-                "![GitHub license](https://img.shields.io/github/license/Hjwoon/Mini_OverWatch)\n" +
-                "\n" +
-                "The Mini OverWatch Backend handles various aspects of the OverWatch-like platform, including real-time data management, user interactions, and API services.\n" +
+                "<p align=\"center\" style=\"display: flex; justify-content: center; gap: 10px;\">\n" +
+                "    <img src=\"https://img.shields.io/github/stars/Hjwoon/Mini_OverWatch?style=social\" alt=\"GitHub stars\">\n" +
+                "    <img src=\"https://img.shields.io/github/license/Hjwoon/Mini_OverWatch\" alt=\"GitHub license\">\n" +
+                "</p>\n" +
                 "\n" +
                 "## \uD83D\uDCDA Tech Stack \uD83D\uDCDA\n" +
                 "\n" +
-                "![Java](https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white)\n" +
-                "![XML](https://img.shields.io/badge/XML-FF6600?style=for-the-badge&logo=xml&logoColor=white)\n" +
+                "<p align=\"center\" style=\"display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;\">\n" +
+                "    <img src=\"https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white\">\n" +
+                "    <img src=\"https://img.shields.io/badge/XML-FF6600?style=for-the-badge&logo=xml&logoColor=white\">\n" +
+                "</p>\n" +
                 "\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "The tech stack for the Mini OverWatch project from the repository includes:\n" +
-                "\n" +
-                "**Java**: Main programming language used.\n" +
-                "**XML**: Utilized for configuring game elements.\n" +
-                "The project focuses on creating a bullet-game-style application where players can customize and play games through a game editor and player mode.\n" +
-                " \n" +
+                "- \uD83D\uDCBB **Java**: Used for the main game and authoring tool development.\n" +
+                "- \uD83D\uDEE0\uFE0F **XML**: For storing and loading game levels and configurations.\n" +
                 "\n" +
                 "## \uD83D\uDCC2 Project Structure \uD83D\uDCC2\n" +
                 "\n" +
-                "- **src/main/java**: Contains the main logic for game configuration and player interactions.\n" +
-                "  - **game**: Game mechanics such as player, enemy, and object behaviors.\n" +
-                "  - **editor**: Code responsible for the Game Editor functionality.\n" +
-                "  - **player**: Implements the Player mode to play configured games.\n" +
-                "- **src/main/resources**: XML files for game data configuration (e.g., player stats, enemy types).\n" +
-                "- **src/test**: Test cases for validating game logic and editor functionality.\n" +
-                "\n" +
-                "\n" +
+                "- **\uD83D\uDDC2\uFE0F Wproject**: Contains the main game source files.\n" +
+                "  - **\uD83D\uDCE6 AuthorFrame.java**: Handles the game authoring tool interface.\n" +
+                "  - **\uD83D\uDCE6 GameApp.java**: Manages the main gameplay logic.\n" +
                 "\n" +
                 "## \uD83D\uDE80 Getting Started \uD83D\uDE80\n" +
                 "\n" +
-                "1. Clone the repository:\n" +
+                "1\uFE0F⃣ **Clone the repository:**\n" +
+                "```\n" +
+                "git clone https://github.com/Hjwoon/Mini_OverWatch.git\n" +
+                "```\n" +
                 "\n" +
-                "   \n" +
-                "bash\n" +
-                "   git clone https://github.com/Hjwoon/Mini_OverWatch.git\n" +
+                "2\uFE0F⃣ Navigate to the project directory:\n" +
+                "```\n" +
+                "cd Mini_OverWatch\n" +
+                "```\n" +
                 "\n" +
-                "2. Install dependencies and set up the database (MySQL).\n" +
+                "3\uFE0F⃣ Compile the project:\n" +
+                "```\n" +
+                "javac -d bin Wproject/*.java\n" +
+                "```\n" +
                 "\n" +
-                "3. Run the application:\n" +
-                "\n" +
-                "   ./gradlew bootRun \n" +
-                "\n" +
-                "<!-- \"https://www.notion.so\" 부분을 원하는 노션 페이지 URL로 변경하세요. -->\n" +
-                "[![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white)](https://www.notion.so) \n" +
+                "4\uFE0F⃣ Run the application:\n" +
+                "```\n" +
+                "java -cp bin Wproject.GameApp\n" +
+                "```\n" +
                 "\n" +
                 "\uD83D\uDCC4 License \uD83D\uDCC4\n" +
-                "This project is licensed under the MIT License. See the LICENSE file for more details.\n" +
+                "This project is licensed under the Apache-2.0 License. For more details, see the LICENSE file.\n" +
                 "\n" +
-                "@\n" +
-                "This README provides a concise summary of the project and key information regarding the tech stack, structure, and setup instructions.\n" +
+                "\uD83C\uDF1F About this README \uD83C\uDF1F\n" +
+                "This README provides an overview of the game's core features, tech stack, and project structure.\n" +
                 "\n" +
+                "✨ Special Thanks ✨\n" +
+                "Special thanks to the P-ND team, powered by Gamjakkang! \uD83D\uDE80\n" +
+                "For more info, check out the P-ND GitHub repository.\n" +
+                "\n" +
+                "```\n" +
+                "This README template has been customized for the **Mini OverWatch** repository, reflecting its key technologies, structure, and features.\n" +
+                "```" +
                 "[제공하는 링크]\n" + repoId;
 
 
