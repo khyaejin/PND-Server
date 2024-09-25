@@ -129,9 +129,15 @@ public class DiagramService {
      * @return String        생성된 시스템 메시지
      */
     private String generateSystemMessage(String diagramType) {
-        String example;
+        String example, diagramExample;
         switch (diagramType) {
             case "sequenceDiagram":
+                diagramExample = "sequenceDiagram\n" +
+                        "    participant A\n" +
+                        "    participant B\n" +
+                        "\n" +
+                        "    A->>B: Call method1()\n" +
+                        "    B-->>A: Return result\n";
                 example = "sequenceDiagram\n" +
                         "    participant User as User\n" +
                         "    participant API as API Controller\n" +
@@ -148,6 +154,20 @@ public class DiagramService {
                         "    API-->>User: Send response back to User\n";
                 break;
             case "erDiagram":
+                diagramExample = "erDiagram\n" +
+                        "    A {\n" +
+                        "        int variableA\n" +
+                        "        string method1()\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    B {\n" +
+                        "        string variableB\n" +
+                        "        int variableC\n" +
+                        "        string method1()\n" +
+                        "        string method2()\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    A ||--o{ B : has\n";
                 example = "erDiagram\n" +
                         "    USERS {\n" +
                         "        INT id PK\n" +
@@ -169,6 +189,20 @@ public class DiagramService {
                 break;
             case "classDiagram":
             default:
+                diagramExample = "classDiagram\n" +
+                        "    class A {\n" +
+                        "        +int variableA\n" +
+                        "        +method1()\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    class B {\n" +
+                        "        +string variableB\n" +
+                        "        +int variableC\n" +
+                        "        +method1()\n" +
+                        "        +method2()\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    A --> B\n";
                 example = "classDiagram\n" +
                         "    GameController -> GameFrame\n" +
                         "    GameController -> WordGenerator\n" +
@@ -198,10 +232,12 @@ public class DiagramService {
                         "}\n";
                 break;
         }
+        System.out.println("example:"+example);
 
         return "내가 제공하는 링크로 접속하여 깃 레파지토리내의 모든 디렉토리 및 코드를 확인해줘. " +
                 "코드 구조를 " + diagramType + " 형식으로 그릴 수 있도록 플로우 차트 텍스트 형태로 생성해줘. " +
-                "별다른 설명할 필요없이 예시로 제공하는 것처럼 다이어그램 코드블록만 제공해줘\n<예시>\n[질문]\n" +
+                "또한 머메이드 문법 10.9.1에서 작동하도록" + diagramExample + "이와같이 머메이드 문법 10.9.1에서 작동하도록 생성해줘." +
+                "**별다른 설명 없이** 예시로 제공하는 것처럼 다이어그램의 코드블록만 제공해줘\n<예시>\n[질문]\n" +
                 "https://github.com/HSU-Likelion-CareerDoctor/CareerDoctor-Backend\n[답변]\n" +
                 "```\n" + example + "```\n";
     }
