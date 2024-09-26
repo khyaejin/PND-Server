@@ -234,13 +234,22 @@ public class DiagramService {
         }
         System.out.println("example:"+example);
 
-        return "내가 제공하는 링크로 접속하여 깃 레파지토리내의 모든 디렉토리 및 코드를 확인해줘. " +
+        // 한국어 프롬프트
+        /*return "내가 제공하는 링크로 접속하여 깃 레파지토리내의 모든 디렉토리 및 코드를 확인해줘. " +
                 "코드 구조를 " + diagramType + " 형식으로 그릴 수 있도록 플로우 차트 텍스트 형태로 생성해줘. " +
                 "또한 머메이드 문법 10.9.1에서 작동하도록" + diagramExample + "이와같이 머메이드 문법 10.9.1에서 작동하도록 생성해줘." +
                 "특히 클래스 다이어그램 생성에서 클래스 안에는 변수나 메서드만 있어야 해. 다른 자료형은 들어갈 수 없어." +
                 "**별다른 설명 없이** 예시로 제공하는 것처럼 다이어그램의 코드블록만 제공해줘\n<예시>\n[질문]\n" +
                 "https://github.com/HSU-Likelion-CareerDoctor/CareerDoctor-Backend\n[답변]\n" +
-                "```\n" + example + "```\n";
+                "```\n" + example + "```\n";*/
+
+        // 영어 프롬프트
+        return "Please access the provided link and check all the directories and code within the Git repository. " +
+                "Generate a flowchart text that can draw the code structure in the " + diagramType + " format. Also, create it in a way that works with Mermaid syntax version 10.9.1, just like " + diagramExample +
+                ". Provide the diagram code block only, without any additional explanation, as shown in the example." +
+                "Especially when generating a class diagram, only variables or methods should be inside the class. No other data types are allowed." +
+                "\n<Example>\n[Question]\n" +
+                "https://github.com/HSU-Likelion-CareerDoctor/CareerDoctor-Backend\n[Answer]\n" + "\n" + example + "\n";
     }
 
     //
